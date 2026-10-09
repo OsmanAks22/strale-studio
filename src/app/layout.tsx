@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "STRALE | Made with Direction",
+    default: "STRALE | Amaçla Tasarlandı",
     template: "%s | STRALE",
   },
   description:
-    "Strale Studio designs premium everyday essentials with intent — sweats, knitwear and outerwear cut, sewn and finished to last.",
+    "Strale Studio, yıllarca giyilmek için tasarlanmış premium temel parçalar üretir: sweat, triko ve dış giyim.",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="tr" className="h-full">
       <body className="st-body min-h-full">{children}</body>
     </html>
   );

@@ -1,15 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { Fragment, useState } from "react";
-import { SITE_DOMAIN, footerColumns, legalLinks, storeUrl } from "./data";
+import { footerColumns, legalLinks, socialLinks, storeUrl } from "./data";
 import { CaretIcon, InstagramIcon, TwitterIcon } from "./icons";
 import { ShippingSelect } from "./shipping-select";
 
-const socials = [
-  { label: "Instagram", href: "https://www.instagram.com/strale.studio/", Icon: InstagramIcon },
-  { label: "X", href: "https://x.com/stralestudio", Icon: TwitterIcon },
-];
+const socialIcons = { Instagram: InstagramIcon, X: TwitterIcon };
 
 export function SiteFooter() {
   return (
@@ -43,9 +39,9 @@ function Newsletter() {
 
   return (
     <div className="mt-[71px] min-w-0 tab:mt-[3px] tab:max-w-[380px] tab:flex-1 tab:basis-[200px]">
-      <h2 className="st-display text-[34px] leading-10">The List</h2>
+      <h2 className="st-display text-[34px] leading-10">THE LIST</h2>
       <p className="mt-1.5">
-        Join for first access to new collections, limited runs and studio notes from Strale.
+        Yeni koleksiyonlara, sınırlı üretimlere ve stüdyodan notlara ilk sen ulaş.
       </p>
       <form
         className="relative mt-3"
@@ -55,7 +51,7 @@ function Newsletter() {
         }}
       >
         <label htmlFor="st-footer-email" className="sr-only">
-          Email Address
+          E-posta adresi
         </label>
         <input
           id="st-footer-email"
@@ -63,38 +59,40 @@ function Newsletter() {
           name="email"
           required
           autoComplete="email"
-          placeholder="Email Address"
+          placeholder="E-posta adresi"
           className="h-12 w-full border-b border-bone bg-transparent pr-8 text-bone outline-none placeholder:text-ash"
         />
         <button
           type="submit"
-          aria-label="Subscribe"
+          aria-label="Abone ol"
           className="absolute top-0 right-0 flex h-12 w-6 cursor-pointer items-center justify-end"
         >
           <CaretIcon className="size-[18px]" />
         </button>
       </form>
-      {submitted ? <p className="mt-3 text-ash">You’re on the list.</p> : null}
+      {submitted ? <p className="mt-3 text-ash">Listeye eklendin. Teşekkürler.</p> : null}
       <p className="mt-3 text-ash">
-        All emails are sent by Strale Studio | Unsubscribe any time |{" "}
-        <Link href="/" className="st-underline">
-          {SITE_DOMAIN}
-        </Link>{" "}
-        |{" "}
-        <a href={storeUrl("/pages/privacy")} className="st-underline">
-          Privacy Policy
+        Abone olarak{" "}
+        <a href={storeUrl("/sayfa/kvkk")} className="st-underline">
+          KVKK Aydınlatma Metni
         </a>
+        ’ni okuduğunu kabul edersin. Dilediğin zaman abonelikten çıkabilirsin.
       </p>
-      <ul className="mt-12 flex gap-3">
-        {socials.map(({ label, href, Icon }) => (
-          <li key={label}>
-            <a href={href} className="block size-5" target="_blank" rel="noreferrer">
-              <Icon className="size-5" fill="currentColor" />
-              <span className="sr-only">{label}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+      {socialLinks.length > 0 ? (
+        <ul className="mt-12 flex gap-3">
+          {socialLinks.map(({ label, href }) => {
+            const Icon = socialIcons[label];
+            return (
+              <li key={label}>
+                <a href={href} className="block size-5" target="_blank" rel="noreferrer">
+                  <Icon className="size-5" fill="currentColor" />
+                  <span className="sr-only">{label}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
     </div>
   );
 }
@@ -115,7 +113,7 @@ function SubFooter() {
         ))}
       </ul>
       <div className="mt-6 flex flex-col gap-6 tab:mt-0 tab:flex-row tab:items-center tab:gap-0">
-        <p className="desk:whitespace-nowrap">© 2026 Strale Studio. All Rights Reserved</p>
+        <p className="desk:whitespace-nowrap">© 2026 Strale Studio. Tüm hakları saklıdır.</p>
         <span className="mx-1 hidden text-bone tab:inline">|</span>
         <ShippingSelect className="text-bone" />
       </div>

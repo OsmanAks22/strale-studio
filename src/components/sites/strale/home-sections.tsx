@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ASSET_ROOT, categories, contentCards, newArrivals, storeUrl } from "./data";
+import { ASSET_ROOT, FREE_SHIPPING_THRESHOLD, categories, contentCards, formatPrice, newArrivals, storeUrl } from "./data";
 import { ProductCard } from "./product-card";
 import { Slider, SliderItem } from "./slider";
 
@@ -7,12 +7,12 @@ export function AnnouncementBar() {
   return (
     <div className="flex h-[42px] items-center justify-center bg-ink px-3 text-bone tab:justify-between tab:px-8">
       <p className="whitespace-nowrap">
-        New In: Fall ‘26 Collection.{" "}
-        <a href={storeUrl("/collections/new-in")} className="st-underline">
-          Shop New
+        Yeni Sezon: Sonbahar ‘26.{" "}
+        <a href={storeUrl("/koleksiyonlar/yeni-gelenler")} className="st-underline">
+          Keşfet
         </a>
       </p>
-      <p className="hidden whitespace-nowrap tab:block">Free shipping on orders $75+</p>
+      <p className="hidden whitespace-nowrap tab:block">{formatPrice(FREE_SHIPPING_THRESHOLD)} üzeri siparişlerde ücretsiz kargo</p>
     </div>
   );
 }
@@ -26,10 +26,10 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 export function Hero() {
-  const href = storeUrl("/collections/new-in");
+  const href = storeUrl("/koleksiyonlar/yeni-gelenler");
   return (
     <section className="relative -mt-[60px] aspect-[4/5] w-full overflow-hidden text-bone tab:aspect-auto tab:h-[calc(100dvh-42px)]">
-      <a href={href} aria-label="Made with Direction" className="absolute inset-0">
+      <a href={href} aria-label="Amaçla Tasarlandı" className="absolute inset-0">
         <video
           className="size-full object-cover"
           autoPlay
@@ -45,17 +45,17 @@ export function Hero() {
       <div className="pointer-events-none absolute bottom-8 left-3 tab:left-8">
         <h2 className="st-display text-[34px] leading-[36px] tab:text-[56px] tab:leading-[58px]">
           <a href={href} className="pointer-events-auto">
-            Made with Direction
+            Amaçla Tasarlandı
           </a>
         </h2>
         <p className="mt-2 text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">
-          Essentials designed with intent. Built to be worn for years.
+          Yıllarca giyilmek için, bir amaçla tasarlanmış temel parçalar.
         </p>
         <a
           href={href}
           className="pointer-events-auto mt-4 inline-block text-[12px] leading-[18px] st-label st-underline tab:text-[16px] tab:leading-6"
         >
-          Shop the Collection
+          Koleksiyonu Keşfet
         </a>
       </div>
     </section>
@@ -65,8 +65,8 @@ export function Hero() {
 export function NewArrivals() {
   return (
     <section className="pt-6 pb-8 tab:pb-[30px]">
-      <SectionHeading>New Arrivals</SectionHeading>
-      <Slider label="New Arrivals">
+      <SectionHeading>Yeni Gelenler</SectionHeading>
+      <Slider label="Yeni Gelenler">
         {newArrivals.map((product, index) => (
           <SliderItem key={product.handle}>
             <ProductCard product={product} index={index} />
@@ -93,7 +93,7 @@ export function ContentCards() {
             </h3>
             <p className="text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">{card.text}</p>
             <span className="mt-4 inline-block text-[12px] leading-[18px] st-label st-underline tab:text-[16px] tab:leading-6">
-              Shop Now
+              Keşfet
             </span>
           </div>
         </a>
@@ -105,8 +105,8 @@ export function ContentCards() {
 export function ShopByCategory() {
   return (
     <section className="pt-6 pb-9">
-      <SectionHeading>Shop by Category</SectionHeading>
-      <Slider label="Shop by Category">
+      <SectionHeading>Kategoriler</SectionHeading>
+      <Slider label="Kategoriler">
         {categories.map((category) => (
           <SliderItem key={category.slug}>
             <a href={storeUrl(category.href)} className="block">
@@ -131,7 +131,7 @@ export function ShopByCategory() {
 }
 
 export function PerformanceBanner() {
-  const href = storeUrl("/collections/motion");
+  const href = storeUrl("/koleksiyonlar/motion");
   return (
     <section className="px-3 tab:px-8">
       <a href={href} className="relative block aspect-[4/5] overflow-hidden text-bone tab:aspect-auto tab:h-[600px]">
@@ -159,13 +159,13 @@ export function PerformanceBanner() {
         </video>
         <div className="absolute bottom-[33px] left-3 tab:bottom-8 tab:left-8">
           <h2 className="st-heading text-[12px] leading-[18px]  tab:text-[16px] tab:leading-6">
-            Motion
+            MOTION
           </h2>
           <p className="mt-2 text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">
-            Technical layers for training and everyday wear.
+            Antrenmandan gündelik hayata teknik katmanlar.
           </p>
           <span className="mt-4 inline-block text-[12px] leading-[18px] st-label st-underline tab:text-[16px] tab:leading-6">
-            Shop Now
+            Keşfet
           </span>
         </div>
       </a>
@@ -177,11 +177,11 @@ export function RecentlyViewed() {
   return (
     <section className="px-3 pt-9 pb-12 tab:px-8">
       <h2 className="st-heading text-[12px] leading-[18px]  tab:text-[16px] tab:leading-6">
-        Recently Viewed
+        Son Görüntülenenler
       </h2>
-      <p className="mt-8">There are no recently viewed items to show.</p>
-      <a href={storeUrl("/collections/new-in")} className="mt-1.5 inline-block st-underline">
-        Shop New Arrivals
+      <p className="mt-8">Henüz görüntülediğiniz bir ürün yok.</p>
+      <a href={storeUrl("/koleksiyonlar/yeni-gelenler")} className="mt-1.5 inline-block st-underline">
+        Yeni Gelenleri Keşfet
       </a>
     </section>
   );

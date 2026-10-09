@@ -65,7 +65,7 @@ function SliderButton({
   return (
     <button
       type="button"
-      aria-label={direction === 1 ? "Next" : "Previous"}
+      aria-label={direction === 1 ? "Sonraki" : "Önceki"}
       disabled={disabled}
       onClick={onClick}
       className={cn(

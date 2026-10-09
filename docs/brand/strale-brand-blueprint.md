@@ -1,6 +1,6 @@
 # STRALE — Brand Design Blueprint
 
-> Durum: v1 taslak · 2026-10-09 · `claude/gracious-davinci-ng1ac1` branch'i
+> Durum: v2 · Türkçe/TL · 2026-10-09 · `claude/gracious-davinci-ng1ac1` branch'i
 > Kapsam: klonlanan reigningchamp.com ana sayfa iskeletinin Strale kimliğine dönüştürülmesi.
 > Kod tarafındaki karşılıkları: `src/app/globals.css` (token'lar), `src/components/sites/strale/` (bileşenler).
 
@@ -19,15 +19,18 @@
 | **Ses tonu** | Kısa cümleler. Fiil ile başlayan CTA'lar. Ünlem yok, emoji yok. Teknik bilgi (kumaş, gramaj, kalıp) gururla verilir. |
 
 ### Mesaj hiyerarşisi
-1. **Tagline:** Made with direction.
-2. **Destek cümlesi:** Essentials designed with intent — cut, sewn and finished to last.
+1. **Tagline:** Amaçla tasarlandı. (uluslararası kullanım: *Made with direction.*)
+2. **Destek cümlesi:** Yıllarca giyilmek için, bir amaçla tasarlanmış temel parçalar.
 3. **Kanıt noktaları:** ağır gramajlı pamuk, merino, ölçülü kalıplar (Slim / Standard / Relaxed), uzun ömür garantisi.
 
 ### Yazım kuralları
 - Navigasyon, etiket, CTA: **BÜYÜK HARF**, geniş harf aralığı.
 - Gövde metni: cümle düzeni (sentence case).
-- Ürün adı formatı: `<Kumaş> <Model> <Kalıp> <Tip>` → *Loopback Terry Arc Standard Hoodie*.
-- Koleksiyon/hikâye başlıkları tek kelime ya da iki kelime: *Field Layers*, *Fall '26*.
+- Site dili Türkçe; okuyucuya "sen" diye hitap edilir.
+- Ürün adı formatı: `<Model> <Kumaş> <Kalıp> <Tip>` → *Point Merinos Slim Tişört*. Model adları (Vane, Ridge, Arc, Quill, Point) İngilizce kalır.
+- Seri adları İngilizce ve büyük harfle yazılır: *FIELD*, *MOTION*, *ESSENTIALS*, *THE LIST*.
+- ⚠️ `lang="tr"` altında CSS büyük harf dönüşümü "i"yi "İ" yapar. İçinde "i" geçen İngilizce kelimeler kaynakta zaten BÜYÜK HARFLE yazılmalı.
+- Fiyat: `Intl.NumberFormat("tr-TR", TRY)` → **₺13.900** (kuruş gösterilmez).
 
 ---
 
@@ -134,23 +137,52 @@ Mevcut 20px ince çizgi ikon seti (arama, çanta, kaydet, hesap) korunur; stroke
 
 | # | Bölüm | Strale içeriği |
 |---|---|---|
-| 1 | Duyuru | "New In: Fall '26 Collection. Shop New" · "Free shipping on orders $75+" |
-| 2 | Header | Nav: New In · Clothing · Outerwear · Sweats · Accessories · Shop By |
-| 3 | Hero | **Made with Direction** — "Essentials designed with intent. Built to be worn for years." · CTA *Shop the Collection* |
-| 4 | Yeni gelenler | "New Arrivals" — 12 ürün, Strale isimlendirmesiyle |
-| 5 | İkili kart | *Sweats* — "The foundation of every wardrobe." · *Field Layers* — "Outerwear cut for cold mornings and long days." |
-| 6 | Kategori | T-Shirts · Pants · Knitwear · Shirts · Accessories |
-| 7 | Video banner | **Motion** — "Technical layers for training and everyday wear." |
-| 8 | Son görüntülenen | Boş durum metni |
-| 9 | Footer | Strale Studio / Support kolonları + **The List** newsletter |
+| 1 | Duyuru | "Yeni Sezon: Sonbahar '26. Keşfet" · "₺2.500 üzeri siparişlerde ücretsiz kargo" |
+| 2 | Header | Nav: Yeni Gelenler · Giyim · Dış Giyim · Sweat · Aksesuar · Keşfet; Teslimat: Türkiye / Uluslararası |
+| 3 | Hero | **Amaçla Tasarlandı** — "Yıllarca giyilmek için, bir amaçla tasarlanmış temel parçalar." · CTA *Koleksiyonu Keşfet* |
+| 4 | Yeni gelenler | 12 ürün, ₺2.900–₺13.900 bandı |
+| 5 | İkili kart | *Eşofman & Sweat* — "Her gardırobun temeli." · *FIELD Serisi* — "Soğuk sabahlar ve uzun günler için kesilmiş dış giyim." |
+| 6 | Kategoriler | Tişört · Pantolon · Triko · Gömlek · Aksesuar |
+| 7 | Video banner | **MOTION** — "Antrenmandan gündelik hayata teknik katmanlar." |
+| 8 | Son görüntülenenler | Boş durum metni |
+| 9 | Footer | Strale Studio / Yardım kolonları + **THE LIST** bülteni (KVKK onay metniyle); yasal linkler: Kullanım Koşulları, KVKK Aydınlatma Metni, Çerez Politikası, Mesafeli Satış Sözleşmesi |
 
 ---
 
-## 9. Varsayımlar (onay bekleyen)
+## 9. Kararlar & açık konular
 
-Bunlar marka sahibinden teyit gelene kadar yer tutucudur:
-- Satış dili İngilizce, para birimi USD.
-- Fiyatlar klondaki fiyat bandında tutuldu (premium segment).
-- Sosyal medya hesapları: `@strale.studio` (Instagram), `@stralestudio` (X), Facebook kaldırıldı.
-- Domain: `strale.studio`; adres bilgisi kaldırıldı.
-- Mağaza/ürün/koleksiyon sayfaları henüz yok → tüm iç linkler "Coming soon" sayfasına düşer.
+**Onaylandı (2026-10-09):**
+- Site dili Türkçe (`<html lang="tr">`), para birimi Türk lirası (TRY). URL'ler Türkçe: `/koleksiyonlar/…`, `/urun/…`, `/sayfa/…`.
+
+**Bekleyen:**
+- **Sosyal medya:** hesaplar henüz açılmadı. Footer'daki ikonlar gizli; açılınca `src/components/sites/strale/data.ts` → `socialLinks` dizisine eklemek yeterli.
+- **Domain:** henüz alınmadı; sitede domain geçmiyor. Alınınca metadata (`metadataBase`) ve e-posta metinlerine eklenecek.
+- **Fiyatlar** örnek değerdir; gerçek fiyat listesiyle değiştirilmeli.
+- **Ücretsiz kargo eşiği** ₺2.500 (`FREE_SHIPPING_THRESHOLD`).
+- **Yasal metinler** (KVKK, Mesafeli Satış, Çerez) linkleri hazır, içerikleri yazılmalı.
+- Mağaza/ürün/koleksiyon sayfaları henüz yok → tüm iç linkler "Yakında" sayfasına düşer.
+- Logo ve palet seçimi → bkz. bölüm 10.
+
+---
+
+## 10. Alternatifler (seçim bekliyor)
+
+Canlı karşılaştırma: `/marka` sayfası (sitenin gerçek fontuyla). Logo ve palet bağımsız seçilebilir.
+
+**Logo**
+
+| | İşaret | Wordmark | Karakter |
+|---|---|---|---|
+| **A — Dart** (mevcut) | Çentikli dolu ok ucu | STRALE, condensed 700, geniş aralık | Sportif, keskin; küçük boyutta en okunaklı |
+| **B — Twin** | Ardışık iki şevron | STRALE, wide (wdth 125) 500 | Hareket/ritim; daha lüks ve sakin |
+| **C — Flight** | Tek kanatlı çizgisel ok | strale, küçük harf 700, sıkı aralık | Modern, samimi, stüdyo/atölye hissi |
+
+**Palet** (hepsi WCAG AA)
+
+| | Zemin | Metin | Ürün zemini | İkincil | Vurgu |
+|---|---|---|---|---|---|
+| **A — Kemik & Pas** (mevcut) | `#F5F2EC` | `#151412` | `#E8E3DA` | `#645F58` | `#A23E1A` |
+| **B — Tebeşir & Orman** | `#F2F1EC` | `#161A16` | `#E3E3DB` | `#5E625B` | `#2F5D46` |
+| **C — Sis & Lacivert** | `#F3F4F2` | `#0F1720` | `#E2E5E4` | `#5B6168` | `#1F4E79` |
+
+Seçim yapıldığında yalnızca `globals.css` içindeki `--color-*` token'ları ve `logo.tsx` değişir.

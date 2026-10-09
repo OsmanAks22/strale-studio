@@ -1,14 +1,33 @@
 export const ASSET_ROOT = "/sites/strale";
-export const SITE_DOMAIN = "strale.studio";
 
 /**
  * Store destinations (collections, products, account…) are not built yet; they resolve to local
- * paths that the catch-all route renders as "Coming soon". External URLs pass through untouched.
+ * paths that the catch-all route renders as "Yakında". External URLs pass through untouched.
  */
 export function storeUrl(path: string) {
   return path;
 }
 
+const tryFormat = new Intl.NumberFormat("tr-TR", {
+  style: "currency",
+  currency: "TRY",
+  maximumFractionDigits: 0,
+});
+
+/** 12900 → "₺12.900" */
+export function formatPrice(amount: number) {
+  return tryFormat.format(amount);
+}
+
+export const FREE_SHIPPING_THRESHOLD = 2500;
+
+/** Social accounts are not opened yet; add `{ label, href }` entries here once they exist. */
+export const socialLinks: { label: "Instagram" | "X"; href: string }[] = [];
+
+/*
+ * Labels are rendered uppercase under lang="tr", which maps "i" → "İ". English words containing an
+ * "i" (FIELD, MOTION, SLIM, THE LIST…) are therefore written in capitals here so they stay correct.
+ */
 export type MenuLink = { label: string; href: string };
 export type MenuColumn = { heading: string; links: MenuLink[] };
 export type NavItem = {
@@ -20,204 +39,205 @@ export type NavItem = {
 
 export const navItems: NavItem[] = [
   {
-    label: "New In",
-    href: "/collections/new-in",
+    label: "Yeni Gelenler",
+    href: "/koleksiyonlar/yeni-gelenler",
     columns: [
       {
-        heading: "Featured",
+        heading: "Öne Çıkanlar",
         links: [
-          { label: "New Arrivals", href: "/collections/new-in" },
-          { label: "Fall '26 Lookbook", href: "/collections/fall-26-lookbook" },
-          { label: "Field Layers", href: "/collections/outerwear" },
-          { label: "Sweats", href: "/collections/sweats" },
+          { label: "Yeni Gelenler", href: "/koleksiyonlar/yeni-gelenler" },
+          { label: "Sonbahar ‘26 Lookbook", href: "/koleksiyonlar/sonbahar-26-lookbook" },
+          { label: "FIELD Serisi", href: "/koleksiyonlar/dis-giyim" },
+          { label: "Eşofman & Sweat", href: "/koleksiyonlar/esofman-sweat" },
         ],
       },
       {
-        heading: "New In",
+        heading: "Yeni",
         links: [
-          { label: "Hoodies & Sweatshirts", href: "/collections/new-in/sweatshirts" },
-          { label: "T-Shirts", href: "/collections/new-in/t-shirts" },
-          { label: "Pants", href: "/collections/new-in/pants" },
-          { label: "Knitwear", href: "/collections/new-in/knitwear" },
-          { label: "Jackets & Outerwear", href: "/collections/new-in/outerwear" },
-          { label: "Shirts & Overshirts", href: "/collections/new-in/shirts" },
-          { label: "Accessories", href: "/collections/new-in/accessories" },
+          { label: "Kapüşonlu & Sweatshirt", href: "/koleksiyonlar/yeni-gelenler/sweatshirt" },
+          { label: "Tişört", href: "/koleksiyonlar/yeni-gelenler/tisort" },
+          { label: "Pantolon", href: "/koleksiyonlar/yeni-gelenler/pantolon" },
+          { label: "Triko", href: "/koleksiyonlar/yeni-gelenler/triko" },
+          { label: "Ceket & Dış Giyim", href: "/koleksiyonlar/yeni-gelenler/dis-giyim" },
+          { label: "Gömlek & Overshirt", href: "/koleksiyonlar/yeni-gelenler/gomlek" },
+          { label: "Aksesuar", href: "/koleksiyonlar/yeni-gelenler/aksesuar" },
         ],
       },
     ],
     feature: {
       image: `${ASSET_ROOT}/images/menu/latest.jpg`,
-      caption: "Shop New Arrivals",
-      href: "/collections/new-in",
+      caption: "Yeni Gelenleri Keşfet",
+      href: "/koleksiyonlar/yeni-gelenler",
     },
   },
   {
-    label: "Clothing",
-    href: "/collections/clothing",
+    label: "Giyim",
+    href: "/koleksiyonlar/giyim",
     columns: [
       {
-        heading: "Tops",
+        heading: "Üst Giyim",
         links: [
-          { label: "Hoodies & Sweatshirts", href: "/collections/sweatshirts" },
-          { label: "T-Shirts", href: "/collections/t-shirts" },
-          { label: "Knitwear", href: "/collections/knitwear" },
-          { label: "Jackets & Outerwear", href: "/collections/outerwear" },
-          { label: "Shirts & Overshirts", href: "/collections/shirts" },
-          { label: "Polo Shirts", href: "/collections/polo-shirts" },
+          { label: "Kapüşonlu & Sweatshirt", href: "/koleksiyonlar/sweatshirt" },
+          { label: "Tişört", href: "/koleksiyonlar/tisort" },
+          { label: "Triko", href: "/koleksiyonlar/triko" },
+          { label: "Ceket & Dış Giyim", href: "/koleksiyonlar/dis-giyim" },
+          { label: "Gömlek & Overshirt", href: "/koleksiyonlar/gomlek" },
+          { label: "Polo Yaka", href: "/koleksiyonlar/polo-yaka" },
         ],
       },
       {
-        heading: "Bottoms",
+        heading: "Alt Giyim",
         links: [
-          { label: "Pants", href: "/collections/pants" },
-          { label: "Sweatpants", href: "/collections/sweatpants" },
-          { label: "Shorts", href: "/collections/shorts" },
+          { label: "Pantolon", href: "/koleksiyonlar/pantolon" },
+          { label: "Eşofman Altı", href: "/koleksiyonlar/esofman-alti" },
+          { label: "Şort", href: "/koleksiyonlar/sort" },
         ],
       },
       {
-        heading: "Lines",
+        heading: "Seriler",
         links: [
-          { label: "Sweats", href: "/collections/sweats" },
-          { label: "Essentials", href: "/collections/essentials" },
-          { label: "Field", href: "/collections/field" },
-          { label: "Motion", href: "/collections/motion" },
-          { label: "Shop All", href: "/collections/clothing" },
+          { label: "Eşofman & Sweat", href: "/koleksiyonlar/esofman-sweat" },
+          { label: "ESSENTIALS", href: "/koleksiyonlar/essentials" },
+          { label: "FIELD", href: "/koleksiyonlar/field" },
+          { label: "MOTION", href: "/koleksiyonlar/motion" },
+          { label: "Tümünü Gör", href: "/koleksiyonlar/giyim" },
         ],
       },
     ],
     feature: {
       image: `${ASSET_ROOT}/images/menu/clothing.jpg`,
-      caption: "Shop Knitwear",
-      href: "/collections/knitwear",
+      caption: "Trikoyu Keşfet",
+      href: "/koleksiyonlar/triko",
     },
   },
-  { label: "Outerwear", href: "/collections/outerwear" },
-  { label: "Sweats", href: "/collections/sweats" },
+  { label: "Dış Giyim", href: "/koleksiyonlar/dis-giyim" },
+  { label: "Sweat", href: "/koleksiyonlar/esofman-sweat" },
   {
-    label: "Accessories",
-    href: "/collections/accessories",
+    label: "Aksesuar",
+    href: "/koleksiyonlar/aksesuar",
     columns: [
       {
-        heading: "Featured",
+        heading: "Öne Çıkanlar",
         links: [
-          { label: "Headwear", href: "/collections/accessories/headwear" },
-          { label: "Bags", href: "/collections/accessories/bags" },
-          { label: "Belts", href: "/collections/accessories/belts" },
-          { label: "Scarves", href: "/collections/accessories/scarves" },
-          { label: "Socks", href: "/collections/accessories/socks" },
-          { label: "Shop All", href: "/collections/accessories" },
+          { label: "Şapka & Bere", href: "/koleksiyonlar/aksesuar/sapka-bere" },
+          { label: "Çanta", href: "/koleksiyonlar/aksesuar/canta" },
+          { label: "Kemer", href: "/koleksiyonlar/aksesuar/kemer" },
+          { label: "Atkı", href: "/koleksiyonlar/aksesuar/atki" },
+          { label: "Çorap", href: "/koleksiyonlar/aksesuar/corap" },
+          { label: "Tümünü Gör", href: "/koleksiyonlar/aksesuar" },
         ],
       },
     ],
     feature: {
       image: `${ASSET_ROOT}/images/menu/accessories.jpg`,
-      caption: "Shop Accessories",
-      href: "/collections/accessories",
+      caption: "Aksesuarları Keşfet",
+      href: "/koleksiyonlar/aksesuar",
     },
   },
   {
-    label: "Shop By",
+    label: "Keşfet",
     columns: [
       {
-        heading: "Fabric",
+        heading: "Kumaş",
         links: [
-          { label: "Loopback Terry", href: "/collections/loopback-terry" },
-          { label: "Heavy Jersey", href: "/collections/heavy-jersey" },
-          { label: "Cotton Twill", href: "/collections/cotton-twill" },
-          { label: "Merino Wool", href: "/collections/merino" },
-          { label: "Wool Fleece", href: "/collections/wool-fleece" },
+          { label: "Loopback Terry", href: "/koleksiyonlar/loopback-terry" },
+          { label: "Kalın Süprem", href: "/koleksiyonlar/kalin-suprem" },
+          { label: "Pamuk Gabardin", href: "/koleksiyonlar/pamuk-gabardin" },
+          { label: "Merinos Yün", href: "/koleksiyonlar/merinos" },
+          { label: "Yün Polar", href: "/koleksiyonlar/yun-polar" },
         ],
       },
       {
-        heading: "Fit",
+        heading: "Kalıp",
         links: [
-          { label: "Slim", href: "/collections/slim-fit" },
-          { label: "Standard", href: "/collections/standard-fit" },
-          { label: "Relaxed", href: "/collections/relaxed-fit" },
+          { label: "SLIM", href: "/koleksiyonlar/slim-kalip" },
+          { label: "Standart", href: "/koleksiyonlar/standart-kalip" },
+          { label: "Rahat", href: "/koleksiyonlar/rahat-kalip" },
         ],
       },
     ],
     feature: {
       image: `${ASSET_ROOT}/images/menu/shop-by.jpg`,
-      caption: "Shop Loopback Terry",
-      href: "/collections/loopback-terry",
+      caption: "Loopback Terry’yi Keşfet",
+      href: "/koleksiyonlar/loopback-terry",
     },
   },
 ];
 
 /** `image` is the file name in public/sites/strale/images/products (placeholder photography). */
-export type Product = { name: string; handle: string; image: string; price: string };
+export type Product = { name: string; handle: string; image: string; price: number };
 
 export const newArrivals: Product[] = [
-  { name: "Wool Fleece Vane Chore Jacket", handle: "vane-chore-jacket-umber", image: "wool-fleece-chore-jacket-heather-brown", price: "$320 USD" },
-  { name: "Brushed Flannel Ridge Shirt", handle: "ridge-flannel-shirt-oxide", image: "cotton-flannel-highland-shirt-arctic-wolf-oxide", price: "$135 USD" },
-  { name: "Tech Pique Arc Standard Track Pant", handle: "arc-track-pant-navy", image: "poly-pique-campo-standard-track-pant-5738-navy", price: "$135 USD" },
-  { name: "Merino Quill Quarter Zip", handle: "quill-quarter-zip-grey", image: "merino-kenny-quarter-zip-nep-heather-grey", price: "$245 USD" },
-  { name: "Merino Jersey Point Slim T-Shirt", handle: "point-slim-t-shirt-ink", image: "merino-jersey-vista-slim-t-shirt-black", price: "$95 USD" },
-  { name: "Tech Pique Arc Standard Track Jacket", handle: "arc-track-jacket-navy", image: "poly-pique-campo-standard-track-jacket-3235-navy", price: "$145 USD" },
-  { name: "Wool Fleece Vane Zip Jacket", handle: "vane-zip-jacket-ink", image: "wool-fleece-ridge-zip-jacket-heather-black", price: "$320 USD" },
-  { name: "Merino Jersey Point Slim T-Shirt", handle: "point-slim-t-shirt-carbon", image: "merino-jersey-vista-slim-t-shirt-carbon", price: "$95 USD" },
-  { name: "Tech Pique Arc Standard Track Pant", handle: "arc-track-pant-petrol", image: "poly-pique-campo-standard-track-pant-5738-petrol", price: "$135 USD" },
-  { name: "Heavy Jersey Standard Long Sleeve", handle: "standard-long-sleeve-ink", image: "midweight-jersey-standard-long-sleeve-2361-black", price: "$68 USD" },
-  { name: "Tech Pique Arc Standard Track Jacket", handle: "arc-track-jacket-petrol", image: "poly-pique-campo-standard-track-jacket-3235-petrol", price: "$145 USD" },
-  { name: "Double Fleece Relaxed Sweatpant", handle: "relaxed-sweatpant-ink", image: "dual-fleece-relaxed-sweatpant-black", price: "$135 USD" },
+  { name: "Vane Yün Polar Ceket", handle: "vane-yun-polar-ceket-toprak", image: "wool-fleece-chore-jacket-heather-brown", price: 13900 },
+  { name: "Ridge Fırçalanmış Flanel Gömlek", handle: "ridge-flanel-gomlek-oksit", image: "cotton-flannel-highland-shirt-arctic-wolf-oxide", price: 5900 },
+  { name: "Arc Teknik Pike Eşofman Altı", handle: "arc-esofman-alti-lacivert", image: "poly-pique-campo-standard-track-pant-5738-navy", price: 5900 },
+  { name: "Quill Merinos Yarım Fermuarlı Triko", handle: "quill-merinos-triko-gri", image: "merino-kenny-quarter-zip-nep-heather-grey", price: 10500 },
+  { name: "Point Merinos Slim Tişört", handle: "point-merinos-tisort-siyah", image: "merino-jersey-vista-slim-t-shirt-black", price: 3900 },
+  { name: "Arc Teknik Pike Eşofman Üstü", handle: "arc-esofman-ustu-lacivert", image: "poly-pique-campo-standard-track-jacket-3235-navy", price: 6200 },
+  { name: "Vane Yün Polar Fermuarlı Ceket", handle: "vane-fermuarli-ceket-siyah", image: "wool-fleece-ridge-zip-jacket-heather-black", price: 13900 },
+  { name: "Point Merinos Slim Tişört", handle: "point-merinos-tisort-antrasit", image: "merino-jersey-vista-slim-t-shirt-carbon", price: 3900 },
+  { name: "Arc Teknik Pike Eşofman Altı", handle: "arc-esofman-alti-petrol", image: "poly-pique-campo-standard-track-pant-5738-petrol", price: 5900 },
+  { name: "Kalın Süprem Uzun Kollu Tişört", handle: "suprem-uzun-kollu-siyah", image: "midweight-jersey-standard-long-sleeve-2361-black", price: 2900 },
+  { name: "Arc Teknik Pike Eşofman Üstü", handle: "arc-esofman-ustu-petrol", image: "poly-pique-campo-standard-track-jacket-3235-petrol", price: 6200 },
+  { name: "Çift Polar Rahat Eşofman Altı", handle: "cift-polar-esofman-alti-siyah", image: "dual-fleece-relaxed-sweatpant-black", price: 5900 },
 ];
 
+/** `slug` is the image file name in public/sites/strale/images/categories. */
 export const categories = [
-  { label: "T-Shirts", slug: "t-shirts", href: "/collections/t-shirts" },
-  { label: "Pants", slug: "pants", href: "/collections/pants" },
-  { label: "Knitwear", slug: "knitwear", href: "/collections/knitwear" },
-  { label: "Shirts", slug: "shirts", href: "/collections/shirts" },
-  { label: "Accessories", slug: "accessories", href: "/collections/accessories" },
+  { label: "Tişört", slug: "t-shirts", href: "/koleksiyonlar/tisort" },
+  { label: "Pantolon", slug: "pants", href: "/koleksiyonlar/pantolon" },
+  { label: "Triko", slug: "knitwear", href: "/koleksiyonlar/triko" },
+  { label: "Gömlek", slug: "shirts", href: "/koleksiyonlar/gomlek" },
+  { label: "Aksesuar", slug: "accessories", href: "/koleksiyonlar/aksesuar" },
 ];
 
 export const contentCards = [
   {
-    title: "Sweats",
-    text: "The foundation of every wardrobe.",
+    title: "Eşofman & Sweat",
+    text: "Her gardırobun temeli.",
     image: `${ASSET_ROOT}/images/content/sweats.jpg`,
-    href: "/collections/sweats",
+    href: "/koleksiyonlar/esofman-sweat",
   },
   {
-    title: "Field Layers",
-    text: "Outerwear cut for cold mornings and long days.",
+    title: "FIELD Serisi",
+    text: "Soğuk sabahlar ve uzun günler için kesilmiş dış giyim.",
     image: `${ASSET_ROOT}/images/content/jackets-outerwear.jpg`,
-    href: "/collections/outerwear",
+    href: "/koleksiyonlar/dis-giyim",
   },
 ];
 
 export const footerColumns: MenuColumn[] = [
   {
-    heading: "Strale Studio",
+    heading: "STRALE STUDIO",
     links: [
-      { label: "About Us", href: "/pages/about" },
+      { label: "Hakkımızda", href: "/sayfa/hakkimizda" },
       { label: "Journal", href: "/journal" },
-      { label: "Materials", href: "/pages/materials" },
-      { label: "Fit Guide", href: "/pages/fit-guide" },
-      { label: "Careers", href: "/pages/careers" },
-      { label: "Gift Card", href: "/products/gift-card" },
-      { label: "The List", href: "/pages/newsletter" },
+      { label: "Malzemeler", href: "/sayfa/malzemeler" },
+      { label: "Beden Rehberi", href: "/sayfa/beden-rehberi" },
+      { label: "Kariyer", href: "/sayfa/kariyer" },
+      { label: "Hediye Kartı", href: "/urun/hediye-karti" },
+      { label: "THE LIST", href: "/sayfa/bulten" },
     ],
   },
   {
-    heading: "Support",
+    heading: "Yardım",
     links: [
-      { label: "Contact Us", href: "/pages/contact" },
-      { label: "Shipping", href: "/pages/shipping" },
-      { label: "Returns & Exchanges", href: "/pages/returns" },
-      { label: "Wholesale Enquiries", href: "/pages/wholesale" },
-      { label: "Product Care", href: "/pages/product-care" },
-      { label: "Payment Options", href: "/pages/payment" },
-      { label: "Terms of Service", href: "/pages/terms" },
-      { label: "Privacy Policy", href: "/pages/privacy" },
+      { label: "İletişim", href: "/sayfa/iletisim" },
+      { label: "Kargo & Teslimat", href: "/sayfa/kargo-teslimat" },
+      { label: "İade & Değişim", href: "/sayfa/iade-degisim" },
+      { label: "Toptan Satış", href: "/sayfa/toptan-satis" },
+      { label: "Ürün Bakımı", href: "/sayfa/urun-bakimi" },
+      { label: "Ödeme Seçenekleri", href: "/sayfa/odeme-secenekleri" },
+      { label: "Sipariş Takibi", href: "/sayfa/siparis-takibi" },
     ],
   },
 ];
 
 export const legalLinks: MenuLink[] = [
-  { label: "Terms of Service", href: "/pages/terms" },
-  { label: "Privacy Policy", href: "/pages/privacy" },
-  { label: "Manage Cookies", href: "/pages/privacy" },
+  { label: "Kullanım Koşulları", href: "/sayfa/kullanim-kosullari" },
+  { label: "KVKK Aydınlatma Metni", href: "/sayfa/kvkk" },
+  { label: "Çerez Politikası", href: "/sayfa/cerez-politikasi" },
+  { label: "Mesafeli Satış Sözleşmesi", href: "/sayfa/mesafeli-satis-sozlesmesi" },
 ];
 
-export const shippingRegions = ["International", "Türkiye", "European Union", "United States"];
+export const shippingRegions = ["Türkiye", "Uluslararası"];

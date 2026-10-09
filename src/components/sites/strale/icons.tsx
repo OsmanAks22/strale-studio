@@ -9,6 +9,20 @@ export function StraleMark(props: IconProps) {
   );
 }
 
+/** Alternative B — "Twin": two chevrons in sequence, reads as speed and momentum (5:4). */
+export function StraleMarkTwin(props: IconProps) {
+  return (
+    <svg aria-hidden="true" focusable="false" {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 24"><path d="M0 0h7l9 12-9 12H0l9-12Z"></path><path d="M14 0h7l9 12-9 12h-7l9-12Z"></path></svg>
+  );
+}
+
+/** Alternative C — "Flight": a shaft with a single barb, a line-drawn dart in motion (4:3). */
+export function StraleMarkFlight(props: IconProps) {
+  return (
+    <svg aria-hidden="true" focusable="false" {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24" fill="none"><path d="M1.5 15h27L17.5 4" stroke="currentColor" strokeWidth="3" strokeLinecap="square"></path></svg>
+  );
+}
+
 export function CaretIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" focusable="false" {...props} viewBox="0 0 20 21" fill="none"><path fillRule="evenodd" clipRule="evenodd" d="M5.80764 2.5575C5.8657 2.4993 5.93467 2.45312 6.0106 2.42161C6.08653 2.3901 6.16793 2.37389 6.25014 2.37389C6.33235 2.37389 6.41375 2.3901 6.48968 2.42161C6.56561 2.45312 6.63458 2.4993 6.69264 2.5575L14.1926 10.0575C14.2508 10.1156 14.297 10.1845 14.3285 10.2605C14.36 10.3364 14.3763 10.4178 14.3763 10.5C14.3763 10.5822 14.36 10.6636 14.3285 10.7395C14.297 10.8155 14.2508 10.8844 14.1926 10.9425L6.69264 18.4425C6.57528 18.5599 6.41611 18.6258 6.25014 18.6258C6.08417 18.6258 5.925 18.5599 5.80764 18.4425C5.69028 18.3251 5.62435 18.166 5.62435 18C5.62435 17.834 5.69028 17.6749 5.80764 17.5575L12.8664 10.5L5.80764 3.4425C5.74944 3.38445 5.70326 3.31548 5.67175 3.23955C5.64024 3.16361 5.62402 3.08221 5.62402 3C5.62402 2.91779 5.64024 2.83639 5.67175 2.76046C5.70326 2.68453 5.74944 2.61556 5.80764 2.5575Z" fill="currentColor"></path></svg>

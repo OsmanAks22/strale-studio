@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ASSET_ROOT, storeUrl, type Product } from "./data";
+import { ASSET_ROOT, formatPrice, storeUrl, type Product } from "./data";
 import { WishlistSmallIcon } from "./icons";
 
 export function ProductCard({ product, index }: { product: Product; index: number }) {
   const [saved, setSaved] = useState(false);
-  const href = storeUrl(`/products/${product.handle}`);
+  const href = storeUrl(`/urun/${product.handle}`);
 
   return (
     <div className="relative">
@@ -21,7 +21,7 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
           className="object-cover"
         />
         <span className="st-micro absolute top-1.5 left-1.5 text-[9px] leading-[7.2px] text-rust tab:top-3 tab:left-3 tab:text-[12px] tab:leading-[9.6px]">
-          New
+          Yeni
         </span>
       </a>
       <button
@@ -37,13 +37,13 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
         ) : (
           <WishlistSmallIcon className="size-[9px] tab:size-3" />
         )}
-        <span className="sr-only">{saved ? "Remove from Wishlist" : "Add to Wishlist"}</span>
+        <span className="sr-only">{saved ? "Favorilerden çıkar" : "Favorilere ekle"}</span>
       </button>
       <div className="mt-2 px-1 text-[9px] leading-[13.5px] tab:text-[12px] tab:leading-[18px] desk:mt-1.5 desk:flex desk:items-start desk:justify-between desk:gap-6 desk:px-[3px]">
         <a href={href} className="block truncate">
           {product.name}
         </a>
-        <span className="mt-[3px] block shrink-0 st-label desk:mt-0">{product.price}</span>
+        <span className="mt-[3px] block shrink-0 st-label desk:mt-0">{formatPrice(product.price)}</span>
       </div>
     </div>
   );

@@ -73,7 +73,7 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
           <Link href="/" aria-label="Strale" className="block shrink-0">
             <StraleLogo />
           </Link>
-          <nav aria-label="Primary" className="hidden desk:block">
+          <nav aria-label="Ana menü" className="hidden desk:block">
             <ul className="ml-6 flex flex-wrap gap-x-6 leading-[18px]">
               {navItems.map((item, index) => (
                 <li
@@ -95,21 +95,21 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
         <div className="flex items-center">
           <ShippingSelect className="mr-5 hidden tab:inline-flex" />
           <div className="flex items-center gap-5">
-            <IconLink href="/search" label="Search">
+            <IconLink href="/arama" label="Ara">
               <SearchIcon className="size-5" />
             </IconLink>
-            <IconLink href="/cart" label="Bag">
+            <IconLink href="/sepet" label="Sepet">
               <BagIcon className="size-5" />
             </IconLink>
-            <IconLink href="/pages/wishlist" label="Wishlist">
+            <IconLink href="/favoriler" label="Favoriler">
               <WishlistIcon className="size-5" />
             </IconLink>
-            <IconLink href="/account" label="Account" className="hidden tab:block">
+            <IconLink href="/hesap" label="Hesabım" className="hidden tab:block">
               <AccountIcon className="size-5" />
             </IconLink>
             <button
               type="button"
-              aria-label="Menu"
+              aria-label="Menü"
               aria-expanded={drawerOpen}
               onClick={() => setDrawerOpen(true)}
               className="block cursor-pointer desk:hidden"
@@ -254,7 +254,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
     <div className={cn("fixed inset-0 z-50 desk:hidden", open ? "visible" : "invisible")} aria-hidden={!open}>
       <button
         type="button"
-        aria-label="Close menu"
+        aria-label="Menüyü kapat"
         tabIndex={-1}
         onClick={close}
         className={cn(
@@ -265,7 +265,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Menu"
+        aria-label="Menü"
         className={cn(
           "absolute top-0 right-0 flex h-full w-[360px] max-w-[calc(100%-30px)] flex-col overflow-hidden bg-bone text-ink transition-transform duration-200",
           open ? "translate-x-0" : "translate-x-full",
@@ -275,12 +275,12 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           <Link href="/" aria-label="Strale" onClick={close}>
             <StraleLogo />
           </Link>
-          <button type="button" aria-label="Close" onClick={close} className="cursor-pointer">
+          <button type="button" aria-label="Kapat" onClick={close} className="cursor-pointer">
             <CloseIcon className="size-5" />
           </button>
         </div>
 
-        <nav aria-label="Mobile" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3">
+        <nav aria-label="Mobil menü" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3">
           <ul className="border-t border-sand">
             {navItems.map((item, index) => (
               <li key={item.label} className="border-b border-sand">
@@ -306,14 +306,14 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           </ul>
 
           <div className="mt-auto flex flex-col gap-4 pt-10 pb-12">
-            <a href={storeUrl("/account")} className="st-label">
-              Account
+            <a href={storeUrl("/hesap")} className="st-label">
+              Hesabım
             </a>
-            <a href={storeUrl("/pages/contact")} className="st-label">
-              Contact Us
+            <a href={storeUrl("/sayfa/iletisim")} className="st-label">
+              İletişim
             </a>
-            <a href={storeUrl("/pages/about")} className="st-label">
-              About Us
+            <a href={storeUrl("/sayfa/hakkimizda")} className="st-label">
+              Hakkımızda
             </a>
             <ShippingSelect className="mt-2" />
           </div>
