@@ -177,6 +177,8 @@ export type Product = {
   listPrice: number;
   stock: number;
   sizes: string[];
+  /** Minor-defect pieces are labelled on the card; describe the flaw on the product page. */
+  condition?: "hafif-kusurlu";
 };
 
 /** Show "Son N adet" at or below this many pieces. */
@@ -197,7 +199,7 @@ export const newArrivals: Product[] = [
   { name: "Merinos Slim Tişört — Antrasit", handle: "merinos-slim-tisort-antrasit", image: "merino-jersey-vista-slim-t-shirt-carbon", price: 690, listPrice: 1290, stock: 9, sizes: ["S", "M", "L"] },
   { name: "Şeritli Eşofman Altı — Petrol", handle: "seritli-esofman-alti-petrol", image: "poly-pique-campo-standard-track-pant-5738-petrol", price: 990, listPrice: 1990, stock: 6, sizes: ["M", "L", "XL"] },
   { name: "Uzun Kollu Basic Tişört — Siyah", handle: "uzun-kollu-basic-tisort-siyah", image: "midweight-jersey-standard-long-sleeve-2361-black", price: 490, listPrice: 990, stock: 18, sizes: ["S", "M", "L", "XL", "XXL"] },
-  { name: "Şeritli Eşofman Üstü — Petrol", handle: "seritli-esofman-ustu-petrol", image: "poly-pique-campo-standard-track-jacket-3235-petrol", price: 1190, listPrice: 2290, stock: 2, sizes: ["M"] },
+  { name: "Şeritli Eşofman Üstü — Petrol", handle: "seritli-esofman-ustu-petrol", image: "poly-pique-campo-standard-track-jacket-3235-petrol", price: 1190, listPrice: 2290, stock: 2, sizes: ["M"], condition: "hafif-kusurlu" },
   { name: "Polar Rahat Eşofman Altı — Siyah", handle: "polar-rahat-esofman-alti-siyah", image: "dual-fleece-relaxed-sweatpant-black", price: 1090, listPrice: 2190, stock: 8, sizes: ["S", "M", "L", "XL"] },
 ];
 

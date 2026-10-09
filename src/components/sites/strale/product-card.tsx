@@ -24,7 +24,11 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
           -%{discountPercent(product)}
         </span>
         <span className="st-micro absolute bottom-1.5 left-1.5 text-[8px] leading-[11px] text-graphite tab:bottom-3 tab:left-3 tab:text-[10px]">
-          İhraç fazlası
+          {product.condition === "hafif-kusurlu" ? (
+            <span className="text-rust">İhraç fazlası · Hafif kusurlu</span>
+          ) : (
+            "İhraç fazlası"
+          )}
         </span>
       </a>
       <button
