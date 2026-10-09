@@ -83,7 +83,7 @@ function Newsletter() {
           reigningchamp.com
         </Link>{" "}
         |{" "}
-        <Link href={localHref("/policies/privacy-policy")} className="rc-underline">
+        <Link href={localHref("/pages/privacy-policy")} className="rc-underline">
           Privacy Policy
         </Link>
       </p>

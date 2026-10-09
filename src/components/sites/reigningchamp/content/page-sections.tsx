@@ -148,7 +148,7 @@ function Banner({ section, ctx }: { section: Extract<PageSection, { type: "banne
   return (
     <section
       id={ctx.anchorIds.get(ctx.index)}
-      className={cn("relative overflow-hidden", article && "mx-3 tab:mx-0", bannerHeight(section, ctx))}
+      className={cn("relative scroll-mt-20 overflow-hidden", article && "mx-3 tab:mx-0", bannerHeight(section, ctx))}
     >
       {section.mobileImage ? (
         <>
@@ -230,6 +230,16 @@ function RichText({ section, ctx }: { section: Extract<PageSection, { type: "ric
   const style = headingStyle(section, ctx);
   const HeadingTag = ctx.index === 0 ? "h1" : "h2";
   const policy = isPolicyPage(ctx.handle) && section.html.length > 2000;
+  // Short heading-less lines in articles ("Watch the film") are left-aligned subtitles on the source.
+  const articleLabel = article && !section.heading && section.html.replace(/<[^>]+>/g, "").trim().length < 60;
+
+  if (articleLabel) {
+    return (
+      <section className={cn(GUTTER, "pt-9 pb-6")}>
+        <Html html={section.html} className={SUBTITLE} />
+      </section>
+    );
+  }
   const largeBody = LARGE_BODY_PAGES.has(ctx.handle);
 
   // Spacing follows the source's per-template paddings (see docs/research/reigningchamp).
@@ -274,7 +284,7 @@ function RichText({ section, ctx }: { section: Extract<PageSection, { type: "ric
   return (
     <section
       id={ctx.anchorIds.get(ctx.index)}
-      className={cn(GUTTER, article ? "pt-12 pb-9 text-center" : cn(pt, pb))}
+      className={cn("scroll-mt-20", GUTTER, article ? "pt-12 pb-9 text-center" : cn(pt, pb))}
     >
       <div className={cn(article ? "mx-auto max-w-[917px]" : "tab:max-w-[66.67%]")}>
         {section.heading ? (
@@ -364,7 +374,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   // Store info row: STORE HOURS / CONTACT / ABOUT THE STORE.
   if (items.every(isPanel)) {
     return (
-      <section id={id} className="grid tab:grid-cols-3">
+      <section id={id} className="scroll-mt-20 grid tab:grid-cols-3">
         {items.map((item, i) => (
           <div key={i} className="px-[18px] pt-11 pb-8 tab:px-[38px] tab:pb-9">
             <CardText item={item} />
@@ -377,7 +387,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   // Staff picks: text panel + wide photo.
   if (items.length === 2 && isPanel(items[0])) {
     return (
-      <section id={id} className="pt-9 pb-9">
+      <section id={id} className="scroll-mt-20 pt-9 pb-9">
         {heading}
         <div className={cn(GUTTER, "grid gap-1 tab:grid-cols-[1fr_2fr] tab:gap-1.5")}>
           <div className="px-[6px] pt-5 tab:px-[38px] tab:pt-11">
@@ -397,7 +407,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
       "w-[70vw] aspect-[426/551] tab:w-[29.6vw]",
     ];
     return (
-      <section id={id} className="pt-9">
+      <section id={id} className="scroll-mt-20 pt-9">
         {heading}
         <ul className="rc-no-scrollbar flex flex-col items-center gap-12 px-3 py-12 tab:flex-row tab:gap-[6.9vw] tab:overflow-x-auto tab:px-[10vw] tab:py-[7.8vw]">
           {items.map((item, i) => (
@@ -413,7 +423,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   // Full-bleed photo pairs (manufacturing): no gutter, no gap, 4:5.
   if (!hasText && ctx.variant === "page") {
     return (
-      <section id={id} className={cn("grid", items.length > 1 && "tab:grid-cols-2")}>
+      <section id={id} className={cn("scroll-mt-20", "grid", items.length > 1 && "tab:grid-cols-2")}>
         {items.map((item, i) => (
           <CardImage key={i} item={item} aspect="aspect-[4/5]" sizes="(min-width: 750px) 50vw, 100vw" />
         ))}
@@ -425,7 +435,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   if (items.length === 1) {
     const inset = ctx.handle === "stores";
     return (
-      <section id={id} className={cn(GUTTER, inset ? "pb-6 tab:pb-[78px]" : "pt-9 pb-3")}>
+      <section id={id} className={cn("scroll-mt-20", GUTTER, inset ? "pb-6 tab:pb-[78px]" : "pt-9 pb-3")}>
         {heading}
         <div className={cn(inset && "px-[8.5%] pt-[8.5%] tab:px-[6.76%] tab:pt-[6.76%]")}>
           <CardImage item={items[0]} aspect="aspect-[16/9]" sizes="(min-width: 750px) 90vw, 100vw" preload={preload} />
@@ -440,7 +450,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   // Article "shoppable" photo sets: two staggered columns of inset images.
   if (ctx.variant === "article" && items.length >= 3 && !hasText) {
     return (
-      <section id={id} className={cn(GUTTER, "py-12")}>
+      <section id={id} className={cn("scroll-mt-20", GUTTER, "py-12")}>
         <ul className="grid gap-y-6 tab:grid-cols-2 tab:gap-x-1.5 tab:gap-y-[60px]">
           {items.map((item, i) => (
             <li key={i} className={cn("tab:px-[12.5%]", i % 2 === 1 && "tab:pt-[21px]", i % 4 === 2 && "tab:px-[14%]")}>
@@ -455,7 +465,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   // Wholesale/corporate landing: title + link overlaid on the photo.
   if (ctx.compact && items.every((i) => i.title && i.button && i.href && !i.html.trim())) {
     return (
-      <section id={id} className={cn(GUTTER, "pt-3 pb-6 tab:pb-3")}>
+      <section id={id} className={cn("scroll-mt-20", GUTTER, "pt-3 pb-6 tab:pb-3")}>
         <ul className={cn("grid gap-1 tab:gap-1.5", items.length === 2 && "tab:grid-cols-2")}>
           {items.map((item, i) => (
             <li key={i} className="relative text-white">
@@ -471,9 +481,9 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   }
 
   // Grid of cards (contact, wholesale, fit guide, article image pairs).
-  const slider = items.length >= 3;
+  const slider = items.length >= 3 && ctx.variant !== "article";
   return (
-    <section id={id} className={cn("pt-3", ctx.variant === "article" ? "pb-6" : "pb-6 tab:pb-12")}>
+    <section id={id} className={cn("scroll-mt-20", "pt-3", ctx.variant === "article" ? "pb-6" : "pb-6 tab:pb-12")}>
       {heading}
       <ul
         className={cn(
@@ -481,10 +491,9 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
           slider
             ? "rc-no-scrollbar flex snap-x snap-mandatory scroll-px-3 gap-1 overflow-x-auto tab:grid tab:gap-1.5 tab:overflow-visible"
             : "grid gap-y-6 tab:gap-x-1.5",
-          items.length === 2 && "tab:grid-cols-2",
-          items.length === 3 && "tab:grid-cols-3",
-          items.length >= 4 && "tab:grid-cols-4",
-          ctx.variant === "article" && items.length === 2 && "grid-cols-1",
+          (items.length === 2 || ctx.variant === "article") && "tab:grid-cols-2",
+          ctx.variant !== "article" && items.length === 3 && "tab:grid-cols-3",
+          ctx.variant !== "article" && items.length >= 4 && "tab:grid-cols-4",
         )}
       >
         {items.map((item, i) => (
@@ -492,7 +501,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
             <CardImage
               item={item}
               aspect="aspect-[4/5]"
-              sizes={`(min-width: 750px) ${Math.round(96 / Math.min(items.length, 4))}vw, ${slider ? 68 : 100}vw`}
+              sizes={`(min-width: 750px) ${ctx.variant === "article" ? 48 : Math.round(96 / Math.min(items.length, 4))}vw, ${slider ? 68 : 100}vw`}
               preload={preload}
             />
             {item.title || item.html.trim() || (item.button && item.href) ? (
@@ -560,7 +569,7 @@ function CardText({ item, large = false }: { item: CardItem; large?: boolean }) 
 
 function Accordion({ section, ctx }: { section: Extract<PageSection, { type: "accordion" }>; ctx: Ctx }) {
   return (
-    <section id={ctx.anchorIds.get(ctx.index)} className={cn(GUTTER, "pt-6 pb-9")}>
+    <section id={ctx.anchorIds.get(ctx.index)} className={cn("scroll-mt-20", GUTTER, "pt-6 pb-9")}>
       {section.heading ? <h2 className={cn(SUBTITLE, "mb-3")}>{section.heading}</h2> : null}
       <div className="border-b border-black">
         {section.items.map((item) => (
@@ -587,7 +596,7 @@ function Products({ section, ctx }: { section: Extract<PageSection, { type: "pro
   const products = section.handles.map((h) => all[h]).filter(Boolean).map(toSummary);
   if (!products.length) return null;
   return (
-    <section id={ctx.anchorIds.get(ctx.index)} className={cn(GUTTER, "pb-6")}>
+    <section id={ctx.anchorIds.get(ctx.index)} className={cn("scroll-mt-20", GUTTER, "pb-6")}>
       {section.heading ? <h2 className={cn(SUBTITLE, "mb-3")}>{section.heading}</h2> : null}
       <ul className="grid grid-cols-2 gap-x-1 gap-y-4 tab:grid-cols-3 tab:gap-x-1.5 tab:gap-y-3">
         {products.map((product) => (

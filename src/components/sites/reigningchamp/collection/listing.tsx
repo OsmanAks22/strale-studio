@@ -234,6 +234,7 @@ function ProductGrid({ items, view }: { items: ListingItem[]; view: "product" | 
         {items.slice(0, visible).map((item, i) => (
           <li key={item.handle}>
             <ProductGridCard
+              showBadge={false}
               product={view === "model" && item.modelImage ? { ...item, image: item.modelImage } : item}
               sizes="(min-width: 750px) 31vw, 50vw"
               priority={i < 3}

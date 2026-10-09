@@ -15,11 +15,14 @@ export function ProductGridCard({
   product,
   sizes = "(min-width: 990px) 30vw, 50vw",
   priority = false,
+  showBadge = true,
   className,
 }: {
   product: ProductSummary;
   sizes?: string;
   priority?: boolean;
+  /** Collection grids on the source omit the "New" badge that carousels show. */
+  showBadge?: boolean;
   className?: string;
 }) {
   const href = `/products/${product.handle}`;
@@ -38,7 +41,7 @@ export function ProductGridCard({
             className="object-cover"
           />
         ) : null}
-        {product.isNew ? (
+        {showBadge && product.isNew ? (
           <span className="absolute top-1.5 left-1.5 text-[9px] leading-[7.2px] tracking-[1px] tab:top-3 tab:left-3 tab:text-[12px] tab:leading-[9.6px]">
             New
           </span>

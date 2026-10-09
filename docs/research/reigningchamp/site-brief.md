@@ -34,3 +34,11 @@ Collection aliases (`/collections/jackets` → `mens-jackets`, etc.) come from `
 - Facet values are derived from product tags; the source uses Shopify metafields, so some values (e.g. Henley, Mockneck) are missing or counts differ.
 - Editorial image tiles inside collection grids are not reproduced.
 - Checkout, account login and newsletter posting have no backend in the clone.
+
+## Verification (production build, 2026-10-09)
+- `npm run check` passes; 769 product, 51 article and 25 page routes prerender.
+- Crawling every internal link from `/` reached 812 routes with no 404s and no links back to reigningchamp.com
+  (filter query variants not crawled individually).
+- End-to-end: nav mega menu → collection → product → size → Add to bag (bag drawer opens, header count updates) → /cart.
+- Remaining differences: product "Fabric / Construction" video section, bag-drawer recommendations, collection editorial
+  tiles, Shopify search ranking, the article serif title font (PP Editorial, not available) and tag-derived facet values.
