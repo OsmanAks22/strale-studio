@@ -1,9 +1,9 @@
 export const SOURCE_ORIGIN = "https://reigningchamp.com";
 export const ASSET_ROOT = "/sites/reigningchamp";
 
-/** Every destination outside this clone points back to the live store. */
-export function sourceUrl(path: string) {
-  return path.startsWith("http") ? path : `${SOURCE_ORIGIN}${path}`;
+/** Links into the clone stay local; reigningchamp.com URLs are reduced to their path. */
+export function localHref(path: string) {
+  return path.startsWith(SOURCE_ORIGIN) ? path.slice(SOURCE_ORIGIN.length) || "/" : path;
 }
 
 export type MenuLink = { label: string; href: string };

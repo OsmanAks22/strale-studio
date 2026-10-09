@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Fragment, useState } from "react";
-import { footerColumns, legalLinks, sourceUrl } from "./data";
+import { footerColumns, legalLinks, localHref } from "./data";
 import { CaretIcon, FacebookIcon, InstagramIcon, TwitterIcon } from "./icons";
 import { ShippingSelect } from "./shipping-select";
 
@@ -23,9 +23,9 @@ export function SiteFooter() {
               <ul className="mt-5 flex flex-col gap-4">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a href={sourceUrl(link.href)} className="uppercase tracking-[1.2px] rc-hover-underline">
+                    <Link href={localHref(link.href)} className="uppercase tracking-[1.2px] rc-hover-underline">
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -83,17 +83,17 @@ function Newsletter() {
           reigningchamp.com
         </Link>{" "}
         |{" "}
-        <a href={sourceUrl("/policies/privacy-policy")} className="rc-underline">
+        <Link href={localHref("/policies/privacy-policy")} className="rc-underline">
           Privacy Policy
-        </a>
+        </Link>
       </p>
       <ul className="mt-12 flex gap-3">
         {socials.map(({ label, href, Icon }) => (
           <li key={label}>
-            <a href={href} className="block size-5" target="_blank" rel="noreferrer">
+            <Link href={href} className="block size-5" target="_blank" rel="noreferrer">
               <Icon className="size-5" fill="currentColor" />
               <span className="sr-only">{label}</span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -109,9 +109,9 @@ function SubFooter() {
           <Fragment key={link.label}>
             {index > 0 ? <li aria-hidden="true" className="mx-1.5 h-3.5 w-px bg-[#808080]" /> : null}
             <li>
-              <a href={sourceUrl(link.href)} className="rc-underline">
+              <Link href={localHref(link.href)} className="rc-underline">
                 {link.label}
-              </a>
+              </Link>
             </li>
           </Fragment>
         ))}

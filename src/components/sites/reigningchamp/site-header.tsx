@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { navItems, sourceUrl, type NavItem } from "./data";
+import { navItems, localHref, type NavItem } from "./data";
 import {
   AccountIcon,
   BagIcon,
@@ -16,6 +17,7 @@ import {
   WishlistIcon,
 } from "./icons";
 import { ShippingSelect } from "./shipping-select";
+import { useCart } from "./stores";
 
 const SCROLLED_PAST = 70;
 
@@ -25,6 +27,17 @@ export function SiteHeader() {
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const closeTimer = useRef<number | undefined>(undefined);
+  const pathname = usePathname();
+  const [lastPath, setLastPath] = useState(pathname);
+  const { count } = useCart();
+
+  // Client-side navigation keeps this component mounted; close any open menu on route change.
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
+    setOpenMenu(null);
+    setDrawerOpen(false);
+    setHovered(false);
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > SCROLLED_PAST);
@@ -53,7 +66,8 @@ export function SiteHeader() {
     closeTimer.current = window.setTimeout(() => setOpenMenu(null), 150);
   };
 
-  const solid = scrolled || hovered || openMenu !== null;
+  // Only the homepage hero sits under a transparent header.
+  const solid = pathname !== "/" || scrolled || hovered || openMenu !== null;
 
   return (
     <div className="sticky top-0 z-40">
@@ -97,8 +111,13 @@ export function SiteHeader() {
             <IconLink href="/search" label="Search">
               <SearchIcon className="size-5" />
             </IconLink>
-            <IconLink href="/cart" label="Bag">
+            <IconLink href="/cart" label={count ? `Bag, ${count} items` : "Bag"} className="relative">
               <BagIcon className="size-5" />
+              {count ? (
+                <span className="absolute inset-x-0 top-[7px] text-center text-[8px] leading-none tracking-normal">
+                  {count < 100 ? count : "99+"}
+                </span>
+              ) : null}
             </IconLink>
             <IconLink href="/pages/wishlist" label="Wishlist">
               <WishlistIcon className="size-5" />
@@ -130,7 +149,7 @@ export function SiteHeader() {
         )}
       </header>
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer key={pathname} open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </div>
   );
 }
@@ -148,15 +167,15 @@ function TopLink({ item, active, onToggle }: { item: NavItem; active: boolean; o
     );
   }
   return (
-    <a
-      href={sourceUrl(item.href)}
+    <Link
+      href={localHref(item.href)}
       aria-haspopup={item.columns ? "true" : undefined}
       aria-expanded={item.columns ? active : undefined}
       onFocus={item.columns ? onToggle : undefined}
       className={className}
     >
       {item.label}
-    </a>
+    </Link>
   );
 }
 
@@ -172,9 +191,9 @@ function IconLink({
   children: React.ReactNode;
 }) {
   return (
-    <a href={sourceUrl(href)} aria-label={label} className={cn("block", className)}>
+    <Link href={localHref(href)} aria-label={label} className={cn("block", className)}>
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -196,13 +215,13 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
               <ul className="mt-5 flex flex-col gap-4">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={sourceUrl(link.href)}
+                    <Link
+                      href={localHref(link.href)}
                       tabIndex={open ? 0 : -1}
                       className="uppercase tracking-[1.2px] rc-hover-underline"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -210,8 +229,8 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
           ))}
         </div>
         {item.feature ? (
-          <a
-            href={sourceUrl(item.feature.href)}
+          <Link
+            href={localHref(item.feature.href)}
             tabIndex={open ? 0 : -1}
             className="mr-[-8px] block w-[336px] shrink-0 rc-hover-underline"
           >
@@ -224,7 +243,7 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
               className="block h-[420px] w-[336px] object-cover"
             />
             <span className="mt-4 block uppercase tracking-[1.2px]">{item.feature.caption}</span>
-          </a>
+          </Link>
         ) : null}
       </div>
     </div>
@@ -293,27 +312,27 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     <CaretIcon className="size-5" />
                   </button>
                 ) : (
-                  <a
-                    href={sourceUrl(item.href ?? "/")}
+                  <Link
+                    href={localHref(item.href ?? "/")}
                     className="flex h-[58px] items-center uppercase tracking-[1.2px]"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 )}
               </li>
             ))}
           </ul>
 
           <div className="mt-auto flex flex-col gap-4 pt-10 pb-12">
-            <a href={sourceUrl("/account")} className="uppercase tracking-[1.2px]">
+            <Link href={localHref("/account")} className="uppercase tracking-[1.2px]">
               Account
-            </a>
-            <a href={sourceUrl("/pages/contact")} className="uppercase tracking-[1.2px]">
+            </Link>
+            <Link href={localHref("/pages/contact")} className="uppercase tracking-[1.2px]">
               Contact Us
-            </a>
-            <a href={sourceUrl("/pages/about-us")} className="uppercase tracking-[1.2px]">
+            </Link>
+            <Link href={localHref("/pages/about-us")} className="uppercase tracking-[1.2px]">
               About Us
-            </a>
+            </Link>
             <ShippingSelect className="mt-2" />
           </div>
         </nav>
@@ -346,16 +365,16 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     <ul className="mt-5 flex flex-col gap-4">
                       {column.links.map((link) => (
                         <li key={link.label}>
-                          <a href={sourceUrl(link.href)} className="uppercase tracking-[1.2px] rc-hover-underline">
+                          <Link href={localHref(link.href)} className="uppercase tracking-[1.2px] rc-hover-underline">
                             {link.label}
-                          </a>
+                          </Link>
                         </li>
                       ))}
                     </ul>
                   </div>
                 ))}
                 {active.feature ? (
-                  <a href={sourceUrl(active.feature.href)} className="block">
+                  <Link href={localHref(active.feature.href)} className="block">
                     <Image
                       src={active.feature.image}
                       alt=""
@@ -365,7 +384,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                       className="block aspect-[4/5] w-full object-cover"
                     />
                     <span className="mt-4 block uppercase tracking-[1.2px]">{active.feature.caption}</span>
-                  </a>
+                  </Link>
                 ) : null}
               </div>
             </>
