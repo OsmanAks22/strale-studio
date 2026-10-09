@@ -15,7 +15,7 @@ const logos = [
   {
     id: "A",
     name: "Dart",
-    current: true,
+    current: false,
     Mark: StraleMark,
     markClass: "h-[18px] w-6 fill-current",
     wordClass: "st-display text-[22px] tracking-[0.18em]",
@@ -25,7 +25,7 @@ const logos = [
   {
     id: "B",
     name: "Twin",
-    current: false,
+    current: true,
     Mark: StraleMarkTwin,
     markClass: "h-[18px] w-[22px] fill-current",
     wordClass: "font-medium font-stretch-[125%] text-[18px] tracking-[0.1em] uppercase",
@@ -143,7 +143,7 @@ export default function BrandLab() {
         </h1>
         <p className="mt-4 text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">
           Her alternatif sitenin gerçek fontuyla çizildi. Logo ve palet birbirinden bağımsız seçilebilir; örneğin
-          logo B + palet A. Şu an sitede kullanılanlar “Mevcut” olarak işaretli.
+          logo B + palet A. Sitede kullanılan seçim “Seçildi” olarak işaretli.
         </p>
       </header>
 
@@ -170,7 +170,7 @@ export default function BrandLab() {
               <div className="p-4 tab:p-6">
                 <h3 className="st-heading text-[12px]">
                   {id} — <span lang="en">{name}</span>
-                  {current ? <Badge>Mevcut</Badge> : null}
+                  {current ? <Badge>Seçildi</Badge> : null}
                 </h3>
                 <p className="mt-2 text-graphite">{note}</p>
               </div>
@@ -189,8 +189,10 @@ export default function BrandLab() {
               </div>
               <div className="flex h-[48px] items-center justify-between border-b border-(--p-stone) px-4">
                 <span className="inline-flex items-center gap-2">
-                  <StraleMark className="h-3 w-4 fill-current" />
-                  <span className="st-display text-[15px] leading-none tracking-[0.18em]">Strale</span>
+                  <StraleMarkTwin className="h-3 w-[15px] fill-current" />
+                  <span className="text-[13px] leading-none font-medium font-stretch-[125%] tracking-[0.1em] uppercase">
+                    Strale
+                  </span>
                 </span>
                 <span className="st-label text-[10px]">Yeni · Giyim · Aksesuar</span>
               </div>
@@ -224,7 +226,7 @@ export default function BrandLab() {
               <div className="p-4 pt-5">
                 <h3 className="st-heading text-[12px]">
                   {p.id} — {p.name}
-                  {p.current ? <Badge>Mevcut</Badge> : null}
+                  {p.current ? <Badge>Seçildi</Badge> : null}
                 </h3>
                 <p className="mt-2 text-(--p-graphite)">{p.note}</p>
                 <p className="st-micro mt-3 text-[9px] text-(--p-graphite)">WCAG AA ✓ · {p.contrast}</p>

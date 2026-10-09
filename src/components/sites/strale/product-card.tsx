@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ASSET_ROOT, formatPrice, storeUrl, type Product } from "./data";
+import { ASSET_ROOT, LOW_STOCK, discountPercent, formatPrice, storeUrl, type Product } from "./data";
 import { WishlistSmallIcon } from "./icons";
 
 export function ProductCard({ product, index }: { product: Product; index: number }) {
@@ -20,8 +20,11 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
           loading={index < 5 ? "eager" : "lazy"}
           className="object-cover"
         />
-        <span className="st-micro absolute top-1.5 left-1.5 text-[9px] leading-[7.2px] text-rust tab:top-3 tab:left-3 tab:text-[12px] tab:leading-[9.6px]">
-          Yeni
+        <span className="st-micro absolute top-1.5 left-1.5 bg-rust px-1 py-0.5 text-[9px] leading-[11px] text-bone tab:top-3 tab:left-3 tab:px-1.5 tab:text-[11px] tab:leading-[14px]">
+          -%{discountPercent(product)}
+        </span>
+        <span className="st-micro absolute bottom-1.5 left-1.5 text-[8px] leading-[11px] text-graphite tab:bottom-3 tab:left-3 tab:text-[10px]">
+          İhraç fazlası
         </span>
       </a>
       <button
@@ -43,8 +46,23 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
         <a href={href} className="block truncate">
           {product.name}
         </a>
-        <span className="mt-[3px] block shrink-0 st-label desk:mt-0">{formatPrice(product.price)}</span>
+        <span className="mt-[3px] flex shrink-0 items-baseline gap-1.5 desk:mt-0">
+          <s className="text-graphite">
+            <span className="sr-only">Önceki fiyat: </span>
+            {formatPrice(product.listPrice)}
+          </s>
+          <span className="st-label text-rust">
+            <span className="sr-only">İndirimli fiyat: </span>
+            {formatPrice(product.price)}
+          </span>
+        </span>
       </div>
+      <p className="mt-1 flex justify-between gap-2 px-1 text-[9px] leading-[13.5px] text-graphite tab:text-[11px] tab:leading-4 desk:px-[3px]">
+        <span className="truncate">Beden: {product.sizes.join(" · ")}</span>
+        {product.stock <= LOW_STOCK ? (
+          <span className="shrink-0 font-medium text-rust">Son {product.stock} adet</span>
+        ) : null}
+      </p>
     </div>
   );
 }

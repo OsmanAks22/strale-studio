@@ -1,8 +1,28 @@
 # STRALE — Brand Design Blueprint
 
-> Durum: v2 · Türkçe/TL · 2026-10-09 · `claude/gracious-davinci-ng1ac1` branch'i
+> Durum: v3 · İhraç fazlası mağaza · Logo B + Palet A · 2026-10-09 · `claude/gracious-davinci-ng1ac1` branch'i
 > Kapsam: klonlanan reigningchamp.com ana sayfa iskeletinin Strale kimliğine dönüştürülmesi.
 > Kod tarafındaki karşılıkları: `src/app/globals.css` (token'lar), `src/components/sites/strale/` (bileşenler).
+
+---
+
+## 0. İş modeli — ihraç fazlası
+
+STRALE, Türkiye'deki fabrikalarda yurt dışı siparişler için üretilip sevkiyata girmeyen (fazla üretim,
+iptal, sezon kapanışı) giyim ürünlerini doğrudan stoktan satan bir **ihraç fazlası mağazasıdır**.
+
+**Kırmızı çizgi:** Ürünler STRALE adıyla ya da markasız satılır. Başka bir markanın adı, logosu, etiketi
+veya "replika / muadil / 1:1" ifadesiyle ürün listelenmez; sitede üçüncü taraf marka adı geçmez.
+Başka markanın taklidi olan ürün satmak 6769 sayılı SMK kapsamında marka hakkı ihlali ve suçtur.
+Marka etiketi taşıyan ihraç fazlası ürünler ancak marka sahibinin izniyle ya da etiketi çıkarılarak satılabilir.
+
+Mağaza formatı:
+- Her kartta indirim rozeti (`-%50`), üstü çizili önceki fiyat + indirimli fiyat, beden listesi, "Son N adet" uyarısı (≤3).
+- Görsel alt köşesinde "İhraç fazlası" etiketi; hafif kusurlu ürünler ayrı etiketlenir ve "Hafif Kusurlu" koleksiyonunda toplanır.
+- Hero altında güven bandı: ihracat kalitesi · ücretsiz kargo eşiği · 14 gün iade · güvenli ödeme.
+- "İhraç Fazlası Nedir?" açıklama bölümü: nereden geliyor / neden bu fiyat / nasıl kontrol ediyoruz.
+- ⚖️ Üstü çizili fiyat, Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği gereği indirimden önceki
+  **son 30 gündeki en düşük satış fiyatı** olmalıdır (`listPrice`). "Piyasa fiyatı" gibi doğrulanamayan karşılaştırmalar kullanılmaz.
 
 ---
 
@@ -19,8 +39,8 @@
 | **Ses tonu** | Kısa cümleler. Fiil ile başlayan CTA'lar. Ünlem yok, emoji yok. Teknik bilgi (kumaş, gramaj, kalıp) gururla verilir. |
 
 ### Mesaj hiyerarşisi
-1. **Tagline:** Amaçla tasarlandı. (uluslararası kullanım: *Made with direction.*)
-2. **Destek cümlesi:** Yıllarca giyilmek için, bir amaçla tasarlanmış temel parçalar.
+1. **Tagline:** İhracat kalitesi, stok fiyatı.
+2. **Destek cümlesi:** Yurt dışı siparişlerden artan, sınırlı sayıdaki parçalar. Etiket fiyatının yarısına.
 3. **Kanıt noktaları:** ağır gramajlı pamuk, merino, ölçülü kalıplar (Slim / Standard / Relaxed), uzun ömür garantisi.
 
 ### Yazım kuralları
@@ -38,14 +58,14 @@
 
 | Öğe | Tanım |
 |---|---|
-| **İşaret (mark)** | "Dart": öne bakan, ortasından çentikli ok ucu. 4:3 oran (32×24). Tek renk, `currentColor`. |
-| **Wordmark** | `STRALE` — Archivo, wght 700, wdth 75 (condensed), harf aralığı 0.18em. |
+| **İşaret (mark)** | "Twin": ardışık iki şevron, 5:4 oran (30×24). Tek renk, `currentColor`. |
+| **Wordmark** | `STRALE` — Archivo, wght 500, wdth 125 (wide), harf aralığı 0.1em. |
 | **Kilit (lockup)** | İşaret + 10px boşluk + wordmark. Header'da 24px yükseklik. |
 | **Koruma alanı** | Her yönde işaret yüksekliğinin ½'si. |
 | **Minimum boyut** | İşaret 16px; lockup 72px genişlik. |
 | **Yasak** | Döndürme, gradyan, gölge, kontur, rengini paletin dışına çıkarma. |
 
-Kodda: `src/components/sites/strale/icons.tsx` → `StraleMark`, `src/components/sites/strale/logo.tsx` → `StraleLogo`.
+Kodda: `src/components/sites/strale/icons.tsx` → `StraleMarkTwin`, `src/components/sites/strale/logo.tsx` → `StraleLogo`.
 
 ---
 
@@ -137,13 +157,15 @@ Mevcut 20px ince çizgi ikon seti (arama, çanta, kaydet, hesap) korunur; stroke
 
 | # | Bölüm | Strale içeriği |
 |---|---|---|
-| 1 | Duyuru | "Yeni Sezon: Sonbahar '26. Keşfet" · "₺2.500 üzeri siparişlerde ücretsiz kargo" |
-| 2 | Header | Nav: Yeni Gelenler · Giyim · Dış Giyim · Sweat · Aksesuar · Keşfet; Teslimat: Türkiye / Uluslararası |
-| 3 | Hero | **Amaçla Tasarlandı** — "Yıllarca giyilmek için, bir amaçla tasarlanmış temel parçalar." · CTA *Koleksiyonu Keşfet* |
-| 4 | Yeni gelenler | 12 ürün, ₺2.900–₺13.900 bandı |
-| 5 | İkili kart | *Eşofman & Sweat* — "Her gardırobun temeli." · *FIELD Serisi* — "Soğuk sabahlar ve uzun günler için kesilmiş dış giyim." |
+| 1 | Duyuru | "İhraç fazlası ürünlerde %50'ye varan indirim. Alışverişe Başla" · "₺2.500 üzeri siparişlerde ücretsiz kargo" |
+| 2 | Header | Logo B · Nav: Yeni Gelenler · Giyim · Dış Giyim · Son Fırsatlar · Aksesuar · Keşfet; Teslimat: Türkiye / Uluslararası |
+| 3 | Hero | **İhracat Kalitesi, Stok Fiyatı** — "Yurt dışı siparişlerden artan, sınırlı sayıdaki parçalar. Etiket fiyatının yarısına." · CTA *Yeni Gelen Stokları Gör* |
+| 3b | Güven bandı | İhracat kalitesi · ₺2.500 üzeri ücretsiz kargo · 14 gün koşulsuz iade · Güvenli ödeme |
+| 4 | Bu hafta gelen stoklar | 12 ürün, ₺490–₺3.490; indirim rozeti, eski/yeni fiyat, beden, stok uyarısı |
+| 5 | İkili kart | *Eşofman & Sweat* — "Fabrika fazlası sweat ve eşofmanlar, etiket fiyatının yarısına." · *Dış Giyim* — "Avrupa siparişlerinden artan yün ve polar ceketler. Sınırlı adet." |
 | 6 | Kategoriler | Tişört · Pantolon · Triko · Gömlek · Aksesuar |
-| 7 | Video banner | **MOTION** — "Antrenmandan gündelik hayata teknik katmanlar." |
+| 7 | Video banner | **Son Bedenler** — "Tek beden kalan parçalar, en düşük fiyatlarla. Bittiğinde yenisi gelmez." |
+| 7b | İhraç Fazlası Nedir? | Nereden geliyor · Neden bu fiyat · Nasıl kontrol ediyoruz |
 | 8 | Son görüntülenenler | Boş durum metni |
 | 9 | Footer | Strale Studio / Yardım kolonları + **THE LIST** bülteni (KVKK onay metniyle); yasal linkler: Kullanım Koşulları, KVKK Aydınlatma Metni, Çerez Politikası, Mesafeli Satış Sözleşmesi |
 
@@ -161,11 +183,11 @@ Mevcut 20px ince çizgi ikon seti (arama, çanta, kaydet, hesap) korunur; stroke
 - **Ücretsiz kargo eşiği** ₺2.500 (`FREE_SHIPPING_THRESHOLD`).
 - **Yasal metinler** (KVKK, Mesafeli Satış, Çerez) linkleri hazır, içerikleri yazılmalı.
 - Mağaza/ürün/koleksiyon sayfaları henüz yok → tüm iç linkler "Yakında" sayfasına düşer.
-- Logo ve palet seçimi → bkz. bölüm 10.
+- Logo B (Twin) + Palet A (Kemik & Pas) seçildi ve uygulandı.
 
 ---
 
-## 10. Alternatifler (seçim bekliyor)
+## 10. Alternatifler (seçim: logo B + palet A)
 
 Canlı karşılaştırma: `/marka` sayfası (sitenin gerçek fontuyla). Logo ve palet bağımsız seçilebilir.
 
@@ -173,15 +195,15 @@ Canlı karşılaştırma: `/marka` sayfası (sitenin gerçek fontuyla). Logo ve 
 
 | | İşaret | Wordmark | Karakter |
 |---|---|---|---|
-| **A — Dart** (mevcut) | Çentikli dolu ok ucu | STRALE, condensed 700, geniş aralık | Sportif, keskin; küçük boyutta en okunaklı |
-| **B — Twin** | Ardışık iki şevron | STRALE, wide (wdth 125) 500 | Hareket/ritim; daha lüks ve sakin |
+| **A — Dart** | Çentikli dolu ok ucu | STRALE, condensed 700, geniş aralık | Sportif, keskin; küçük boyutta en okunaklı |
+| **B — Twin** ✅ seçildi | Ardışık iki şevron | STRALE, wide (wdth 125) 500 | Hareket/ritim; daha lüks ve sakin |
 | **C — Flight** | Tek kanatlı çizgisel ok | strale, küçük harf 700, sıkı aralık | Modern, samimi, stüdyo/atölye hissi |
 
 **Palet** (hepsi WCAG AA)
 
 | | Zemin | Metin | Ürün zemini | İkincil | Vurgu |
 |---|---|---|---|---|---|
-| **A — Kemik & Pas** (mevcut) | `#F5F2EC` | `#151412` | `#E8E3DA` | `#645F58` | `#A23E1A` |
+| **A — Kemik & Pas** ✅ seçildi | `#F5F2EC` | `#151412` | `#E8E3DA` | `#645F58` | `#A23E1A` |
 | **B — Tebeşir & Orman** | `#F2F1EC` | `#161A16` | `#E3E3DB` | `#5E625B` | `#2F5D46` |
 | **C — Sis & Lacivert** | `#F3F4F2` | `#0F1720` | `#E2E5E4` | `#5B6168` | `#1F4E79` |
 

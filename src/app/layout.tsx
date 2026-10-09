@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "STRALE | Amaçla Tasarlandı",
+    default: "STRALE | İhraç Fazlası Giyim",
     template: "%s | STRALE",
   },
   description:
-    "Strale Studio, yıllarca giyilmek için tasarlanmış premium temel parçalar üretir: sweat, triko ve dış giyim.",
+    "Yurt dışı siparişlerden artan ihraç fazlası giyim ürünleri; ceket, triko, sweat ve eşofman. Sınırlı stok, etiket fiyatının yarısına.",
 };
 
 export default function RootLayout({

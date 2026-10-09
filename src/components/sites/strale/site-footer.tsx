@@ -41,7 +41,7 @@ function Newsletter() {
     <div className="mt-[71px] min-w-0 tab:mt-[3px] tab:max-w-[380px] tab:flex-1 tab:basis-[200px]">
       <h2 className="st-display text-[34px] leading-10">THE LIST</h2>
       <p className="mt-1.5">
-        Yeni koleksiyonlara, sınırlı üretimlere ve stüdyodan notlara ilk sen ulaş.
+        Yeni gelen stoklardan ilk sen haberdar ol. Sınırlı adetler hızlı tükenir.
       </p>
       <form
         className="relative mt-3"

@@ -1,5 +1,15 @@
 import Image from "next/image";
-import { ASSET_ROOT, FREE_SHIPPING_THRESHOLD, categories, contentCards, formatPrice, newArrivals, storeUrl } from "./data";
+import {
+  ASSET_ROOT,
+  FREE_SHIPPING_THRESHOLD,
+  categories,
+  contentCards,
+  formatPrice,
+  newArrivals,
+  storeUrl,
+  surplusFacts,
+  trustItems,
+} from "./data";
 import { ProductCard } from "./product-card";
 import { Slider, SliderItem } from "./slider";
 
@@ -7,9 +17,9 @@ export function AnnouncementBar() {
   return (
     <div className="flex h-[42px] items-center justify-center bg-ink px-3 text-bone tab:justify-between tab:px-8">
       <p className="whitespace-nowrap">
-        Yeni Sezon: Sonbahar ‘26.{" "}
+        İhraç fazlası ürünlerde %50’ye varan indirim.{" "}
         <a href={storeUrl("/koleksiyonlar/yeni-gelenler")} className="st-underline">
-          Keşfet
+          Alışverişe Başla
         </a>
       </p>
       <p className="hidden whitespace-nowrap tab:block">{formatPrice(FREE_SHIPPING_THRESHOLD)} üzeri siparişlerde ücretsiz kargo</p>
@@ -19,7 +29,7 @@ export function AnnouncementBar() {
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="mb-3 px-3 st-heading text-[12px] leading-[18px]  tab:px-8 tab:text-[16px] tab:leading-6">
+    <h2 className="mb-3 px-3 st-heading text-[12px] leading-[18px] tab:px-8 tab:text-[15px] tab:leading-6">
       {children}
     </h2>
   );
@@ -29,7 +39,7 @@ export function Hero() {
   const href = storeUrl("/koleksiyonlar/yeni-gelenler");
   return (
     <section className="relative -mt-[60px] aspect-[4/5] w-full overflow-hidden text-bone tab:aspect-auto tab:h-[calc(100dvh-42px)]">
-      <a href={href} aria-label="Amaçla Tasarlandı" className="absolute inset-0">
+      <a href={href} aria-label="İhracat Kalitesi, Stok Fiyatı" className="absolute inset-0">
         <video
           className="size-full object-cover"
           autoPlay
@@ -45,17 +55,19 @@ export function Hero() {
       <div className="pointer-events-none absolute bottom-8 left-3 tab:left-8">
         <h2 className="st-display text-[34px] leading-[36px] tab:text-[56px] tab:leading-[58px]">
           <a href={href} className="pointer-events-auto">
-            Amaçla Tasarlandı
+            İhracat Kalitesi,
+            <br />
+            Stok Fiyatı
           </a>
         </h2>
         <p className="mt-2 text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">
-          Yıllarca giyilmek için, bir amaçla tasarlanmış temel parçalar.
+          Yurt dışı siparişlerden artan, sınırlı sayıdaki parçalar. Etiket fiyatının yarısına.
         </p>
         <a
           href={href}
           className="pointer-events-auto mt-4 inline-block text-[12px] leading-[18px] st-label st-underline tab:text-[16px] tab:leading-6"
         >
-          Koleksiyonu Keşfet
+          Yeni Gelen Stokları Gör
         </a>
       </div>
     </section>
@@ -65,8 +77,8 @@ export function Hero() {
 export function NewArrivals() {
   return (
     <section className="pt-6 pb-8 tab:pb-[30px]">
-      <SectionHeading>Yeni Gelenler</SectionHeading>
-      <Slider label="Yeni Gelenler">
+      <SectionHeading>Bu Hafta Gelen Stoklar</SectionHeading>
+      <Slider label="Bu Hafta Gelen Stoklar">
         {newArrivals.map((product, index) => (
           <SliderItem key={product.handle}>
             <ProductCard product={product} index={index} />
@@ -131,7 +143,7 @@ export function ShopByCategory() {
 }
 
 export function PerformanceBanner() {
-  const href = storeUrl("/koleksiyonlar/motion");
+  const href = storeUrl("/koleksiyonlar/son-bedenler");
   return (
     <section className="px-3 tab:px-8">
       <a href={href} className="relative block aspect-[4/5] overflow-hidden text-bone tab:aspect-auto tab:h-[600px]">
@@ -159,10 +171,10 @@ export function PerformanceBanner() {
         </video>
         <div className="absolute bottom-[33px] left-3 tab:bottom-8 tab:left-8">
           <h2 className="st-heading text-[12px] leading-[18px]  tab:text-[16px] tab:leading-6">
-            MOTION
+            Son Bedenler
           </h2>
           <p className="mt-2 text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">
-            Antrenmandan gündelik hayata teknik katmanlar.
+            Tek beden kalan parçalar, en düşük fiyatlarla. Bittiğinde yenisi gelmez.
           </p>
           <span className="mt-4 inline-block text-[12px] leading-[18px] st-label st-underline tab:text-[16px] tab:leading-6">
             Keşfet
@@ -183,6 +195,39 @@ export function RecentlyViewed() {
       <a href={storeUrl("/koleksiyonlar/yeni-gelenler")} className="mt-1.5 inline-block st-underline">
         Yeni Gelenleri Keşfet
       </a>
+    </section>
+  );
+}
+
+export function TrustBar() {
+  return (
+    <section aria-label="Alışveriş güvencesi" className="border-b border-sand px-3 py-5 tab:px-8">
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-4 desk:grid-cols-4">
+        {trustItems.map((item) => (
+          <li key={item.title}>
+            <p className="st-label">{item.title}</p>
+            <p className="mt-0.5 text-graphite">{item.text}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+export function SurplusExplainer() {
+  return (
+    <section className="px-3 pt-12 tab:px-8">
+      <div className="bg-stone px-4 py-8 tab:px-8 tab:py-12">
+        <h2 className="st-display text-[28px] leading-[30px] tab:text-[40px] tab:leading-[42px]">İhraç Fazlası Nedir?</h2>
+        <div className="mt-6 grid gap-6 tab:grid-cols-3 tab:gap-8">
+          {surplusFacts.map((fact) => (
+            <div key={fact.title}>
+              <h3 className="st-heading text-[12px] tab:text-[13px]">{fact.title}</h3>
+              <p className="mt-2 text-[12px] leading-[18px] tab:text-[14px] tab:leading-[22px]">{fact.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

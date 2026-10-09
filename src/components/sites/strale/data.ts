@@ -26,7 +26,7 @@ export const socialLinks: { label: "Instagram" | "X"; href: string }[] = [];
 
 /*
  * Labels are rendered uppercase under lang="tr", which maps "i" → "İ". English words containing an
- * "i" (FIELD, MOTION, SLIM, THE LIST…) are therefore written in capitals here so they stay correct.
+ * "i" (SLIM, THE LIST…) are therefore written in capitals here so they stay correct.
  */
 export type MenuLink = { label: string; href: string };
 export type MenuColumn = { heading: string; links: MenuLink[] };
@@ -46,8 +46,8 @@ export const navItems: NavItem[] = [
         heading: "Öne Çıkanlar",
         links: [
           { label: "Yeni Gelenler", href: "/koleksiyonlar/yeni-gelenler" },
-          { label: "Sonbahar ‘26 Lookbook", href: "/koleksiyonlar/sonbahar-26-lookbook" },
-          { label: "FIELD Serisi", href: "/koleksiyonlar/dis-giyim" },
+          { label: "Bu Hafta Gelenler", href: "/koleksiyonlar/bu-hafta" },
+          { label: "Son Bedenler", href: "/koleksiyonlar/son-bedenler" },
           { label: "Eşofman & Sweat", href: "/koleksiyonlar/esofman-sweat" },
         ],
       },
@@ -94,12 +94,12 @@ export const navItems: NavItem[] = [
         ],
       },
       {
-        heading: "Seriler",
+        heading: "Fırsatlar",
         links: [
+          { label: "%50 ve Üzeri İndirim", href: "/koleksiyonlar/yuzde-50-ustu" },
+          { label: "Son Bedenler", href: "/koleksiyonlar/son-bedenler" },
+          { label: "Hafif Kusurlu", href: "/koleksiyonlar/hafif-kusurlu" },
           { label: "Eşofman & Sweat", href: "/koleksiyonlar/esofman-sweat" },
-          { label: "ESSENTIALS", href: "/koleksiyonlar/essentials" },
-          { label: "FIELD", href: "/koleksiyonlar/field" },
-          { label: "MOTION", href: "/koleksiyonlar/motion" },
           { label: "Tümünü Gör", href: "/koleksiyonlar/giyim" },
         ],
       },
@@ -111,7 +111,7 @@ export const navItems: NavItem[] = [
     },
   },
   { label: "Dış Giyim", href: "/koleksiyonlar/dis-giyim" },
-  { label: "Sweat", href: "/koleksiyonlar/esofman-sweat" },
+  { label: "Son Fırsatlar", href: "/koleksiyonlar/son-firsatlar" },
   {
     label: "Aksesuar",
     href: "/koleksiyonlar/aksesuar",
@@ -164,22 +164,65 @@ export const navItems: NavItem[] = [
   },
 ];
 
-/** `image` is the file name in public/sites/strale/images/products (placeholder photography). */
-export type Product = { name: string; handle: string; image: string; price: number };
+/**
+ * Export-surplus listing. `listPrice` is the struck-through reference price: under Turkish price
+ * labelling rules it must be the lowest price this store charged in the 30 days before the discount.
+ * `image` is the file name in public/sites/strale/images/products (placeholder photography).
+ */
+export type Product = {
+  name: string;
+  handle: string;
+  image: string;
+  price: number;
+  listPrice: number;
+  stock: number;
+  sizes: string[];
+};
+
+/** Show "Son N adet" at or below this many pieces. */
+export const LOW_STOCK = 3;
+
+export function discountPercent({ price, listPrice }: Pick<Product, "price" | "listPrice">) {
+  return Math.round((1 - price / listPrice) * 100);
+}
 
 export const newArrivals: Product[] = [
-  { name: "Vane Yün Polar Ceket", handle: "vane-yun-polar-ceket-toprak", image: "wool-fleece-chore-jacket-heather-brown", price: 13900 },
-  { name: "Ridge Fırçalanmış Flanel Gömlek", handle: "ridge-flanel-gomlek-oksit", image: "cotton-flannel-highland-shirt-arctic-wolf-oxide", price: 5900 },
-  { name: "Arc Teknik Pike Eşofman Altı", handle: "arc-esofman-alti-lacivert", image: "poly-pique-campo-standard-track-pant-5738-navy", price: 5900 },
-  { name: "Quill Merinos Yarım Fermuarlı Triko", handle: "quill-merinos-triko-gri", image: "merino-kenny-quarter-zip-nep-heather-grey", price: 10500 },
-  { name: "Point Merinos Slim Tişört", handle: "point-merinos-tisort-siyah", image: "merino-jersey-vista-slim-t-shirt-black", price: 3900 },
-  { name: "Arc Teknik Pike Eşofman Üstü", handle: "arc-esofman-ustu-lacivert", image: "poly-pique-campo-standard-track-jacket-3235-navy", price: 6200 },
-  { name: "Vane Yün Polar Fermuarlı Ceket", handle: "vane-fermuarli-ceket-siyah", image: "wool-fleece-ridge-zip-jacket-heather-black", price: 13900 },
-  { name: "Point Merinos Slim Tişört", handle: "point-merinos-tisort-antrasit", image: "merino-jersey-vista-slim-t-shirt-carbon", price: 3900 },
-  { name: "Arc Teknik Pike Eşofman Altı", handle: "arc-esofman-alti-petrol", image: "poly-pique-campo-standard-track-pant-5738-petrol", price: 5900 },
-  { name: "Kalın Süprem Uzun Kollu Tişört", handle: "suprem-uzun-kollu-siyah", image: "midweight-jersey-standard-long-sleeve-2361-black", price: 2900 },
-  { name: "Arc Teknik Pike Eşofman Üstü", handle: "arc-esofman-ustu-petrol", image: "poly-pique-campo-standard-track-jacket-3235-petrol", price: 6200 },
-  { name: "Çift Polar Rahat Eşofman Altı", handle: "cift-polar-esofman-alti-siyah", image: "dual-fleece-relaxed-sweatpant-black", price: 5900 },
+  { name: "Yün Polar Ceket — Kahve", handle: "yun-polar-ceket-kahve", image: "wool-fleece-chore-jacket-heather-brown", price: 3490, listPrice: 6990, stock: 4, sizes: ["M", "L", "XL"] },
+  { name: "Ekose Flanel Gömlek — Haki", handle: "ekose-flanel-gomlek-haki", image: "cotton-flannel-highland-shirt-arctic-wolf-oxide", price: 1290, listPrice: 2490, stock: 2, sizes: ["S", "M"] },
+  { name: "Şeritli Eşofman Altı — Lacivert", handle: "seritli-esofman-alti-lacivert", image: "poly-pique-campo-standard-track-pant-5738-navy", price: 990, listPrice: 1990, stock: 7, sizes: ["S", "M", "L", "XL"] },
+  { name: "Merinos Yarım Fermuarlı Triko — Gri", handle: "merinos-yarim-fermuar-triko-gri", image: "merino-kenny-quarter-zip-nep-heather-grey", price: 2190, listPrice: 4290, stock: 3, sizes: ["M", "L"] },
+  { name: "Merinos Slim Tişört — Siyah", handle: "merinos-slim-tisort-siyah", image: "merino-jersey-vista-slim-t-shirt-black", price: 690, listPrice: 1290, stock: 12, sizes: ["S", "M", "L", "XL"] },
+  { name: "Şeritli Eşofman Üstü — Lacivert", handle: "seritli-esofman-ustu-lacivert", image: "poly-pique-campo-standard-track-jacket-3235-navy", price: 1190, listPrice: 2290, stock: 5, sizes: ["M", "L", "XL"] },
+  { name: "Yün Polar Fermuarlı Ceket — Siyah", handle: "yun-polar-fermuarli-ceket-siyah", image: "wool-fleece-ridge-zip-jacket-heather-black", price: 3490, listPrice: 6990, stock: 1, sizes: ["L"] },
+  { name: "Merinos Slim Tişört — Antrasit", handle: "merinos-slim-tisort-antrasit", image: "merino-jersey-vista-slim-t-shirt-carbon", price: 690, listPrice: 1290, stock: 9, sizes: ["S", "M", "L"] },
+  { name: "Şeritli Eşofman Altı — Petrol", handle: "seritli-esofman-alti-petrol", image: "poly-pique-campo-standard-track-pant-5738-petrol", price: 990, listPrice: 1990, stock: 6, sizes: ["M", "L", "XL"] },
+  { name: "Uzun Kollu Basic Tişört — Siyah", handle: "uzun-kollu-basic-tisort-siyah", image: "midweight-jersey-standard-long-sleeve-2361-black", price: 490, listPrice: 990, stock: 18, sizes: ["S", "M", "L", "XL", "XXL"] },
+  { name: "Şeritli Eşofman Üstü — Petrol", handle: "seritli-esofman-ustu-petrol", image: "poly-pique-campo-standard-track-jacket-3235-petrol", price: 1190, listPrice: 2290, stock: 2, sizes: ["M"] },
+  { name: "Polar Rahat Eşofman Altı — Siyah", handle: "polar-rahat-esofman-alti-siyah", image: "dual-fleece-relaxed-sweatpant-black", price: 1090, listPrice: 2190, stock: 8, sizes: ["S", "M", "L", "XL"] },
+];
+
+/** Shown under the hero. */
+export const trustItems = [
+  { title: "İhracat kalitesi", text: "Yurt dışı siparişler için üretilmiş parçalar" },
+  { title: `${formatPrice(FREE_SHIPPING_THRESHOLD)} üzeri ücretsiz kargo`, text: "1–3 iş gününde kargoda" },
+  { title: "14 gün koşulsuz iade", text: "Beden olmazsa ücretsiz değişim" },
+  { title: "Güvenli ödeme", text: "Kart, havale ve kapıda ödeme" },
+];
+
+/** "İhraç fazlası nedir?" explainer. */
+export const surplusFacts = [
+  {
+    title: "Nereden geliyor?",
+    text: "Türkiye’deki fabrikalarda yurt dışı siparişler için üretilen partilerden artan, sevkiyata girmeyen parçalar.",
+  },
+  {
+    title: "Neden bu fiyat?",
+    text: "Sezon kapanışı, fazla üretim ya da iptal edilen siparişler. Aracı ve mağaza maliyeti olmadan doğrudan stoktan satıyoruz.",
+  },
+  {
+    title: "Nasıl kontrol ediyoruz?",
+    text: "Her parça tek tek kontrol edilir. Hafif kusurlu ürünler açıkça etiketlenir; marka etiketi bulunan ürün satmayız.",
+  },
 ];
 
 /** `slug` is the image file name in public/sites/strale/images/categories. */
@@ -194,13 +237,13 @@ export const categories = [
 export const contentCards = [
   {
     title: "Eşofman & Sweat",
-    text: "Her gardırobun temeli.",
+    text: "Fabrika fazlası sweat ve eşofmanlar, etiket fiyatının yarısına.",
     image: `${ASSET_ROOT}/images/content/sweats.jpg`,
     href: "/koleksiyonlar/esofman-sweat",
   },
   {
-    title: "FIELD Serisi",
-    text: "Soğuk sabahlar ve uzun günler için kesilmiş dış giyim.",
+    title: "Dış Giyim",
+    text: "Avrupa siparişlerinden artan yün ve polar ceketler. Sınırlı adet.",
     image: `${ASSET_ROOT}/images/content/jackets-outerwear.jpg`,
     href: "/koleksiyonlar/dis-giyim",
   },
