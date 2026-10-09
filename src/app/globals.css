@@ -4,10 +4,43 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* reigningchamp.com breakpoints (Shopify Dawn): 750px tablet, 990px desktop nav. */
+/* Archivo variable (SIL OFL) — one family covers body and condensed display via the wdth axis. */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url("/sites/strale/fonts/archivo-latin-ext-wdth-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF,
+    U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url("/sites/strale/fonts/archivo-latin-wdth-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Layout breakpoints kept from the cloned skeleton: 750px tablet, 990px desktop nav. */
 @theme {
   --breakpoint-tab: 750px;
   --breakpoint-desk: 990px;
+
+  /* STRALE brand palette — see docs/brand/strale-brand-blueprint.md */
+  --color-ink: #151412;
+  --color-bone: #f5f2ec;
+  --color-stone: #e8e3da;
+  --color-sand: #d6cfc2;
+  --color-graphite: #645f58;
+  --color-ash: #a39d93;
+  --color-smoke: #2a2825;
+  --color-rust: #a23e1a;
 }
 
 @theme inline {
@@ -16,9 +49,7 @@
   --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
   --font-heading: var(--font-sans);
-  --font-rc: var(--font-akzidenz), "Helvetica Neue", Arial, sans-serif;
-  --font-rc-med: var(--font-akzidenz-med), "Helvetica Neue", Arial, sans-serif;
-  --font-rc-cond: var(--font-akzidenz-cond), "Arial Narrow", sans-serif;
+  --font-strale: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -137,31 +168,70 @@
     @apply font-sans;
   }
 }
-/* reigningchamp.com clone */
-.rc-body {
-  font-family: var(--font-rc);
+/* STRALE */
+.st-body {
+  font-family: var(--font-strale);
   font-size: 12px;
   line-height: 18px;
-  letter-spacing: 1px;
-  color: #000;
-  background: #fff;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+  background: var(--color-bone);
   -webkit-font-smoothing: antialiased;
 }
 
-.rc-underline {
-  text-decoration: underline;
-  text-underline-offset: 0.2rem;
+.st-body :focus-visible {
+  outline: 2px solid var(--color-rust);
+  outline-offset: 2px;
 }
 
-.rc-hover-underline:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.2rem;
+@layer components {
+  .st-display {
+    font-weight: 700;
+    font-stretch: 75%;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .st-heading {
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .st-label {
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .st-micro {
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
 }
 
-.rc-no-scrollbar {
+.st-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25rem;
+  transition: text-decoration-color 200ms ease;
+}
+
+.st-underline:hover {
+  text-decoration-color: var(--color-rust);
+}
+
+.st-hover-underline:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25rem;
+}
+
+.st-no-scrollbar {
   scrollbar-width: none;
 }
 
-.rc-no-scrollbar::-webkit-scrollbar {
+.st-no-scrollbar::-webkit-scrollbar {
   display: none;
 }

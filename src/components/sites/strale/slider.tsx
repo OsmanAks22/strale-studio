@@ -39,7 +39,7 @@ export function Slider({ label, children }: { label: string; children: React.Rea
         ref={track}
         onScroll={update}
         aria-label={label}
-        className="rc-no-scrollbar flex snap-x snap-mandatory scroll-px-3 gap-1 overflow-x-auto px-3 tab:scroll-px-8 tab:gap-1.5 tab:px-8"
+        className="st-no-scrollbar flex snap-x snap-mandatory scroll-px-3 gap-1 overflow-x-auto px-3 tab:scroll-px-8 tab:gap-1.5 tab:px-8"
       >
         {children}
       </ul>
@@ -69,7 +69,7 @@ function SliderButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "absolute top-[calc((22.29vw-1px)*0.625-10px)] hidden size-12 cursor-pointer items-center justify-center bg-white text-black opacity-0 transition-opacity duration-200 group-hover/slider:opacity-100 focus-visible:opacity-100 disabled:cursor-default disabled:text-[#ccc] tab:flex",
+        "absolute top-[calc((22.29vw-1px)*0.625-10px)] hidden size-12 cursor-pointer items-center justify-center bg-bone text-ink opacity-0 transition-opacity duration-200 group-hover/slider:opacity-100 focus-visible:opacity-100 disabled:cursor-default disabled:text-sand tab:flex",
         direction === 1 ? "right-8" : "left-8",
       )}
     >

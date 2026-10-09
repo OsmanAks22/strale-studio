@@ -4,22 +4,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { navItems, sourceUrl, type NavItem } from "./data";
+import { navItems, storeUrl, type NavItem } from "./data";
 import {
   AccountIcon,
   BagIcon,
   CaretIcon,
   CloseIcon,
   HamburgerIcon,
-  LogoIcon,
   SearchIcon,
   WishlistIcon,
 } from "./icons";
+import { StraleLogo } from "./logo";
 import { ShippingSelect } from "./shipping-select";
 
 const SCROLLED_PAST = 70;
 
-export function SiteHeader() {
+/** `overlay`: start transparent over a full-bleed hero; otherwise the bar is always solid. */
+export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [openMenu, setOpenMenu] = useState<number | null>(null);
@@ -53,7 +54,7 @@ export function SiteHeader() {
     closeTimer.current = window.setTimeout(() => setOpenMenu(null), 150);
   };
 
-  const solid = scrolled || hovered || openMenu !== null;
+  const solid = !overlay || scrolled || hovered || openMenu !== null;
 
   return (
     <div className="sticky top-0 z-40">
@@ -65,12 +66,12 @@ export function SiteHeader() {
         }}
         className={cn(
           "relative flex min-h-[60px] items-center justify-between px-3 transition-colors duration-200 tab:px-8",
-          solid ? "bg-white text-black" : "bg-transparent text-white",
+          solid ? "bg-bone text-ink" : "bg-transparent text-bone",
         )}
       >
         <div className="flex min-w-0 flex-1 items-center">
-          <Link href="/" aria-label="Reigning Champ" className="block shrink-0">
-            <LogoIcon className="h-6 w-[27px] fill-current" />
+          <Link href="/" aria-label="Strale" className="block shrink-0">
+            <StraleLogo />
           </Link>
           <nav aria-label="Primary" className="hidden desk:block">
             <ul className="ml-6 flex flex-wrap gap-x-6 leading-[18px]">
@@ -137,8 +138,8 @@ export function SiteHeader() {
 
 function TopLink({ item, active, onToggle }: { item: NavItem; active: boolean; onToggle: () => void }) {
   const className = cn(
-    "uppercase tracking-[1.2px] hover:underline hover:underline-offset-[0.2rem]",
-    active && "underline underline-offset-[0.2rem]",
+    "st-label hover:underline hover:underline-offset-[0.25rem]",
+    active && "underline underline-offset-[0.25rem]",
   );
   if (!item.href) {
     return (
@@ -149,7 +150,7 @@ function TopLink({ item, active, onToggle }: { item: NavItem; active: boolean; o
   }
   return (
     <a
-      href={sourceUrl(item.href)}
+      href={storeUrl(item.href)}
       aria-haspopup={item.columns ? "true" : undefined}
       aria-expanded={item.columns ? active : undefined}
       onFocus={item.columns ? onToggle : undefined}
@@ -172,7 +173,7 @@ function IconLink({
   children: React.ReactNode;
 }) {
   return (
-    <a href={sourceUrl(href)} aria-label={label} className={cn("block", className)}>
+    <a href={storeUrl(href)} aria-label={label} className={cn("block", className)}>
       {children}
     </a>
   );
@@ -184,7 +185,7 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
       onMouseEnter={onEnter}
       aria-hidden={!open}
       className={cn(
-        "absolute left-0 top-full hidden w-full bg-white px-8 pt-1.5 pb-9 text-black desk:block",
+        "absolute left-0 top-full hidden w-full bg-bone px-8 pt-1.5 pb-9 text-ink desk:block",
         open ? "visible opacity-100" : "invisible opacity-0",
       )}
     >
@@ -192,14 +193,14 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
         <div className="flex min-w-0 flex-wrap gap-6">
           {item.columns?.map((column) => (
             <div key={column.heading} className="w-[236px]">
-              <p className="text-[9px] leading-[13.5px] tracking-[1.2px] text-[#808080] uppercase">{column.heading}</p>
+              <p className="st-micro text-[9px] leading-[13.5px] text-graphite tab:text-[10px]">{column.heading}</p>
               <ul className="mt-5 flex flex-col gap-4">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     <a
-                      href={sourceUrl(link.href)}
+                      href={storeUrl(link.href)}
                       tabIndex={open ? 0 : -1}
-                      className="uppercase tracking-[1.2px] rc-hover-underline"
+                      className="st-label st-hover-underline"
                     >
                       {link.label}
                     </a>
@@ -211,9 +212,9 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
         </div>
         {item.feature ? (
           <a
-            href={sourceUrl(item.feature.href)}
+            href={storeUrl(item.feature.href)}
             tabIndex={open ? 0 : -1}
-            className="mr-[-8px] block w-[336px] shrink-0 rc-hover-underline"
+            className="mr-[-8px] block w-[336px] shrink-0 st-hover-underline"
           >
             <Image
               src={item.feature.image}
@@ -223,7 +224,7 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
               sizes="336px"
               className="block h-[420px] w-[336px] object-cover"
             />
-            <span className="mt-4 block uppercase tracking-[1.2px]">{item.feature.caption}</span>
+            <span className="mt-4 block st-label">{item.feature.caption}</span>
           </a>
         ) : null}
       </div>
@@ -257,7 +258,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         tabIndex={-1}
         onClick={close}
         className={cn(
-          "absolute inset-0 bg-black/30 backdrop-blur-[5px] transition-opacity duration-200",
+          "absolute inset-0 bg-ink/30 backdrop-blur-[5px] transition-opacity duration-200",
           open ? "opacity-100" : "opacity-0",
         )}
       />
@@ -266,13 +267,13 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         aria-modal="true"
         aria-label="Menu"
         className={cn(
-          "absolute top-0 right-0 flex h-full w-[360px] max-w-[calc(100%-30px)] flex-col overflow-hidden bg-white text-black transition-transform duration-200",
+          "absolute top-0 right-0 flex h-full w-[360px] max-w-[calc(100%-30px)] flex-col overflow-hidden bg-bone text-ink transition-transform duration-200",
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
         <div className="flex h-[60px] shrink-0 items-center justify-between px-3">
-          <Link href="/" aria-label="Reigning Champ" onClick={close}>
-            <LogoIcon className="h-6 w-[27px] fill-current" />
+          <Link href="/" aria-label="Strale" onClick={close}>
+            <StraleLogo />
           </Link>
           <button type="button" aria-label="Close" onClick={close} className="cursor-pointer">
             <CloseIcon className="size-5" />
@@ -280,22 +281,22 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         </div>
 
         <nav aria-label="Mobile" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3">
-          <ul className="border-t border-black">
+          <ul className="border-t border-sand">
             {navItems.map((item, index) => (
-              <li key={item.label} className="border-b border-black">
+              <li key={item.label} className="border-b border-sand">
                 {item.columns ? (
                   <button
                     type="button"
                     onClick={() => setSubmenu(index)}
-                    className="flex h-[58px] w-full cursor-pointer items-center justify-between uppercase tracking-[1.2px]"
+                    className="flex h-[58px] w-full cursor-pointer items-center justify-between st-label"
                   >
                     {item.label}
                     <CaretIcon className="size-5" />
                   </button>
                 ) : (
                   <a
-                    href={sourceUrl(item.href ?? "/")}
-                    className="flex h-[58px] items-center uppercase tracking-[1.2px]"
+                    href={storeUrl(item.href ?? "/")}
+                    className="flex h-[58px] items-center st-label"
                   >
                     {item.label}
                   </a>
@@ -305,13 +306,13 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           </ul>
 
           <div className="mt-auto flex flex-col gap-4 pt-10 pb-12">
-            <a href={sourceUrl("/account")} className="uppercase tracking-[1.2px]">
+            <a href={storeUrl("/account")} className="st-label">
               Account
             </a>
-            <a href={sourceUrl("/pages/contact")} className="uppercase tracking-[1.2px]">
+            <a href={storeUrl("/pages/contact")} className="st-label">
               Contact Us
             </a>
-            <a href={sourceUrl("/pages/about-us")} className="uppercase tracking-[1.2px]">
+            <a href={storeUrl("/pages/about")} className="st-label">
               About Us
             </a>
             <ShippingSelect className="mt-2" />
@@ -320,18 +321,18 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 
         <div
           className={cn(
-            "absolute inset-0 flex flex-col bg-white transition-transform duration-200",
+            "absolute inset-0 flex flex-col bg-bone transition-transform duration-200",
             active ? "translate-x-0" : "translate-x-full",
           )}
           aria-hidden={!active}
         >
           {active ? (
             <>
-              <div className="mx-3 flex h-[60px] shrink-0 items-center border-b border-black">
+              <div className="mx-3 flex h-[60px] shrink-0 items-center border-b border-sand">
                 <button
                   type="button"
                   onClick={() => setSubmenu(null)}
-                  className="flex cursor-pointer items-center gap-2 font-rc-med uppercase tracking-[1.2px]"
+                  className="flex cursor-pointer items-center gap-2 st-heading"
                 >
                   <CaretIcon className="size-5 rotate-180" />
                   {active.label}
@@ -340,13 +341,13 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
               <div className="overflow-y-auto px-3 pt-[25px] pb-12">
                 {active.columns?.map((column) => (
                   <div key={column.heading} className="mb-[30px]">
-                    <p className="text-[9px] leading-[13.5px] tracking-[1.2px] text-[#808080] uppercase">
+                    <p className="st-micro text-[9px] leading-[13.5px] text-graphite tab:text-[10px]">
                       {column.heading}
                     </p>
                     <ul className="mt-5 flex flex-col gap-4">
                       {column.links.map((link) => (
                         <li key={link.label}>
-                          <a href={sourceUrl(link.href)} className="uppercase tracking-[1.2px] rc-hover-underline">
+                          <a href={storeUrl(link.href)} className="st-label st-hover-underline">
                             {link.label}
                           </a>
                         </li>
@@ -355,7 +356,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                   </div>
                 ))}
                 {active.feature ? (
-                  <a href={sourceUrl(active.feature.href)} className="block">
+                  <a href={storeUrl(active.feature.href)} className="block">
                     <Image
                       src={active.feature.image}
                       alt=""
@@ -364,7 +365,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                       sizes="336px"
                       className="block aspect-[4/5] w-full object-cover"
                     />
-                    <span className="mt-4 block uppercase tracking-[1.2px]">{active.feature.caption}</span>
+                    <span className="mt-4 block st-label">{active.feature.caption}</span>
                   </a>
                 ) : null}
               </div>

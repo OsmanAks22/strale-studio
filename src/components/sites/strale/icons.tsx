@@ -2,9 +2,10 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-export function LogoIcon(props: IconProps) {
+/** STRALE "dart" mark: a forward-pointing arrowhead notched at the tail (4:3). */
+export function StraleMark(props: IconProps) {
   return (
-    <svg aria-hidden="true" focusable="false" {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 142.44 126"><g><path d="M95.24,39.69H13.28l.03,46.55h15.65v13.43H12.57C5.09,99.66,.04,95.25,.04,86.62c0,0-.04-37.01-.04-46.76,0-8.94,4.46-13.26,12.6-13.26H95.24v13.09Zm3.85,42.3c-.98-4.92-4.18-12.36-13.06-12.35H46.48l.03,43.18h6.63l.02,13.18H16.66l-.02-13.16h16.59V43.98h13.22l.02,12.49h38.35c5.47,0,14.64-2.73,14.64-12.05V26.6c0-7.24,.02-13.33-11.49-13.33H46.43v9.14s-13.19,0-13.19,0V13.26H16.57V0S83.4,0,91.9,0c14.69,0,20.89,8.61,20.89,20.73l.02,23.08c0,17.22-15.31,19.21-15.31,19.21,0,0,13.25,0,15.14,18.97h-13.54Zm17.89-55.39h9.62c9.14,0,15.79,5.41,15.79,14.26l.02,9.66h-13.28v-6.39c0-2.93-1.24-4.37-4.4-4.37h-7.76v-13.17ZM50.76,99.66v-13.43H123.64c5.01,0,5.53-1.85,5.53-6v-4.09h13.27v8.19c0,8.2-5.84,15.33-15.17,15.33H50.76Zm62.11,4.26v8.84h13.28v13.24h-33.17v-13.24s6.62,0,6.62,0v-8.84s13.27,0,13.27,0Z"></path></g></svg>
+    <svg aria-hidden="true" focusable="false" {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24"><path d="M0 0 32 12 0 24 8.5 12Z"></path></svg>
   );
 }
 
@@ -59,12 +60,6 @@ export function HamburgerIcon(props: IconProps) {
 export function TwitterIcon(props: IconProps) {
   return (
     <svg aria-hidden="true" focusable="false" {...props} viewBox="0 0 16 16"><path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z" fill="currentColor"></path></svg>
-  );
-}
-
-export function FacebookIcon(props: IconProps) {
-  return (
-    <svg aria-hidden="true" focusable="false" {...props} viewBox="0 0 20 20"><g><path d="M20.0001 10.0612C20.0001 4.50375 15.5226 -0.00125122 10.0001 -0.00125122C4.47506 -1.22061e-06 -0.00244141 4.50375 -0.00244141 10.0625C-0.00244141 15.0837 3.65506 19.2462 8.43506 20.0012V12.97H5.89756V10.0625H8.43756V7.84375C8.43756 5.3225 9.93131 3.93 12.2151 3.93C13.3101 3.93 14.4538 4.12625 14.4538 4.12625V6.60125H13.1926C11.9513 6.60125 11.5638 7.3775 11.5638 8.17375V10.0612H14.3363L13.8938 12.9687H11.5626V20C16.3426 19.245 20.0001 15.0825 20.0001 10.0612Z" fill="currentColor"></path></g></svg>
   );
 }
 
