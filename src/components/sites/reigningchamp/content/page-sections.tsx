@@ -146,7 +146,10 @@ function Banner({ section, ctx }: { section: Extract<PageSection, { type: "banne
   if (!section.image) return null;
   const article = ctx.variant === "article";
   return (
-    <section id={ctx.anchorIds.get(ctx.index)} className={cn("relative overflow-hidden", bannerHeight(section, ctx))}>
+    <section
+      id={ctx.anchorIds.get(ctx.index)}
+      className={cn("relative overflow-hidden", article && "mx-3 tab:mx-0", bannerHeight(section, ctx))}
+    >
       {section.mobileImage ? (
         <>
           <Image
@@ -176,6 +179,9 @@ function Banner({ section, ctx }: { section: Extract<PageSection, { type: "banne
           className={article ? "object-contain" : "object-cover"}
         />
       )}
+      {section.heading && ctx.next?.type !== "tabs" ? (
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+      ) : null}
       {section.heading || section.links.length || section.html ? (
         <div className="absolute inset-x-3 bottom-8 text-white tab:inset-x-8">
           {section.heading ? (
@@ -215,8 +221,8 @@ const HEADING_CLASS: Record<HeadingStyle, string> = {
   med24: "font-rc-med text-[18px] leading-[1.25] tracking-[1.5px] uppercase tab:text-[24px] tab:tracking-[1px]",
   med16: "font-rc-med text-[16px] leading-8 tracking-[1.5px] uppercase tab:tracking-[1px]",
   editorial:
-    "font-[Didot,'Bodoni_72','Times_New_Roman',serif] text-[32px] leading-[1.2] tracking-[1px] uppercase tab:text-[48px]",
-  quote: "font-rc-med text-[20px] leading-[1.1] tracking-[1.5px] tab:text-[32px]",
+    "font-[Didot,'Bodoni_72','Times_New_Roman',serif] px-[26px] text-[32px] leading-[1.15] tracking-[1px] uppercase tab:px-0 tab:text-[48px] tab:leading-[1.2]",
+  quote: "font-rc-med text-[24px] leading-[1.1] tracking-[1.5px] tab:text-[32px]",
 };
 
 function RichText({ section, ctx }: { section: Extract<PageSection, { type: "richText" }>; ctx: Ctx }) {
@@ -251,6 +257,8 @@ function RichText({ section, ctx }: { section: Extract<PageSection, { type: "ric
           : "pb-6"
       : ctx.next?.type === "accordion"
         ? "pb-0"
+        : section.form
+          ? "pb-6"
         : ctx.compact
           ? "pb-9"
           : "pb-12";
@@ -277,9 +285,14 @@ function RichText({ section, ctx }: { section: Extract<PageSection, { type: "ric
           handle={ctx.handle}
           className={cn(
             section.heading && "mt-2",
-            largeBody ? "text-[16px] leading-6" : BODY,
+            // The fine print under the newsletter form is small and grey on the source.
+            ctx.prev?.type === "richText" && ctx.prev.form
+              ? "text-[12px] leading-[18px] text-[#808080]"
+              : largeBody
+                ? "text-[16px] leading-6"
+                : BODY,
             article && style === "editorial" && "tracking-[1.2px] uppercase",
-            article && !section.heading && "mx-auto max-w-[640px] text-left",
+            article && !section.heading && "mx-auto max-w-[640px] px-[26px] text-left tab:px-0",
             "[&_ul]:pl-[1.2px] [&_ul]:list-inside",
           )}
         />
@@ -341,6 +354,8 @@ const isPanel = (item: CardItem) => !!item.image && /\/stores-[a-z]+\.png/i.test
 function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards" }>; ctx: Ctx }) {
   const id = ctx.anchorIds.get(ctx.index);
   const items = section.items;
+  // Card rows that open a page (contact, fit guides, first store) hold the largest visible image.
+  const preload = ctx.variant === "page" && ctx.index <= 2 && ctx.prev?.type !== "banner";
   const heading = section.heading ? (
     <h2 className={cn(GUTTER, SUBTITLE, "mb-3")}>{section.heading}</h2>
   ) : null;
@@ -351,7 +366,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
     return (
       <section id={id} className="grid tab:grid-cols-3">
         {items.map((item, i) => (
-          <div key={i} className="px-[18px] pt-11 pb-3 tab:px-[38px] tab:pb-9">
+          <div key={i} className="px-[18px] pt-11 pb-8 tab:px-[38px] tab:pb-9">
             <CardText item={item} />
           </div>
         ))}
@@ -377,14 +392,14 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   // Store gallery: three differently-proportioned photos in a horizontal row.
   if (section.heading.trim().toLowerCase() === "gallery") {
     const shapes = [
-      "w-[48vw] aspect-[352/584] tab:w-[24.4vw]",
-      "w-[72vw] aspect-[576/324] tab:w-[40vw]",
-      "w-[56vw] aspect-[426/551] tab:w-[29.6vw]",
+      "w-[50vw] aspect-[352/584] tab:w-[24.4vw]",
+      "w-full aspect-[576/324] tab:w-[40vw]",
+      "w-[70vw] aspect-[426/551] tab:w-[29.6vw]",
     ];
     return (
       <section id={id} className="pt-9">
         {heading}
-        <ul className="rc-no-scrollbar flex items-center gap-[8vw] overflow-x-auto px-[10vw] py-[7.8vw] tab:gap-[6.9vw]">
+        <ul className="rc-no-scrollbar flex flex-col items-center gap-12 px-3 py-12 tab:flex-row tab:gap-[6.9vw] tab:overflow-x-auto tab:px-[10vw] tab:py-[7.8vw]">
           {items.map((item, i) => (
             <li key={i} className={cn("relative shrink-0 bg-[#f2f2f2]", shapes[i % shapes.length])}>
               {item.image ? <Image src={item.image} alt="" fill sizes="40vw" className="object-cover" /> : null}
@@ -413,7 +428,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
       <section id={id} className={cn(GUTTER, inset ? "pb-6 tab:pb-[78px]" : "pt-9 pb-3")}>
         {heading}
         <div className={cn(inset && "px-[8.5%] pt-[8.5%] tab:px-[6.76%] tab:pt-[6.76%]")}>
-          <CardImage item={items[0]} aspect="aspect-[16/9]" sizes="(min-width: 750px) 90vw, 100vw" />
+          <CardImage item={items[0]} aspect="aspect-[16/9]" sizes="(min-width: 750px) 90vw, 100vw" preload={preload} />
           <div className="px-1.5 pt-3">
             <CardText item={items[0]} />
           </div>
@@ -430,6 +445,24 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
           {items.map((item, i) => (
             <li key={i} className={cn("tab:px-[12.5%]", i % 2 === 1 && "tab:pt-[21px]", i % 4 === 2 && "tab:px-[14%]")}>
               <CardImage item={item} aspect="aspect-[4/5]" sizes="(min-width: 750px) 36vw, 100vw" />
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
+
+  // Wholesale/corporate landing: title + link overlaid on the photo.
+  if (ctx.compact && items.every((i) => i.title && i.button && i.href && !i.html.trim())) {
+    return (
+      <section id={id} className={cn(GUTTER, "pt-3 pb-6 tab:pb-3")}>
+        <ul className={cn("grid gap-1 tab:gap-1.5", items.length === 2 && "tab:grid-cols-2")}>
+          {items.map((item, i) => (
+            <li key={i} className="relative text-white">
+              <CardImage item={item} aspect="aspect-[4/5]" sizes="(min-width: 750px) 48vw, 100vw" />
+              <div className="pointer-events-none absolute bottom-6 left-[18px] tab:bottom-[42px] tab:left-9 [&_a]:pointer-events-auto">
+                <CardText item={item} />
+              </div>
             </li>
           ))}
         </ul>
@@ -460,6 +493,7 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
               item={item}
               aspect="aspect-[4/5]"
               sizes={`(min-width: 750px) ${Math.round(96 / Math.min(items.length, 4))}vw, ${slider ? 68 : 100}vw`}
+              preload={preload}
             />
             {item.title || item.html.trim() || (item.button && item.href) ? (
               <div className="px-1.5 pt-3">
@@ -473,11 +507,21 @@ function Cards({ section, ctx }: { section: Extract<PageSection, { type: "cards"
   );
 }
 
-function CardImage({ item, aspect, sizes }: { item: CardItem; aspect: string; sizes: string }) {
+function CardImage({
+  item,
+  aspect,
+  sizes,
+  preload = false,
+}: {
+  item: CardItem;
+  aspect: string;
+  sizes: string;
+  preload?: boolean;
+}) {
   if (!item.image) return null;
   const media = (
     <span className={cn("relative block overflow-hidden bg-[#f2f2f2]", aspect)}>
-      <Image src={item.image} alt={item.title || ""} fill sizes={sizes} className="object-cover" />
+      <Image src={item.image} alt={item.title || ""} fill sizes={sizes} preload={preload} className="object-cover" />
     </span>
   );
   return item.href ? (
@@ -545,7 +589,7 @@ function Products({ section, ctx }: { section: Extract<PageSection, { type: "pro
   return (
     <section id={ctx.anchorIds.get(ctx.index)} className={cn(GUTTER, "pb-6")}>
       {section.heading ? <h2 className={cn(SUBTITLE, "mb-3")}>{section.heading}</h2> : null}
-      <ul className="grid grid-cols-2 gap-x-1 gap-y-6 tab:grid-cols-3 tab:gap-x-1.5 tab:gap-y-9">
+      <ul className="grid grid-cols-2 gap-x-1 gap-y-4 tab:grid-cols-3 tab:gap-x-1.5 tab:gap-y-3">
         {products.map((product) => (
           <li key={product.handle}>
             <ProductGridCard product={product} sizes="(min-width: 750px) 32vw, 48vw" />
@@ -565,8 +609,8 @@ const POLICY_CLASS = cn(
   "[&_b]:font-rc-med! [&_b]:font-normal! [&_strong]:font-rc-med! [&_strong]:font-normal!",
   "[&_h1]:font-rc-cond! [&_h1]:text-[24px]! tab:[&_h1]:text-[32px]! [&_h1]:tracking-[1.5px]! [&_h1]:leading-[1.25]!",
   "[&_h2]:mt-6! [&_h2]:text-[21.33px]! [&_h2]:leading-[27px]!",
-  "[&_hr]:my-12! tab:[&_hr]:my-[84px]! [&_hr]:border-black/20!",
-  "[&_table]:my-3! [&_td]:border-[#808080]/50! [&_td]:p-3! [&_td]:text-[16px]! [&_td]:leading-[19px]! [&_td]:align-top!",
+  "[&_hr]:my-[84px]! [&_hr]:border-black/20!",
+  "[&_table]:my-3! [&_table]:table-fixed! [&_td]:border-[#808080]/50! [&_td]:p-3! [&_td]:text-[16px]! [&_td]:leading-[19px]! [&_td]:align-top!",
   "[&_.rc-anchor]:scroll-mt-20! [&_p:has(>.rc-anchor:only-child)]:h-[18px]!",
   "[&_a]:break-words!",
 );

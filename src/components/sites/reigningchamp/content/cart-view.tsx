@@ -11,7 +11,7 @@ const FREE_SHIPPING = 50;
 const money = (amount: number) => `$${amount.toFixed(2)}`;
 
 /** /cart ("BAG"): line items on the left, grey SUMMARY panel on the right. */
-export function CartView() {
+export function CartView({ departments }: { departments: Record<string, string> }) {
   const { lines, count, subtotal } = useCart();
   const [notice, setNotice] = useState(false);
   const remaining = FREE_SHIPPING - subtotal;
@@ -33,7 +33,7 @@ export function CartView() {
           ) : (
             <ul className="flex flex-col gap-6" aria-label="Bag items">
               {lines.map((line) => (
-                <CartItem key={line.variantId} line={line} />
+                <CartItem key={line.variantId} line={line} department={departments[line.handle]} />
               ))}
             </ul>
           )}
@@ -90,7 +90,7 @@ export function CartView() {
   );
 }
 
-function CartItem({ line }: { line: CartLine }) {
+function CartItem({ line, department }: { line: CartLine; department?: string }) {
   const href = `/products/${line.handle}`;
   const options = [line.colour, line.size].filter((v): v is string => !!v);
 
@@ -107,7 +107,10 @@ function CartItem({ line }: { line: CartLine }) {
       <div className="flex min-w-0 flex-1 flex-col pt-[8px] text-[9px] leading-[13.5px] tab:text-[12px] tab:leading-[18px]">
         <div className="tab:flex tab:items-start tab:justify-between tab:gap-4">
           <div className="min-w-0">
-            <Link href={href} className="block tracking-[1.2px] uppercase tab:mt-[22px]">
+            <p className="h-[13.5px] text-[9px] leading-[13.5px] tracking-[1.2px] text-[#808080] uppercase">
+              {department ?? ""}
+            </p>
+            <Link href={href} className="mt-2 block tracking-[1.2px] uppercase">
               {line.title}
             </Link>
             <p className="mt-2 tracking-[1.2px] uppercase">
