@@ -1,9 +1,29 @@
+import {
+  AnnouncementBar,
+  ContentCards,
+  Hero,
+  NewArrivals,
+  PerformanceBanner,
+  RecentlyViewed,
+  ShopByCategory,
+} from "@/components/sites/reigningchamp/home-sections";
+import { SiteFooter } from "@/components/sites/reigningchamp/site-footer";
+import { SiteHeader } from "@/components/sites/reigningchamp/site-header";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-muted-foreground">
-        Clone target not yet built. Run <code className="font-mono text-foreground">/clone-website</code> to start.
-      </p>
-    </main>
+    <>
+      <AnnouncementBar />
+      <SiteHeader />
+      <main>
+        <Hero />
+        <NewArrivals />
+        <ContentCards />
+        <ShopByCategory />
+        <PerformanceBanner />
+        <RecentlyViewed />
+      </main>
+      <SiteFooter />
+    </>
   );
 }

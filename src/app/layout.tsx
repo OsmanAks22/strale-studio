@@ -1,20 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const akzidenz = localFont({
+  src: "../../public/sites/reigningchamp/fonts/akzidenz-grotesk-regular.woff2",
+  weight: "400",
+  variable: "--font-akzidenz",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const akzidenzMed = localFont({
+  src: "../../public/sites/reigningchamp/fonts/akzidenz-grotesk-medium.woff2",
+  weight: "500",
+  variable: "--font-akzidenz-med",
+  display: "swap",
+});
+
+const akzidenzCond = localFont({
+  src: "../../public/sites/reigningchamp/fonts/akzidenz-grotesk-bold-condensed.woff2",
+  weight: "700",
+  variable: "--font-akzidenz-cond",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Website Clone",
-  description: "Pixel-perfect website clone",
+  title: "Reigning Champ | Premium Apparel | Est. 2007 | Reigning Champ US",
+  description:
+    "We design and develop premium apparel without compromise. Our process is guided by our principles: Respect the details. Master simplicity.",
 };
 
 export default function RootLayout({
@@ -25,9 +37,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${akzidenz.variable} ${akzidenzMed.variable} ${akzidenzCond.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="rc-body min-h-full">{children}</body>
     </html>
   );
 }
