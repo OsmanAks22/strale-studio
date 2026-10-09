@@ -26,7 +26,7 @@ export function ProductGridCard({
   const extra = product.swatches.length - MAX_SWATCHES;
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative pb-6", className)}>
       <Link href={href} className="group relative block aspect-[4/5] overflow-hidden bg-[#f2f2f2]">
         {product.image ? (
           <Image
@@ -72,7 +72,7 @@ export function ProductGridCard({
                 title={swatch.colour ?? undefined}
                 aria-label={swatch.colour ?? swatch.handle}
                 className={cn(
-                  "block size-2.5 border border-black/20",
+                  "block size-3 border border-black/20",
                   swatch.handle === product.handle && "outline outline-1 outline-offset-1 outline-black",
                 )}
                 style={{ backgroundColor: swatch.colourHex ?? "#ccc" }}

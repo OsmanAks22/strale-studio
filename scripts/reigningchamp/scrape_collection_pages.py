@@ -18,7 +18,7 @@ def scrape(h):
     r={}
     ban=m.select_one('[id*=rc_banner]')
     r['heading']=txt(ban.select_one('h1, h2, .banner__heading')) if ban else ''
-    r['description']=txt(ban.select_one('.banner__text, p')) if ban else ''
+    r['description']=txt(ban.select_one('div.banner__text')) if ban else ''
     r['tabs']=[{'label':txt(a),'href':a.get('href').replace('https://reigningchamp.com','')} for a in m.select('.rc-content-text__list a')]
     facets=[]
     for det in m.select('details[id^="Details-"]'):
