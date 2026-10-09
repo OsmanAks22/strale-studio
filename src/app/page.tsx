@@ -1,33 +1,22 @@
 import {
-  AnnouncementBar,
-  ContentCards,
+  CategoryGrid,
   Hero,
   NewArrivals,
-  PerformanceBanner,
-  RecentlyViewed,
-  ShopByCategory,
+  PromoBlocks,
   SurplusExplainer,
   TrustBar,
 } from "@/components/sites/strale/home-sections";
-import { SiteFooter } from "@/components/sites/strale/site-footer";
-import { SiteHeader } from "@/components/sites/strale/site-header";
+import { StoreShell } from "@/components/sites/strale/store-shell";
 
 export default function Home() {
   return (
-    <>
-      <AnnouncementBar />
-      <SiteHeader />
-      <main>
-        <Hero />
-        <TrustBar />
-        <NewArrivals />
-        <ContentCards />
-        <ShopByCategory />
-        <PerformanceBanner />
-        <SurplusExplainer />
-        <RecentlyViewed />
-      </main>
-      <SiteFooter />
-    </>
+    <StoreShell overlay>
+      <Hero />
+      <TrustBar />
+      <NewArrivals />
+      <CategoryGrid />
+      <PromoBlocks />
+      <SurplusExplainer />
+    </StoreShell>
   );
 }

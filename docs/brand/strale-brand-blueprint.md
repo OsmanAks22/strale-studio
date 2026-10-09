@@ -1,6 +1,6 @@
 # STRALE — Brand Design Blueprint
 
-> Durum: v3 · İhraç fazlası mağaza · Logo B + Palet A · 2026-10-09 · `claude/gracious-davinci-ng1ac1` branch'i
+> Durum: v4 · Yayına hazır iskelet · İhraç fazlası mağaza · Logo B + Palet A · 2026-10-09 · `claude/gracious-davinci-ng1ac1` branch'i
 > Kapsam: klonlanan reigningchamp.com ana sayfa iskeletinin Strale kimliğine dönüştürülmesi.
 > Kod tarafındaki karşılıkları: `src/app/globals.css` (token'lar), `src/components/sites/strale/` (bileşenler).
 
@@ -23,6 +23,24 @@ Mağaza formatı:
 - "İhraç Fazlası Nedir?" açıklama bölümü: nereden geliyor / neden bu fiyat / nasıl kontrol ediyoruz.
 - ⚖️ Üstü çizili fiyat, Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği gereği indirimden önceki
   **son 30 gündeki en düşük satış fiyatı** olmalıdır (`listPrice`). "Piyasa fiyatı" gibi doğrulanamayan karşılaştırmalar kullanılmaz.
+
+---
+
+## 0b. Site yapısı (v4)
+
+| Sayfa | Yol | Kaynak |
+|---|---|---|
+| Ana sayfa | `/` | `home-sections.tsx` |
+| Koleksiyonlar | `/koleksiyonlar/{tumu, yeni-gelenler, son-bedenler, hafif-kusurlu, yuzde-50-ustu, <kategori>}` | `catalog.ts` |
+| Ürün | `/urun/<handle>` | `products.json` (CSV'den, `npm run import-products`) |
+| Arama | `/arama` | istemci tarafı arama |
+| Bilgi & yasal | `/sayfa/<slug>` | `content-pages.tsx` |
+| Mağaza ayarları | — | `site-config.ts` (WhatsApp, telefon, e-posta, firma bilgileri, kargo/iade) |
+
+Sipariş akışı: ürün sayfasında beden seçimi → "WhatsApp ile Sipariş Ver" (ürün, beden, fiyat, link mesaja eklenir).
+Ödeme: havale/EFT veya kapıda ödeme. Kartla online ödeme için ileride iyzico / PayTR / Shopier entegrasyonu.
+
+Fotoğraf yokken ürün kartlarında markalı "Fotoğraf yakında" yer tutucusu gösterilir; Reigning Champ görselleri tamamen kaldırıldı.
 
 ---
 
@@ -148,8 +166,7 @@ Mevcut 20px ince çizgi ikon seti (arama, çanta, kaydet, hesap) korunur; stroke
 - **Video:** sessiz, döngü, yavaş kamera hareketi; metin her zaman sol altta.
 - **Hareket:** 200ms ease geçişler; zıplama/elastik efekt yok.
 
-> ⚠️ Geçici durum: bu branch'te görseller ve videolar hâlâ klondaki reigningchamp.com materyalleridir
-> (`public/sites/strale/images|video`). Yayına çıkmadan önce Strale çekimleriyle değiştirilmeleri gerekir.
+> Klondan kalan tüm reigningchamp.com görsel ve videoları kaldırıldı. Ürün fotoğrafları `public/sites/strale/products/` altına konur.
 
 ---
 

@@ -1,16 +1,13 @@
-"use client";
-
-import { Fragment, useState } from "react";
-import { footerColumns, legalLinks, socialLinks, storeUrl } from "./data";
-import { CaretIcon, InstagramIcon, TwitterIcon } from "./icons";
-import { ShippingSelect } from "./shipping-select";
-
-const socialIcons = { Instagram: InstagramIcon, X: TwitterIcon };
+import Link from "next/link";
+import { Fragment } from "react";
+import { footerColumns, legalLinks } from "./data";
+import { InstagramIcon, WhatsAppIcon } from "./icons";
+import { siteConfig, whatsappLink } from "./site-config";
 
 export function SiteFooter() {
   return (
     <footer className="bg-ink text-bone">
-      <div className="px-3 pt-6 pb-12 tab:flex tab:justify-between tab:gap-6 tab:px-8 tab:pt-12">
+      <div className="px-3 pt-8 pb-12 tab:flex tab:justify-between tab:gap-6 tab:px-8 tab:pt-12">
         <div className="min-w-0 tab:flex tab:gap-6">
           {footerColumns.map((column, index) => (
             <div key={column.heading} className={index === 0 ? "mb-11 tab:mb-0 tab:w-[235px] tab:shrink-0" : "tab:min-w-0"}>
@@ -18,81 +15,71 @@ export function SiteFooter() {
               <ul className="mt-5 flex flex-col gap-4">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a href={storeUrl(link.href)} className="st-label st-hover-underline">
+                    <Link href={link.href} className="st-label st-hover-underline">
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <Newsletter />
+        <ContactBlock />
       </div>
       <SubFooter />
     </footer>
   );
 }
 
-function Newsletter() {
-  const [submitted, setSubmitted] = useState(false);
-
+function ContactBlock() {
+  const whatsapp = whatsappLink("Merhaba, bir ürün hakkında bilgi almak istiyorum.");
   return (
-    <div className="mt-[71px] min-w-0 tab:mt-[3px] tab:max-w-[380px] tab:flex-1 tab:basis-[200px]">
-      <h2 className="st-display text-[34px] leading-10">THE LIST</h2>
-      <p className="mt-1.5">
-        Yeni gelen stoklardan ilk sen haberdar ol. Sınırlı adetler hızlı tükenir.
+    <div className="mt-14 min-w-0 tab:mt-0 tab:max-w-[380px] tab:flex-1 tab:basis-[200px]">
+      <h2 className="st-display text-[34px] leading-10">Sipariş & Destek</h2>
+      <p className="mt-1.5 text-sand">
+        Sipariş, beden ve stok soruların için bize yaz. {siteConfig.hours}.
       </p>
-      <form
-        className="relative mt-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-          setSubmitted(true);
-        }}
-      >
-        <label htmlFor="st-footer-email" className="sr-only">
-          E-posta adresi
-        </label>
-        <input
-          id="st-footer-email"
-          type="email"
-          name="email"
-          required
-          autoComplete="email"
-          placeholder="E-posta adresi"
-          className="h-12 w-full border-b border-bone bg-transparent pr-8 text-bone outline-none placeholder:text-ash"
-        />
-        <button
-          type="submit"
-          aria-label="Abone ol"
-          className="absolute top-0 right-0 flex h-12 w-6 cursor-pointer items-center justify-end"
-        >
-          <CaretIcon className="size-[18px]" />
-        </button>
-      </form>
-      {submitted ? <p className="mt-3 text-ash">Listeye eklendin. Teşekkürler.</p> : null}
-      <p className="mt-3 text-ash">
-        Abone olarak{" "}
-        <a href={storeUrl("/sayfa/kvkk")} className="st-underline">
-          KVKK Aydınlatma Metni
-        </a>
-        ’ni okuduğunu kabul edersin. Dilediğin zaman abonelikten çıkabilirsin.
-      </p>
-      {socialLinks.length > 0 ? (
-        <ul className="mt-12 flex gap-3">
-          {socialLinks.map(({ label, href }) => {
-            const Icon = socialIcons[label];
-            return (
-              <li key={label}>
-                <a href={href} className="block size-5" target="_blank" rel="noreferrer">
-                  <Icon className="size-5" fill="currentColor" />
-                  <span className="sr-only">{label}</span>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      ) : null}
+      <ul className="mt-5 flex flex-col gap-3">
+        {whatsapp ? (
+          <li>
+            <a href={whatsapp} target="_blank" rel="noreferrer" className="st-label inline-flex items-center gap-2 st-hover-underline">
+              <WhatsAppIcon className="size-5" />
+              WhatsApp ile Yaz
+            </a>
+          </li>
+        ) : null}
+        {siteConfig.phone ? (
+          <li>
+            <a href={`tel:${siteConfig.phone.replace(/\s/g, "")}`} className="st-hover-underline">
+              {siteConfig.phone}
+            </a>
+          </li>
+        ) : null}
+        {siteConfig.email ? (
+          <li>
+            <a href={`mailto:${siteConfig.email}`} className="st-hover-underline">
+              {siteConfig.email}
+            </a>
+          </li>
+        ) : null}
+        {siteConfig.instagram ? (
+          <li>
+            <a
+              href={`https://www.instagram.com/${siteConfig.instagram}/`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 st-hover-underline"
+            >
+              <InstagramIcon className="size-5" fill="currentColor" />@{siteConfig.instagram}
+            </a>
+          </li>
+        ) : null}
+        <li>
+          <Link href="/sayfa/iletisim" className="st-label st-underline">
+            Tüm İletişim Bilgileri
+          </Link>
+        </li>
+      </ul>
     </div>
   );
 }
@@ -100,23 +87,19 @@ function Newsletter() {
 function SubFooter() {
   return (
     <div className="border-t border-smoke px-3 pt-[13px] pb-9 text-ash tab:flex tab:items-start tab:justify-between tab:gap-6 tab:px-8 tab:pt-4 tab:pb-12">
-      <ul className="flex flex-wrap items-center gap-y-[9px] tab:shrink-0 tab:basis-[340px] desk:basis-auto">
+      <ul className="flex flex-wrap items-center gap-y-[9px]">
         {legalLinks.map((link, index) => (
           <Fragment key={link.label}>
             {index > 0 ? <li aria-hidden="true" className="mx-1.5 h-3.5 w-px bg-ash" /> : null}
             <li>
-              <a href={storeUrl(link.href)} className="st-underline">
+              <Link href={link.href} className="st-underline">
                 {link.label}
-              </a>
+              </Link>
             </li>
           </Fragment>
         ))}
       </ul>
-      <div className="mt-6 flex flex-col gap-6 tab:mt-0 tab:flex-row tab:items-center tab:gap-0">
-        <p className="desk:whitespace-nowrap">© 2026 Strale Studio. Tüm hakları saklıdır.</p>
-        <span className="mx-1 hidden text-bone tab:inline">|</span>
-        <ShippingSelect className="text-bone" />
-      </div>
+      <p className="mt-6 tab:mt-0 desk:whitespace-nowrap">© 2026 Strale. Tüm hakları saklıdır.</p>
     </div>
   );
 }

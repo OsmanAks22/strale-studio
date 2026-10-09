@@ -1,21 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { navItems, storeUrl, type NavItem } from "./data";
-import {
-  AccountIcon,
-  BagIcon,
-  CaretIcon,
-  CloseIcon,
-  HamburgerIcon,
-  SearchIcon,
-  WishlistIcon,
-} from "./icons";
+import { navItems, type NavItem } from "./data";
+import { CaretIcon, CloseIcon, HamburgerIcon, SearchIcon, WhatsAppIcon } from "./icons";
 import { StraleLogo } from "./logo";
-import { ShippingSelect } from "./shipping-select";
+import { siteConfig, whatsappLink } from "./site-config";
 
 const SCROLLED_PAST = 70;
 
@@ -93,20 +84,24 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
         </div>
 
         <div className="flex items-center">
-          <ShippingSelect className="mr-5 hidden tab:inline-flex" />
           <div className="flex items-center gap-5">
-            <IconLink href="/arama" label="Ara">
+            <Link href="/sayfa/iletisim" className="st-label st-hover-underline hidden tab:block">
+              İletişim
+            </Link>
+            <Link href="/arama" aria-label="Ürün ara" className="block">
               <SearchIcon className="size-5" />
-            </IconLink>
-            <IconLink href="/sepet" label="Sepet">
-              <BagIcon className="size-5" />
-            </IconLink>
-            <IconLink href="/favoriler" label="Favoriler">
-              <WishlistIcon className="size-5" />
-            </IconLink>
-            <IconLink href="/hesap" label="Hesabım" className="hidden tab:block">
-              <AccountIcon className="size-5" />
-            </IconLink>
+            </Link>
+            {siteConfig.whatsapp ? (
+              <a
+                href={whatsappLink("Merhaba, sipariş vermek istiyorum.") ?? undefined}
+                aria-label="WhatsApp ile yazın"
+                target="_blank"
+                rel="noreferrer"
+                className="block"
+              >
+                <WhatsAppIcon className="size-5" />
+              </a>
+            ) : null}
             <button
               type="button"
               aria-label="Menü"
@@ -149,33 +144,15 @@ function TopLink({ item, active, onToggle }: { item: NavItem; active: boolean; o
     );
   }
   return (
-    <a
-      href={storeUrl(item.href)}
+    <Link
+      href={item.href}
       aria-haspopup={item.columns ? "true" : undefined}
       aria-expanded={item.columns ? active : undefined}
       onFocus={item.columns ? onToggle : undefined}
       className={className}
     >
       {item.label}
-    </a>
-  );
-}
-
-function IconLink({
-  href,
-  label,
-  className,
-  children,
-}: {
-  href: string;
-  label: string;
-  className?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <a href={storeUrl(href)} aria-label={label} className={cn("block", className)}>
-      {children}
-    </a>
+    </Link>
   );
 }
 
@@ -197,36 +174,19 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
               <ul className="mt-5 flex flex-col gap-4">
                 {column.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href={storeUrl(link.href)}
+                    <Link
+                      href={link.href}
                       tabIndex={open ? 0 : -1}
                       className="st-label st-hover-underline"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        {item.feature ? (
-          <a
-            href={storeUrl(item.feature.href)}
-            tabIndex={open ? 0 : -1}
-            className="mr-[-8px] block w-[336px] shrink-0 st-hover-underline"
-          >
-            <Image
-              src={item.feature.image}
-              alt=""
-              width={336}
-              height={420}
-              sizes="336px"
-              className="block h-[420px] w-[336px] object-cover"
-            />
-            <span className="mt-4 block st-label">{item.feature.caption}</span>
-          </a>
-        ) : null}
       </div>
     </div>
   );
@@ -294,28 +254,27 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     <CaretIcon className="size-5" />
                   </button>
                 ) : (
-                  <a
-                    href={storeUrl(item.href ?? "/")}
+                  <Link
+                    href={item.href ?? "/"}
                     className="flex h-[58px] items-center st-label"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 )}
               </li>
             ))}
           </ul>
 
           <div className="mt-auto flex flex-col gap-4 pt-10 pb-12">
-            <a href={storeUrl("/hesap")} className="st-label">
-              Hesabım
-            </a>
-            <a href={storeUrl("/sayfa/iletisim")} className="st-label">
+            <Link href="/sayfa/iletisim" className="st-label">
               İletişim
-            </a>
-            <a href={storeUrl("/sayfa/hakkimizda")} className="st-label">
+            </Link>
+            <Link href="/sayfa/hakkimizda" className="st-label">
               Hakkımızda
-            </a>
-            <ShippingSelect className="mt-2" />
+            </Link>
+            <Link href="/arama" className="st-label">
+              Ürün Ara
+            </Link>
           </div>
         </nav>
 
@@ -347,27 +306,14 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     <ul className="mt-5 flex flex-col gap-4">
                       {column.links.map((link) => (
                         <li key={link.label}>
-                          <a href={storeUrl(link.href)} className="st-label st-hover-underline">
+                          <Link href={link.href} className="st-label st-hover-underline">
                             {link.label}
-                          </a>
+                          </Link>
                         </li>
                       ))}
                     </ul>
                   </div>
                 ))}
-                {active.feature ? (
-                  <a href={storeUrl(active.feature.href)} className="block">
-                    <Image
-                      src={active.feature.image}
-                      alt=""
-                      width={336}
-                      height={420}
-                      sizes="336px"
-                      className="block aspect-[4/5] w-full object-cover"
-                    />
-                    <span className="mt-4 block st-label">{active.feature.caption}</span>
-                  </a>
-                ) : null}
               </div>
             </>
           ) : null}
