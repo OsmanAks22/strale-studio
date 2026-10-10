@@ -1,6 +1,7 @@
 {
-  "version": 1,
-  "subject": "subject-a",
+  "version": 2,
+  "defaultModel": "model-a",
+  "inputs": "docs/image-pipeline/inputs",
   "outputRoot": "public/sites/strale",
   "inbox": "temp/higgsfield",
   "slots": [
@@ -18,6 +19,10 @@
         "outfit": "Outerwear: chore jacket or ridge-zip jacket; Base: crewneck tee; Pants: relaxed trouser; Footwear: minimal leather sneaker",
         "pose": "Editorial standing, 3/4 turn, hands relaxed",
         "background": "Location: concrete / industrial interior, soft daylight"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -34,6 +39,10 @@
         "outfit": "Outerwear: track jacket; Base: performance tee; Pants: track pant; Footwear: running shoe",
         "pose": "Dynamic: walking / mid-stride",
         "background": "Location: outdoor track or open urban street, overcast light"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -50,6 +59,10 @@
         "outfit": "Same as performance-desktop-poster",
         "pose": "Same as performance-desktop-poster",
         "background": "Same as performance-desktop-poster"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -66,6 +79,10 @@
         "outfit": "Base: crewneck sweatshirt or full-zip; Pants: matching sweatpant; Footwear: sneaker",
         "pose": "Seated, relaxed lean",
         "background": "Location: warm wood interior, window light"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -82,6 +99,10 @@
         "outfit": "Outerwear: wool jacket / overcoat; Base: knit; Pants: trouser; Footwear: boot",
         "pose": "Editorial standing, looking off-camera",
         "background": "Location: autumn street or forest edge, low sun"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -98,6 +119,10 @@
         "outfit": "Full outfit preset matching the season palette",
         "pose": "Product-forward, front-facing",
         "background": "Studio: clean seamless, light grey"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -114,6 +139,10 @@
         "outfit": "Full outfit preset matching the season palette",
         "pose": "Product-forward, front-facing",
         "background": "Studio: clean seamless, light grey"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -130,6 +159,10 @@
         "outfit": "Headwear + Accessories categories over a basic outfit",
         "pose": "Close-up / half-body",
         "background": "Studio: clean seamless, light grey"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -146,6 +179,10 @@
         "outfit": "Full outfit preset matching the season palette",
         "pose": "Product-forward, front-facing",
         "background": "Studio: clean seamless, light grey"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -162,6 +199,10 @@
         "outfit": "Base: tee as the hero piece (tucked or straight hem visible)",
         "pose": "Product-forward, front or 3/4",
         "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -178,6 +219,10 @@
         "outfit": "Pants as the hero piece; neutral top",
         "pose": "Full body, walking",
         "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -194,6 +239,10 @@
         "outfit": "Base: knit sweater / quarter-zip",
         "pose": "Product-forward, front or 3/4",
         "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -210,6 +259,10 @@
         "outfit": "Base: button shirt or overshirt",
         "pose": "Product-forward, front or 3/4",
         "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -226,6 +279,10 @@
         "outfit": "Headwear + Accessories over a plain outfit",
         "pose": "Product-forward, front or 3/4",
         "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      },
+      "generate": {
+        "model": "model-a",
+        "products": []
       }
     },
     {
@@ -237,7 +294,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Wool Fleece Chore Jacket, heather brown. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Wool Fleece Chore Jacket, heather brown. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-cotton-flannel-highland-shirt-arctic-wolf-oxide",
@@ -248,7 +309,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Cotton Flannel Highland Shirt, arctic wolf / oxide plaid. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Cotton Flannel Highland Shirt, arctic wolf / oxide plaid. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-poly-pique-campo-standard-track-pant-5738-navy",
@@ -259,7 +324,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Pant, navy. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Pant, navy. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-merino-kenny-quarter-zip-nep-heather-grey",
@@ -270,7 +339,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Kenny Quarter Zip, nep heather grey. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Kenny Quarter Zip, nep heather grey. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-merino-jersey-vista-slim-t-shirt-black",
@@ -281,7 +354,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Jersey Vista Slim T-Shirt, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Jersey Vista Slim T-Shirt, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-poly-pique-campo-standard-track-jacket-3235-navy",
@@ -292,7 +369,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Jacket, navy. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Jacket, navy. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-wool-fleece-ridge-zip-jacket-heather-black",
@@ -303,7 +384,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Wool Fleece Ridge Zip Jacket, heather black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Wool Fleece Ridge Zip Jacket, heather black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-merino-jersey-vista-slim-t-shirt-carbon",
@@ -314,7 +399,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Jersey Vista Slim T-Shirt, carbon. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Jersey Vista Slim T-Shirt, carbon. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-poly-pique-campo-standard-track-pant-5738-petrol",
@@ -325,7 +414,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Pant, petrol. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Pant, petrol. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-midweight-jersey-standard-long-sleeve-2361-black",
@@ -336,7 +429,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Midweight Jersey Long Sleeve, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Midweight Jersey Long Sleeve, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-poly-pique-campo-standard-track-jacket-3235-petrol",
@@ -347,7 +444,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Jacket, petrol. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Jacket, petrol. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     },
     {
       "id": "product-dual-fleece-relaxed-sweatpant-black",
@@ -358,7 +459,11 @@
       "height": 900,
       "tool": "packshot",
       "gravity": "center",
-      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Dual Fleece Relaxed Sweatpant, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Dual Fleece Relaxed Sweatpant, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product.",
+      "generate": {
+        "products": [],
+        "prompt": "Turn the product photo into a clean ghost-mannequin e-commerce packshot: the garment alone, centered, front view, soft light grey gradient background, even soft studio light, no person, no hanger."
+      }
     }
   ]
 }

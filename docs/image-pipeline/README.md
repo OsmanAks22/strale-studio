@@ -7,6 +7,8 @@ Bu klasör o işin bilgi birikimini ve takip dosyalarını tutar.
 |---|---|
 | `README.md` | Bu doküman: araç bilgisi, kurallar, adım adım akış |
 | `shot-list.json` | Sitedeki her görsel alanı (slot): id, kullanıldığı yer, hedef boyut, kırpma yönü, brief, kıyafet / poz / arka plan seçimi |
+| `inputs/models/`, `inputs/products/` | Kaynak fotoğraflar: mankenler (`model-a.jpg`, `model-b.jpg`) ve ürünler |
+| `../../scripts/higgsfield_generate.py` | Higgsfield API ile üretim (manken + ürün fotoğrafı → görsel), `temp/higgsfield/` içine indirir |
 | `../../scripts/ingest-generated-images.mjs` | İndirilen görselleri slot boyutuna kırpıp `public/sites/strale/` altına yazar |
 
 Kaynak: [AI Stylist: Recreate Any Outfit with Try-On](https://higgsfield.ai/blog/AI-Stylist-Recreate-Any-Outfit-with-Try-On)
@@ -30,7 +32,7 @@ AI Stylist, Higgsfield içinde **Apps → AI Stylist** altında çalışan bir w
 - Kredi ve fiyat, ticari kullanım hakları (planınıza göre kontrol edin)
 - Kendi ürün fotoğrafımızı kıyafet referansı olarak yükleyip yükleyemediğimiz
 - Altta hangi modelin çalıştığı
-- **API:** AI Stylist için herkese açık bir API bulamadık. Bu yüzden üretim adımı manuel (web arayüzü), sonrası otomatik.
+- **API:** AI Stylist'in kendisinin API'si yok. Aynı işi API'de **Marketing Studio Image** (`marketing-studio/image`) yapıyor. Bkz. bölüm 4A.
 
 > Bu belirsizlikler netleşince bu bölümü güncelleyin. Özellikle "kendi kıyafetimizi yükleme" mümkünse ürün sadakati büyük ölçüde artar.
 
@@ -52,7 +54,44 @@ AI Stylist, Higgsfield içinde **Apps → AI Stylist** altında çalışan bir w
 6. **Palet:** sezon renkleri (kahve, antrasit, lacivert, petrol, gri melanj). Neon ve logo yok. AI'ın uydurduğu yazı, logo ve etiketleri reddedin.
 7. **Kalite kontrol:** el ve parmaklar, fermuar ve düğme sayısı, yaka simetrisi, kumaş dokusu, ayakkabı çifti aynı mı? Bozuksa yeniden üretin, rötuşla kurtarmaya çalışmayın.
 
-## 4. Adım adım akış
+## 4A. API ile otomatik üretim (önerilen)
+
+Model: `marketing-studio/image`. Endpoint `https://api.higgsfield.ai/marketing-studio/image`, başlık `Authorization: Key KEY_ID:KEY_SECRET`. İstek asenkron çalışır, SDK sonucu bekler.
+
+| Parametre | Değer |
+|---|---|
+| `image_urls` | En fazla 16 görsel. Betik önce ürün fotoğraflarını, **en sona** manken fotoğrafını koyar. |
+| `prompt` | Slotun `brief` + poz + fon alanlarından otomatik kurulur. `generate.prompt` ile ezilebilir. |
+| `resolution` | `1k` / `2k` (varsayılan) / `4k` |
+| `quality` | `low` / `medium` / `high` (varsayılan) |
+| `aspect_ratio` | Slot boyutuna en yakın oran (4:5 → `3:4`, 16:9 → `16:9`). Betik sonra 4:5'e kırpar. |
+| `enhance_prompt` + `preset_id` | Marketing Studio preset modu. Şimdilik kapalı. Liste için `--presets`. |
+
+**Fiyat (Ekim 2026, indirimli):** 1k low $0.0138, 2k low $0.0189, 4k high $0.6136 / görsel. Medium ve high kalite 1k/2k fiyatı yayınlanmamış. Betik bunun için temkinli bir tahmin kullanır ($0.05). **4k kullanmayın:** görsel başına yaklaşık 60 sent tutar ve site için 2k yeterli. 10 dolar 2k'da yüzlerce görsele yeter. İlk denemeden sonra gerçek harcamayı [console.higgsfield.ai](https://console.higgsfield.ai/dashboard) üzerinden kontrol edip bu tabloyu güncelleyin.
+
+**Kurulum:**
+1. Anahtar repo'ya ve sohbete **asla** yazılmaz. Bulut ortamının ayarlarına (oturum başlığındaki ortam menüsü → Edit) `HF_KEY=KEY_ID:KEY_SECRET` olarak eklenir. Yerelde `.env` dosyası ya da `export HF_KEY=...` kullanılır.
+2. `pip install higgsfield-client`
+
+**Slotu bağlama:** `shot-list.json` içinde her slotun `generate` alanı var:
+```json
+"generate": { "model": "model-a", "products": ["esofman-ust-yesil", "esofman-alt-yesil"] }
+```
+Değerler dosya adlarıdır (uzantısız): `inputs/models/model-a.jpg`, `inputs/products/esofman-ust-yesil.jpg`. Ürün kartları (`packshot`) için yalnızca `products` doldurulur. Betik ürünü mankensiz, gri fonlu bir pakshot'a çevirir.
+
+**Çalıştırma:**
+```bash
+npm run images:generate -- --dry-run content-sweats         # plan + tahmini maliyet, API çağrısı yok
+npm run images:generate -- content-sweats --quality low     # tek slot, ucuz deneme
+npm run images:generate -- --tool ai-stylist --variants 2 --budget 2
+npm run images:ingest                                        # kırp ve siteye yerleştir
+```
+- `--budget` (varsayılan $1) tahmini harcama limiti geçmeden betiği durdurur.
+- Her ücretli çağrı `temp/higgsfield/log.jsonl` dosyasına yazılır.
+- Daha önce üretilmiş slotlar atlanır. Yeniden üretmek için `--force`.
+- Varyasyonlar `<id>-v2.png` olarak kaydedilir. Beğendiğinizi `<id>.png` olarak yeniden adlandırın.
+
+## 4. Adım adım akış (manuel, web arayüzü)
 
 ```
 shot-list.json  →  Higgsfield AI Stylist (manuel)  →  temp/higgsfield/<slot-id>.png  →  npm run images:ingest  →  public/sites/strale/...
