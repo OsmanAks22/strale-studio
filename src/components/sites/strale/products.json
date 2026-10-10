@@ -1,0 +1,205 @@
+[
+  {
+    "handle": "yun-polar-ceket-kahve",
+    "name": "Yün Polar Ceket",
+    "color": "Kahve",
+    "category": "dis-giyim",
+    "price": 3490,
+    "listPrice": 6990,
+    "stock": 4,
+    "sizes": [
+      "M",
+      "L",
+      "XL"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%70 yün %30 polyester",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "ekose-flanel-gomlek-haki",
+    "name": "Ekose Flanel Gömlek",
+    "color": "Haki",
+    "category": "gomlek",
+    "price": 1290,
+    "listPrice": 2490,
+    "stock": 2,
+    "sizes": [
+      "S",
+      "M"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 pamuk flanel",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "seritli-esofman-alti-lacivert",
+    "name": "Şeritli Eşofman Altı",
+    "color": "Lacivert",
+    "category": "esofman",
+    "price": 990,
+    "listPrice": 1990,
+    "stock": 7,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 polyester pike",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "merinos-yarim-fermuarli-triko-gri",
+    "name": "Merinos Yarım Fermuarlı Triko",
+    "color": "Gri",
+    "category": "triko",
+    "price": 2190,
+    "listPrice": 4290,
+    "stock": 3,
+    "sizes": [
+      "M",
+      "L"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 merinos yün",
+    "origin": "Türkiye - İngiltere siparişi fazlası"
+  },
+  {
+    "handle": "merinos-slim-tisort-siyah",
+    "name": "Merinos Slim Tişört",
+    "color": "Siyah",
+    "category": "tisort",
+    "price": 690,
+    "listPrice": 1290,
+    "stock": 12,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 merinos yün süprem",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "seritli-esofman-ustu-lacivert",
+    "name": "Şeritli Eşofman Üstü",
+    "color": "Lacivert",
+    "category": "esofman",
+    "price": 1190,
+    "listPrice": 2290,
+    "stock": 5,
+    "sizes": [
+      "M",
+      "L",
+      "XL"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 polyester pike",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "yun-polar-fermuarli-ceket-siyah",
+    "name": "Yün Polar Fermuarlı Ceket",
+    "color": "Siyah",
+    "category": "dis-giyim",
+    "price": 3490,
+    "listPrice": 6990,
+    "stock": 1,
+    "sizes": [
+      "L"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%70 yün %30 polyester",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "kapusonlu-sweatshirt-gri-melanj",
+    "name": "Kapüşonlu Sweatshirt",
+    "color": "Gri Melanj",
+    "category": "sweatshirt",
+    "price": 1190,
+    "listPrice": 2390,
+    "stock": 6,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 pamuk 3 iplik",
+    "origin": "Türkiye - ABD siparişi fazlası"
+  },
+  {
+    "handle": "kargo-pantolon-bej",
+    "name": "Kargo Pantolon",
+    "color": "Bej",
+    "category": "pantolon",
+    "price": 1390,
+    "listPrice": 2690,
+    "stock": 4,
+    "sizes": [
+      "30",
+      "32",
+      "34",
+      "36"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%98 pamuk %2 elastan gabardin",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "uzun-kollu-basic-tisort-siyah",
+    "name": "Uzun Kollu Basic Tişört",
+    "color": "Siyah",
+    "category": "tisort",
+    "price": 490,
+    "listPrice": 990,
+    "stock": 18,
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%100 pamuk süprem",
+    "origin": "Türkiye - AB siparişi fazlası"
+  },
+  {
+    "handle": "seritli-esofman-ustu-petrol",
+    "name": "Şeritli Eşofman Üstü",
+    "color": "Petrol",
+    "category": "esofman",
+    "price": 890,
+    "listPrice": 2290,
+    "stock": 2,
+    "sizes": [
+      "M"
+    ],
+    "condition": "hafif-kusurlu",
+    "fabric": "%100 polyester pike",
+    "origin": "Türkiye - AB siparişi fazlası",
+    "note": "Sol kol manşetinde hafif renk farkı"
+  },
+  {
+    "handle": "yun-karisimli-bere-antrasit",
+    "name": "Yün Karışımlı Bere",
+    "color": "Antrasit",
+    "category": "aksesuar",
+    "price": 390,
+    "listPrice": 790,
+    "stock": 10,
+    "sizes": [
+      "STD"
+    ],
+    "condition": "kusursuz",
+    "fabric": "%50 yün %50 akrilik",
+    "origin": "Türkiye - AB siparişi fazlası"
+  }
+]

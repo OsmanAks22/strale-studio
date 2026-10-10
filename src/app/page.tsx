@@ -1,29 +1,22 @@
 import {
-  AnnouncementBar,
+  Banner,
   ContentCards,
   Hero,
   NewArrivals,
-  PerformanceBanner,
   RecentlyViewed,
   ShopByCategory,
-} from "@/components/sites/reigningchamp/home-sections";
-import { SiteFooter } from "@/components/sites/reigningchamp/site-footer";
-import { SiteHeader } from "@/components/sites/reigningchamp/site-header";
+} from "@/components/sites/strale/home-sections";
+import { StoreShell } from "@/components/sites/strale/store-shell";
 
 export default function Home() {
   return (
-    <>
-      <AnnouncementBar />
-      <SiteHeader />
-      <main>
-        <Hero />
-        <NewArrivals />
-        <ContentCards />
-        <ShopByCategory />
-        <PerformanceBanner />
-        <RecentlyViewed />
-      </main>
-      <SiteFooter />
-    </>
+    <StoreShell overlay>
+      <Hero />
+      <NewArrivals />
+      <ContentCards />
+      <ShopByCategory />
+      <Banner />
+      <RecentlyViewed />
+    </StoreShell>
   );
 }
