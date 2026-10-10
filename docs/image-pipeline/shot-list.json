@@ -1,0 +1,364 @@
+{
+  "version": 1,
+  "subject": "subject-a",
+  "outputRoot": "public/sites/strale",
+  "inbox": "temp/higgsfield",
+  "slots": [
+    {
+      "id": "hero-poster",
+      "usedIn": "Hero video poster (full-bleed, copy bottom-left)",
+      "reference": "public/sites/reigningchamp/video/hero-refined-utility-poster.jpg",
+      "output": "video/hero-refined-utility-poster.jpg",
+      "width": 1920,
+      "height": 1080,
+      "tool": "ai-stylist",
+      "gravity": "left",
+      "brief": "Season key visual 'Refined Utility'. Wide 16:9, subject left/center third so the bottom-left copy stays readable; lower-left quadrant darker/quiet.",
+      "stylist": {
+        "outfit": "Outerwear: chore jacket or ridge-zip jacket; Base: crewneck tee; Pants: relaxed trouser; Footwear: minimal leather sneaker",
+        "pose": "Editorial standing, 3/4 turn, hands relaxed",
+        "background": "Location: concrete / industrial interior, soft daylight"
+      }
+    },
+    {
+      "id": "performance-desktop-poster",
+      "usedIn": "Performance video banner poster (desktop, 600px tall)",
+      "reference": "public/sites/reigningchamp/video/performance-desktop-poster.jpg",
+      "output": "video/performance-desktop-poster.jpg",
+      "width": 1920,
+      "height": 1080,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Training / performance look. Wide crop, subject centered, motion-ready pose.",
+      "stylist": {
+        "outfit": "Outerwear: track jacket; Base: performance tee; Pants: track pant; Footwear: running shoe",
+        "pose": "Dynamic: walking / mid-stride",
+        "background": "Location: outdoor track or open urban street, overcast light"
+      }
+    },
+    {
+      "id": "performance-mobile-poster",
+      "usedIn": "Performance video banner poster (mobile 4:5)",
+      "reference": "public/sites/reigningchamp/video/performance-mobile-poster.jpg",
+      "output": "video/performance-mobile-poster.jpg",
+      "width": 750,
+      "height": 938,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Same look and subject as performance-desktop-poster, vertical crop.",
+      "stylist": {
+        "outfit": "Same as performance-desktop-poster",
+        "pose": "Same as performance-desktop-poster",
+        "background": "Same as performance-desktop-poster"
+      }
+    },
+    {
+      "id": "content-sweats",
+      "usedIn": "Two-up content card 'Sweats' (text bottom-left)",
+      "reference": "public/sites/reigningchamp/images/content/sweats.jpg",
+      "output": "images/content/sweats.jpg",
+      "width": 1080,
+      "height": 1350,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Matching sweat set, warm interior, seated relaxed pose. Keep bottom-left 30% calm for overlaid copy.",
+      "stylist": {
+        "outfit": "Base: crewneck sweatshirt or full-zip; Pants: matching sweatpant; Footwear: sneaker",
+        "pose": "Seated, relaxed lean",
+        "background": "Location: warm wood interior, window light"
+      }
+    },
+    {
+      "id": "content-jackets-outerwear",
+      "usedIn": "Two-up content card 'Jackets & Outerwear'",
+      "reference": "public/sites/reigningchamp/images/content/jackets-outerwear.jpg",
+      "output": "images/content/jackets-outerwear.jpg",
+      "width": 1080,
+      "height": 1350,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Fall outerwear hero. Full or 3/4 length, subject centered or right of center.",
+      "stylist": {
+        "outfit": "Outerwear: wool jacket / overcoat; Base: knit; Pants: trouser; Footwear: boot",
+        "pose": "Editorial standing, looking off-camera",
+        "background": "Location: autumn street or forest edge, low sun"
+      }
+    },
+    {
+      "id": "menu-latest",
+      "usedIn": "Mega-menu feature image 'latest' (336x420 display)",
+      "reference": "public/sites/reigningchamp/images/menu/latest.jpg",
+      "output": "images/menu/latest.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Newest-season full look. Small display size: one subject, simple silhouette, strong contrast.",
+      "stylist": {
+        "outfit": "Full outfit preset matching the season palette",
+        "pose": "Product-forward, front-facing",
+        "background": "Studio: clean seamless, light grey"
+      }
+    },
+    {
+      "id": "menu-clothing",
+      "usedIn": "Mega-menu feature image 'clothing' (336x420 display)",
+      "reference": "public/sites/reigningchamp/images/menu/clothing.jpg",
+      "output": "images/menu/clothing.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Layered everyday look. Small display size: one subject, simple silhouette, strong contrast.",
+      "stylist": {
+        "outfit": "Full outfit preset matching the season palette",
+        "pose": "Product-forward, front-facing",
+        "background": "Studio: clean seamless, light grey"
+      }
+    },
+    {
+      "id": "menu-accessories",
+      "usedIn": "Mega-menu feature image 'accessories' (336x420 display)",
+      "reference": "public/sites/reigningchamp/images/menu/accessories.jpg",
+      "output": "images/menu/accessories.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Close/medium shot emphasizing cap, beanie, bag, socks. Small display size: one subject, simple silhouette, strong contrast.",
+      "stylist": {
+        "outfit": "Headwear + Accessories categories over a basic outfit",
+        "pose": "Close-up / half-body",
+        "background": "Studio: clean seamless, light grey"
+      }
+    },
+    {
+      "id": "menu-shop-by",
+      "usedIn": "Mega-menu feature image 'shop-by' (336x420 display)",
+      "reference": "public/sites/reigningchamp/images/menu/shop-by.jpg",
+      "output": "images/menu/shop-by.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Full look, clean and graphic. Small display size: one subject, simple silhouette, strong contrast.",
+      "stylist": {
+        "outfit": "Full outfit preset matching the season palette",
+        "pose": "Product-forward, front-facing",
+        "background": "Studio: clean seamless, light grey"
+      }
+    },
+    {
+      "id": "category-t-shirts",
+      "usedIn": "Shop by Category card 't-shirts'",
+      "reference": "public/sites/reigningchamp/images/categories/t-shirts.jpg",
+      "output": "images/categories/t-shirts.jpg",
+      "width": 750,
+      "height": 938,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Category hero for t-shirts: the category garment must read instantly at ~320px width.",
+      "stylist": {
+        "outfit": "Base: tee as the hero piece (tucked or straight hem visible)",
+        "pose": "Product-forward, front or 3/4",
+        "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      }
+    },
+    {
+      "id": "category-pants",
+      "usedIn": "Shop by Category card 'pants'",
+      "reference": "public/sites/reigningchamp/images/categories/pants.jpg",
+      "output": "images/categories/pants.jpg",
+      "width": 750,
+      "height": 938,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Category hero for pants: the category garment must read instantly at ~320px width.",
+      "stylist": {
+        "outfit": "Pants as the hero piece; neutral top",
+        "pose": "Full body, walking",
+        "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      }
+    },
+    {
+      "id": "category-knitwear",
+      "usedIn": "Shop by Category card 'knitwear'",
+      "reference": "public/sites/reigningchamp/images/categories/knitwear.jpg",
+      "output": "images/categories/knitwear.jpg",
+      "width": 750,
+      "height": 938,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Category hero for knitwear: the category garment must read instantly at ~320px width.",
+      "stylist": {
+        "outfit": "Base: knit sweater / quarter-zip",
+        "pose": "Product-forward, front or 3/4",
+        "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      }
+    },
+    {
+      "id": "category-shirts",
+      "usedIn": "Shop by Category card 'shirts'",
+      "reference": "public/sites/reigningchamp/images/categories/shirts.jpg",
+      "output": "images/categories/shirts.jpg",
+      "width": 750,
+      "height": 938,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Category hero for shirts: the category garment must read instantly at ~320px width.",
+      "stylist": {
+        "outfit": "Base: button shirt or overshirt",
+        "pose": "Product-forward, front or 3/4",
+        "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      }
+    },
+    {
+      "id": "category-accessories",
+      "usedIn": "Shop by Category card 'accessories'",
+      "reference": "public/sites/reigningchamp/images/categories/accessories.jpg",
+      "output": "images/categories/accessories.jpg",
+      "width": 750,
+      "height": 938,
+      "tool": "ai-stylist",
+      "gravity": "center",
+      "brief": "Category hero for accessories: the category garment must read instantly at ~320px width.",
+      "stylist": {
+        "outfit": "Headwear + Accessories over a plain outfit",
+        "pose": "Product-forward, front or 3/4",
+        "background": "Studio: clean seamless, light grey (same across all 5 categories)"
+      }
+    },
+    {
+      "id": "product-wool-fleece-chore-jacket-heather-brown",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/wool-fleece-chore-jacket-heather-brown.jpg",
+      "output": "images/products/wool-fleece-chore-jacket-heather-brown.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Wool Fleece Chore Jacket, heather brown. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-cotton-flannel-highland-shirt-arctic-wolf-oxide",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/cotton-flannel-highland-shirt-arctic-wolf-oxide.jpg",
+      "output": "images/products/cotton-flannel-highland-shirt-arctic-wolf-oxide.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Cotton Flannel Highland Shirt, arctic wolf / oxide plaid. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-poly-pique-campo-standard-track-pant-5738-navy",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/poly-pique-campo-standard-track-pant-5738-navy.jpg",
+      "output": "images/products/poly-pique-campo-standard-track-pant-5738-navy.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Pant, navy. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-merino-kenny-quarter-zip-nep-heather-grey",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/merino-kenny-quarter-zip-nep-heather-grey.jpg",
+      "output": "images/products/merino-kenny-quarter-zip-nep-heather-grey.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Kenny Quarter Zip, nep heather grey. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-merino-jersey-vista-slim-t-shirt-black",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/merino-jersey-vista-slim-t-shirt-black.jpg",
+      "output": "images/products/merino-jersey-vista-slim-t-shirt-black.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Jersey Vista Slim T-Shirt, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-poly-pique-campo-standard-track-jacket-3235-navy",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/poly-pique-campo-standard-track-jacket-3235-navy.jpg",
+      "output": "images/products/poly-pique-campo-standard-track-jacket-3235-navy.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Jacket, navy. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-wool-fleece-ridge-zip-jacket-heather-black",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/wool-fleece-ridge-zip-jacket-heather-black.jpg",
+      "output": "images/products/wool-fleece-ridge-zip-jacket-heather-black.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Wool Fleece Ridge Zip Jacket, heather black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-merino-jersey-vista-slim-t-shirt-carbon",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/merino-jersey-vista-slim-t-shirt-carbon.jpg",
+      "output": "images/products/merino-jersey-vista-slim-t-shirt-carbon.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Merino Jersey Vista Slim T-Shirt, carbon. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-poly-pique-campo-standard-track-pant-5738-petrol",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/poly-pique-campo-standard-track-pant-5738-petrol.jpg",
+      "output": "images/products/poly-pique-campo-standard-track-pant-5738-petrol.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Pant, petrol. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-midweight-jersey-standard-long-sleeve-2361-black",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/midweight-jersey-standard-long-sleeve-2361-black.jpg",
+      "output": "images/products/midweight-jersey-standard-long-sleeve-2361-black.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Midweight Jersey Long Sleeve, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-poly-pique-campo-standard-track-jacket-3235-petrol",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/poly-pique-campo-standard-track-jacket-3235-petrol.jpg",
+      "output": "images/products/poly-pique-campo-standard-track-jacket-3235-petrol.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Poly Pique Campo Track Jacket, petrol. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    },
+    {
+      "id": "product-dual-fleece-relaxed-sweatpant-black",
+      "usedIn": "New Arrivals product card (4:5, light grey backdrop)",
+      "reference": "public/sites/reigningchamp/images/products/dual-fleece-relaxed-sweatpant-black.jpg",
+      "output": "images/products/dual-fleece-relaxed-sweatpant-black.jpg",
+      "width": 720,
+      "height": 900,
+      "tool": "packshot",
+      "gravity": "center",
+      "brief": "Ghost-mannequin / flat packshot of the REAL garment: Dual Fleece Relaxed Sweatpant, black. Centered, light grey gradient backdrop, no model. Not an AI Stylist job: must show the actual product."
+    }
+  ]
+}
