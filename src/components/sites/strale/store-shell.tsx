@@ -16,10 +16,10 @@ export function StoreShell({ children, overlay = false }: { children: React.Reac
 
 export function PageHeading({ eyebrow, title, children }: { eyebrow?: string; title: string; children?: React.ReactNode }) {
   return (
-    <header className="px-3 pt-10 pb-6 tab:px-8 tab:pt-14 tab:pb-8">
-      {eyebrow ? <p className="st-micro text-[10px] text-graphite">{eyebrow}</p> : null}
-      <h1 className="st-display mt-2 text-[34px] leading-[36px] tab:text-[56px] tab:leading-[58px]">{title}</h1>
-      {children ? <div className="mt-3 max-w-[620px] text-[13px] leading-5 tab:text-[15px] tab:leading-6">{children}</div> : null}
+    <header className="px-3 pt-6 pb-6 tab:px-8 tab:pt-9 tab:pb-8">
+      {eyebrow ? <p className="text-[9px] leading-[13.5px] st-label text-graphite tab:text-[12px] tab:leading-[18px]">{eyebrow}</p> : null}
+      <h1 className="mt-1 st-heading text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">{title}</h1>
+      {children ? <div className="mt-2 max-w-[620px] text-[12px] leading-[18px] tab:text-[16px] tab:leading-6">{children}</div> : null}
     </header>
   );
 }

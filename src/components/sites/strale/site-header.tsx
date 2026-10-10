@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { navItems, type NavItem } from "./data";
-import { CaretIcon, CloseIcon, HamburgerIcon, SearchIcon, WhatsAppIcon } from "./icons";
+import { AccountIcon, BagIcon, CaretIcon, CloseIcon, HamburgerIcon, SearchIcon, WhatsAppIcon } from "./icons";
 import { StraleLogo } from "./logo";
+import { media } from "./media";
+import { MediaSlot } from "./media-slot";
 import { siteConfig, whatsappLink } from "./site-config";
 
 const SCROLLED_PAST = 70;
@@ -84,12 +86,13 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
         </div>
 
         <div className="flex items-center">
+          <span className="mr-5 hidden whitespace-nowrap tab:inline">Teslimat: Türkiye</span>
           <div className="flex items-center gap-5">
-            <Link href="/sayfa/iletisim" className="st-label st-hover-underline hidden tab:block">
-              İletişim
-            </Link>
             <Link href="/arama" aria-label="Ürün ara" className="block">
               <SearchIcon className="size-5" />
+            </Link>
+            <Link href="/sayfa/siparis" aria-label="Nasıl sipariş verilir?" className="block">
+              <BagIcon className="size-5" />
             </Link>
             {siteConfig.whatsapp ? (
               <a
@@ -102,6 +105,9 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
                 <WhatsAppIcon className="size-5" />
               </a>
             ) : null}
+            <Link href="/sayfa/iletisim" aria-label="İletişim" className="hidden tab:block">
+              <AccountIcon className="size-5" />
+            </Link>
             <button
               type="button"
               aria-label="Menü"
@@ -187,6 +193,18 @@ function MegaMenu({ item, open, onEnter }: { item: NavItem; open: boolean; onEnt
             </div>
           ))}
         </div>
+        {item.feature ? (
+          <Link
+            href={item.feature.href}
+            tabIndex={open ? 0 : -1}
+            className="mr-[-8px] block w-[336px] shrink-0 st-hover-underline"
+          >
+            <span className="relative block h-[420px] w-[336px] overflow-hidden">
+              <MediaSlot media={media.menu[item.label]} sizes="336px" tone="light" />
+            </span>
+            <span className="mt-4 block st-label">{item.feature.caption}</span>
+          </Link>
+        ) : null}
       </div>
     </div>
   );
@@ -314,6 +332,14 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
                     </ul>
                   </div>
                 ))}
+                {active.feature ? (
+                  <Link href={active.feature.href} onClick={close} className="block">
+                    <span className="relative block aspect-[4/5] w-full overflow-hidden">
+                      <MediaSlot media={media.menu[active.label]} sizes="336px" tone="light" />
+                    </span>
+                    <span className="mt-4 block st-label">{active.feature.caption}</span>
+                  </Link>
+                ) : null}
               </div>
             </>
           ) : null}

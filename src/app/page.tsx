@@ -1,10 +1,10 @@
 import {
-  CategoryGrid,
+  Banner,
+  ContentCards,
   Hero,
   NewArrivals,
-  PromoBlocks,
-  SurplusExplainer,
-  TrustBar,
+  RecentlyViewed,
+  ShopByCategory,
 } from "@/components/sites/strale/home-sections";
 import { StoreShell } from "@/components/sites/strale/store-shell";
 
@@ -12,11 +12,11 @@ export default function Home() {
   return (
     <StoreShell overlay>
       <Hero />
-      <TrustBar />
       <NewArrivals />
-      <CategoryGrid />
-      <PromoBlocks />
-      <SurplusExplainer />
+      <ContentCards />
+      <ShopByCategory />
+      <Banner />
+      <RecentlyViewed />
     </StoreShell>
   );
 }

@@ -12,6 +12,7 @@ import {
 import { OrderPanel } from "@/components/sites/strale/order-panel";
 import { ProductCard } from "@/components/sites/strale/product-card";
 import { ProductImage } from "@/components/sites/strale/product-image";
+import { RecentlyViewedList, TrackRecentlyViewed } from "@/components/sites/strale/recently-viewed";
 import { siteConfig } from "@/components/sites/strale/site-config";
 import { Slider, SliderItem } from "@/components/sites/strale/slider";
 import { StoreShell } from "@/components/sites/strale/store-shell";
@@ -51,6 +52,7 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <StoreShell>
+      <TrackRecentlyViewed handle={product.handle} />
       <nav aria-label="Sayfa yolu" className="px-3 pt-6 text-graphite tab:px-8">
         <Link href="/" className="st-hover-underline">
           Ana Sayfa
@@ -65,7 +67,7 @@ export default async function ProductPage({ params }: Props) {
         <div className="relative">
           <ProductImage product={product} sizes="(min-width: 990px) 58vw, (min-width: 750px) 50vw, 100vw" priority />
           {discount > 0 ? (
-            <span className="st-micro absolute top-3 left-3 bg-rust px-2 py-1 text-[12px] text-bone">-%{discount}</span>
+            <span className="absolute top-3 left-3 text-[12px] leading-[9.6px] tracking-[1px] text-rust uppercase">-%{discount}</span>
           ) : null}
         </div>
 
@@ -73,16 +75,16 @@ export default async function ProductPage({ params }: Props) {
           <p className="st-micro text-[10px] text-graphite">
             İhraç fazlası · {categoryLabel(product.category)}
           </p>
-          <h1 className="mt-2 text-[22px] leading-7 font-semibold tab:text-[28px] tab:leading-9">{product.name}</h1>
-          {product.color ? <p className="mt-1 text-[14px] text-graphite">Renk: {product.color}</p> : null}
+          <h1 className="mt-2 st-heading text-[14px] leading-[22px] tab:text-[16px] tab:leading-6">{product.name}</h1>
+          {product.color ? <p className="mt-1 text-graphite">Renk: {product.color}</p> : null}
 
           <p className="mt-4 flex items-baseline gap-3">
-            <span className={discount > 0 ? "text-[24px] font-semibold text-rust" : "text-[24px] font-semibold"}>
+            <span className="st-label text-[14px] tab:text-[16px]">
               {formatPrice(product.price)}
             </span>
             {discount > 0 && product.listPrice ? (
               <>
-                <s className="text-[15px] text-graphite">
+                <s className="text-[14px] text-graphite tab:text-[16px]">
                   <span className="sr-only">Önceki fiyat: </span>
                   {formatPrice(product.listPrice)}
                 </s>
@@ -118,7 +120,7 @@ export default async function ProductPage({ params }: Props) {
 
       {related.length ? (
         <section className="pb-14">
-          <h2 className="st-heading mb-3 px-3 text-[12px] tab:px-8 tab:text-[15px]">Benzer Ürünler</h2>
+          <h2 className="mb-3 px-3 st-heading text-[12px] leading-[18px] tab:px-8 tab:text-[16px] tab:leading-6">Benzer Ürünler</h2>
           <Slider label="Benzer Ürünler">
             {related.slice(0, 8).map((item) => (
               <SliderItem key={item.handle}>
@@ -128,6 +130,13 @@ export default async function ProductPage({ params }: Props) {
           </Slider>
         </section>
       ) : null}
+
+      <section className="pt-3 pb-12">
+        <h2 className="px-3 st-heading text-[12px] leading-[18px] tab:px-8 tab:text-[16px] tab:leading-6">
+          Son Görüntülenenler
+        </h2>
+        <RecentlyViewedList exclude={product.handle} />
+      </section>
     </StoreShell>
   );
 }

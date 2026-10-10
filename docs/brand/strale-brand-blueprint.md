@@ -30,7 +30,8 @@ Mağaza formatı:
 
 | Sayfa | Yol | Kaynak |
 |---|---|---|
-| Ana sayfa | `/` | `home-sections.tsx` |
+| Ana sayfa | `/` | `home-sections.tsx` — klonun bölüm yapısı ve ölçüleri 1:1 (hero, yeni gelenler, ikili kart, kategoriler, banner, son görüntülenenler) |
+| Kampanya görselleri | — | `media.ts` (hero, kartlar, kategoriler, banner, menü görselleri; boşken aynı ölçüde ton yer tutucu) |
 | Koleksiyonlar | `/koleksiyonlar/{tumu, yeni-gelenler, son-bedenler, hafif-kusurlu, yuzde-50-ustu, <kategori>}` | `catalog.ts` |
 | Ürün | `/urun/<handle>` | `products.json` (CSV'den, `npm run import-products`) |
 | Arama | `/arama` | istemci tarafı arama |

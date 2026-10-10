@@ -1,18 +1,48 @@
-import { formatPrice } from "./catalog";
-import { siteConfig } from "./site-config";
-
 /*
  * Labels are rendered uppercase under lang="tr", which maps "i" → "İ". English words containing an
  * "i" are therefore written in capitals here so they stay correct.
  */
 export type MenuLink = { label: string; href: string };
 export type MenuColumn = { heading: string; links: MenuLink[] };
-export type NavItem = { label: string; href?: string; columns?: MenuColumn[] };
+export type NavItem = {
+  label: string;
+  href?: string;
+  columns?: MenuColumn[];
+  /** Mega-menu feature tile; its media is set in media.ts under the same label. */
+  feature?: { caption: string; href: string };
+};
 
 const collection = (slug: string) => `/koleksiyonlar/${slug}`;
 
+/* Mirrors the cloned nav: Latest · Clothing · Outerwear · Sweats · Accessories · Shop By. */
 export const navItems: NavItem[] = [
-  { label: "Yeni Gelenler", href: collection("yeni-gelenler") },
+  {
+    label: "Yeni Gelenler",
+    href: collection("yeni-gelenler"),
+    columns: [
+      {
+        heading: "Öne Çıkanlar",
+        links: [
+          { label: "Yeni Gelenler", href: collection("yeni-gelenler") },
+          { label: "Son Bedenler", href: collection("son-bedenler") },
+          { label: "Dış Giyim", href: collection("dis-giyim") },
+          { label: "Eşofman", href: collection("esofman") },
+        ],
+      },
+      {
+        heading: "Kategoriler",
+        links: [
+          { label: "Tişört", href: collection("tisort") },
+          { label: "Gömlek", href: collection("gomlek") },
+          { label: "Triko", href: collection("triko") },
+          { label: "Sweatshirt", href: collection("sweatshirt") },
+          { label: "Pantolon", href: collection("pantolon") },
+          { label: "Aksesuar", href: collection("aksesuar") },
+        ],
+      },
+    ],
+    feature: { caption: "Yeni Gelenlere Göz At", href: collection("yeni-gelenler") },
+  },
   {
     label: "Giyim",
     href: collection("tumu"),
@@ -35,45 +65,28 @@ export const navItems: NavItem[] = [
         ],
       },
       {
-        heading: "Fırsatlar",
+        heading: "Tümü",
+        links: [{ label: "Tüm Ürünler", href: collection("tumu") }],
+      },
+    ],
+    feature: { caption: "Trikolara Göz At", href: collection("triko") },
+  },
+  { label: "Dış Giyim", href: collection("dis-giyim") },
+  { label: "Eşofman", href: collection("esofman") },
+  { label: "Aksesuar", href: collection("aksesuar") },
+  {
+    label: "Fırsatlar",
+    columns: [
+      {
+        heading: "İndirim",
         links: [
           { label: "%50 ve Üzeri İndirim", href: collection("yuzde-50-ustu") },
           { label: "Son Bedenler", href: collection("son-bedenler") },
           { label: "Hafif Kusurlu", href: collection("hafif-kusurlu") },
-          { label: "Tüm Ürünler", href: collection("tumu") },
         ],
       },
     ],
-  },
-  { label: "Dış Giyim", href: collection("dis-giyim") },
-  { label: "Aksesuar", href: collection("aksesuar") },
-  { label: "Son Bedenler", href: collection("son-bedenler") },
-];
-
-/** Shown under the hero. */
-export const trustItems = [
-  { title: "İhracat kalitesi", text: "Yurt dışı siparişler için üretilmiş parçalar" },
-  {
-    title: `${formatPrice(siteConfig.freeShippingThreshold)} üzeri ücretsiz kargo`,
-    text: `${siteConfig.dispatchDays} iş gününde kargoda`,
-  },
-  { title: `${siteConfig.returnDays} gün iade hakkı`, text: "Beden olmazsa değişim" },
-  { title: "Kolay sipariş", text: "WhatsApp’tan yaz, havale veya kapıda öde" },
-];
-
-/** "İhraç fazlası nedir?" explainer. */
-export const surplusFacts = [
-  {
-    title: "Nereden geliyor?",
-    text: "Türkiye’deki fabrikalarda yurt dışı siparişler için üretilen partilerden artan, sevkiyata girmeyen parçalar.",
-  },
-  {
-    title: "Neden bu fiyat?",
-    text: "Sezon kapanışı, fazla üretim ya da iptal edilen siparişler. Aracı ve büyük mağaza maliyeti olmadan doğrudan stoktan satıyoruz.",
-  },
-  {
-    title: "Nasıl kontrol ediyoruz?",
-    text: "Her parça tek tek kontrol edilir. Hafif kusurlu ürünler açıkça etiketlenir; başka markaya ait logo veya etiket taşıyan ürün satmayız.",
+    feature: { caption: "Son Bedenlere Göz At", href: collection("son-bedenler") },
   },
 ];
 
