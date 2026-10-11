@@ -6,7 +6,7 @@ shot prompt is sent as one entry of Kling's multi_prompt, so the whole montage
 comes back as a single clip. Takes land in temp/higgsfield/video/<name>-<n>.mp4.
 
     pip install higgsfield-client
-    export HF_KEY="KEY_ID:KEY_SECRET"      # environment secret, never commit it
+    export HF_KEY="KEY_ID:KEY_SECRET"      # or HF_CREDENTIALS; environment secret, never commit it
 
     python3 scripts/higgsfield_video.py docs/video-pipeline/hero-kapadokya.json --dry-run
     python3 scripts/higgsfield_video.py docs/video-pipeline/hero-kapadokya.json            # one take
@@ -26,6 +26,10 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
+
+# The Python SDK reads HF_KEY; accept the TypeScript SDK's HF_CREDENTIALS too.
+if not os.environ.get("HF_KEY") and os.environ.get("HF_CREDENTIALS"):
+    os.environ["HF_KEY"] = os.environ["HF_CREDENTIALS"]
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTBOX = ROOT / "temp/higgsfield/video"
@@ -97,7 +101,7 @@ def main() -> int:
         print(json.dumps(arguments, indent=2, ensure_ascii=False))
         return 0
     if not os.environ.get("HF_KEY"):
-        print("HF_KEY is not set (format KEY_ID:KEY_SECRET). Add it as an environment secret.", file=sys.stderr)
+        print("HF_KEY / HF_CREDENTIALS is not set (format KEY_ID:KEY_SECRET). Add it as an environment secret.", file=sys.stderr)
         return 1
 
     import higgsfield_client  # imported late so --dry-run works without the SDK

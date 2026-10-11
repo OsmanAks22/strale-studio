@@ -8,7 +8,7 @@ brief. Results land in temp/higgsfield/<slot-id>.png, where
 scripts/ingest-generated-images.mjs picks them up.
 
     pip install higgsfield-client
-    export HF_KEY="KEY_ID:KEY_SECRET"      # environment secret, never commit it
+    export HF_KEY="KEY_ID:KEY_SECRET"      # or HF_CREDENTIALS; environment secret, never commit it
 
     python3 scripts/higgsfield_generate.py --dry-run content-sweats   # plan + cost estimate, no API call
     python3 scripts/higgsfield_generate.py content-sweats             # one slot
@@ -28,6 +28,10 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
+
+# The Python SDK reads HF_KEY; accept the TypeScript SDK's HF_CREDENTIALS too.
+if not os.environ.get("HF_KEY") and os.environ.get("HF_CREDENTIALS"):
+    os.environ["HF_KEY"] = os.environ["HF_CREDENTIALS"]
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "docs/image-pipeline/shot-list.json"
@@ -130,7 +134,7 @@ def main() -> int:
     args = parser.parse_args()
 
     if not args.dry_run and not os.environ.get("HF_KEY"):
-        print("HF_KEY is not set (format KEY_ID:KEY_SECRET). Add it as an environment secret.", file=sys.stderr)
+        print("HF_KEY / HF_CREDENTIALS is not set (format KEY_ID:KEY_SECRET). Add it as an environment secret.", file=sys.stderr)
         return 1
     if args.presets:
         list_presets()
