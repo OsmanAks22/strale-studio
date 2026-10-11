@@ -12,7 +12,7 @@
    | `orijinal` (boşsa bu) | Kendi fotoğrafınız 4:5 kırpılır | Ücretsiz |
    | `urun` | Yapay zekâ ürünü açık gri stüdyo fonunda, mankensiz "packshot" olarak yeniden çeker | ≈ $0,05 |
    | `manken` | Yapay zekâ ürünü `manken` sütunundaki mankene giydirir; kartta bu görsel çıkar, ürün sayfasında kendi fotoğrafınız da durur | ≈ $0,05 |
-   | `ikisi` (önerilen) | Kartta gri fonlu ürün fotoğrafı, ürün sayfasında ayrıca mankenli görsel | ≈ $0,10 |
+   | `ikisi` (önerilen) | Kartta (giriş sayfası, listeler) gri fonlu ürün fotoğrafı; ürüne tıklayınca sayfa mankenli görselle açılır | ≈ $0,10 |
 
 4. Çalıştırın:
 

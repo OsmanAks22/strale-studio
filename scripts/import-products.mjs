@@ -179,15 +179,18 @@ if (generateImages && jobs.length) {
   if (run.status !== 0) console.warn("⚠️  Bazı görseller üretilemedi; mevcut olanlarla devam ediliyor.");
 }
 
-/** Attach whatever images exist for each product: main shot first, AI on-model shot flagged. */
+/**
+ * Attach whatever images exist for each product. The card shows `image`; the product page opens on gallery[0].
+ * manken: on-model shot on both. ikisi: packshot on the card, on-model shot first on the product page.
+ */
 for (const product of products) {
   const files = { main: `${PUBLIC_PRODUCTS}/${product.handle}.jpg`, model: `${PUBLIC_PRODUCTS}/${product.handle}-manken.jpg` };
   const has = (path) => existsSync(resolve(root, "public", path.slice(1)));
   const gallery = [];
   if (has(files.main)) gallery.push({ src: files.main });
-  if (has(files.model)) gallery[product.look === "manken" ? "unshift" : "push"]({ src: files.model, ai: true });
+  if (has(files.model)) gallery[["manken", "ikisi"].includes(product.look) ? "unshift" : "push"]({ src: files.model, ai: true });
   if (gallery.length) {
-    product.image = gallery[0].src;
+    product.image = product.look === "ikisi" && has(files.main) ? files.main : gallery[0].src;
     if (gallery.length > 1) product.gallery = gallery;
   }
   delete product.look;
