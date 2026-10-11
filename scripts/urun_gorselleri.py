@@ -7,6 +7,7 @@ directly on that list. Each job is one product row from the stock spreadsheet:
     orijinal  your photo, cropped to 4:5 (no AI, free)            → <handle>.jpg
     urun      AI studio packshot on the site's light grey backdrop → <handle>.jpg
     manken    your photo cropped (gallery) + AI on-model photo     → <handle>.jpg, <handle>-manken.jpg
+    ikisi     AI studio packshot + AI on-model photo               → <handle>.jpg, <handle>-manken.jpg
 
     python3 scripts/urun_gorselleri.py temp/urun-gorselleri/jobs.json --dry-run   # plan + cost, no API call
     python3 scripts/urun_gorselleri.py temp/urun-gorselleri/jobs.json --budget 2
@@ -81,10 +82,10 @@ def plan(jobs: list[dict], force: bool) -> list[dict]:
         main = OUT_DIR / f"{job['handle']}.jpg"
         if job["look"] in ("orijinal", "manken") and (force or not main.exists()):
             steps.append({"kind": "crop", "handle": job["handle"], "src": photo, "dest": main})
-        if job["look"] == "urun" and (force or not main.exists()):
+        if job["look"] in ("urun", "ikisi") and (force or not main.exists()):
             steps.append({"kind": "ai", "mode": "urun", "handle": job["handle"], "images": [photo], "dest": main})
         on_model = OUT_DIR / f"{job['handle']}-manken.jpg"
-        if job["look"] == "manken" and (force or not on_model.exists()):
+        if job["look"] in ("manken", "ikisi") and (force or not on_model.exists()):
             steps.append({"kind": "ai", "mode": "manken", "handle": job["handle"], "images": [photo, Path(job["model"])], "dest": on_model})
     return steps
 

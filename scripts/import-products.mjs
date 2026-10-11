@@ -8,6 +8,7 @@
  * Raw product photos go in docs/products/fotograflar/ (`foto_dosyasi` names the file); model photos for
  * on-model shots in docs/products/mankenler/. The `gorsel` column picks what the site shows:
  *   orijinal (default) your photo cropped to 4:5 · urun AI studio packshot · manken AI on-model + your photo
+ *   · ikisi AI packshot on the card + AI on-model shot on the product page
  *
  *   npm run import-products -- docs/products/urun-listesi.csv --gorsel            # also produce the images
  *   npm run import-products -- docs/products/urun-listesi.csv --gorsel --dry-run  # show plan + AI cost only
@@ -24,7 +25,7 @@ const generateImages = flags.includes("--gorsel");
 const imagerFlags = flags.filter((flag) => flag !== "--gorsel");
 const PHOTOS = resolve(root, "docs/products/fotograflar");
 const MODELS = resolve(root, "docs/products/mankenler");
-const LOOKS = ["orijinal", "urun", "manken"];
+const LOOKS = ["orijinal", "urun", "manken", "ikisi"];
 const PUBLIC_PRODUCTS = "/sites/strale/products";
 if (!input) {
   console.error("Kullanım: npm run import-products -- <dosya.csv>");
@@ -135,7 +136,7 @@ const products = rows.map((cells, index) => {
     if (!existsSync(photoPath)) warnings.push(`Satır ${line}: fotoğraf bulunamadı: docs/products/fotograflar/${photo}`);
     else {
       const job = { handle, look, photo: photoPath };
-      if (look === "manken") {
+      if (look === "manken" || look === "ikisi") {
         const modelName = get("manken") || "manken-1";
         const modelPath = [".jpg", ".jpeg", ".png", ".webp"].map((ext) => resolve(MODELS, modelName + ext)).find(existsSync);
         if (modelPath) job.model = modelPath;

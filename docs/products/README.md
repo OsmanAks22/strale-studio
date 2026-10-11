@@ -12,6 +12,7 @@
    | `orijinal` (boşsa bu) | Kendi fotoğrafınız 4:5 kırpılır | Ücretsiz |
    | `urun` | Yapay zekâ ürünü açık gri stüdyo fonunda, mankensiz "packshot" olarak yeniden çeker | ≈ $0,05 |
    | `manken` | Yapay zekâ ürünü `manken` sütunundaki mankene giydirir; kartta bu görsel çıkar, ürün sayfasında kendi fotoğrafınız da durur | ≈ $0,05 |
+   | `ikisi` (önerilen) | Kartta gri fonlu ürün fotoğrafı, ürün sayfasında ayrıca mankenli görsel | ≈ $0,10 |
 
 4. Çalıştırın:
 
@@ -43,8 +44,8 @@
 | `kumas` | Etiketteki içerik oranı. |
 | `mensei_uretim` | Üretim yeri ve kaynağı (ör. "Türkiye - AB siparişi fazlası"). |
 | `foto_dosyasi` | `docs/products/fotograflar/` içindeki dosya adı. Ürün tek başına, düz ve iyi ışıkta; en az 1200 px. Boşsa "Fotoğraf yakında" görünür. |
-| `gorsel` | `orijinal`, `urun` veya `manken` (yukarıdaki tablo). |
-| `manken` | `gorsel` = `manken` ise kullanılacak manken dosyası (uzantısız), ör. `manken-1`. Boşsa `manken-1`. |
+| `gorsel` | `orijinal`, `urun`, `manken` veya `ikisi` (yukarıdaki tablo). |
+| `manken` | `gorsel` = `manken` / `ikisi` ise kullanılacak manken dosyası (uzantısız), ör. `manken-1`. Boşsa `manken-1`. |
 | `not` | Kusur açıklaması veya ek bilgi. |
 
 Ürün sırası = sitede görünme sırası. En yeni ürünleri en üste koyun; ana sayfadaki "Bu Hafta Gelen Stoklar" ilk 12 ürünü gösterir.

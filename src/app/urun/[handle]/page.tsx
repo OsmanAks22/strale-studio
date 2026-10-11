@@ -79,7 +79,7 @@ export default async function ProductPage({ params }: Props) {
               ) : null}
               {"ai" in shot && shot.ai ? (
                 <figcaption className="absolute right-3 bottom-3 bg-bone/85 px-2 py-1 text-[10px] text-graphite">
-                  Yapay zekâ ile mankene giydirilmiştir; ürünün kendisi diğer fotoğraftadır.
+                  Yapay zekâ ile mankene giydirilmiştir.
                 </figcaption>
               ) : null}
             </figure>
