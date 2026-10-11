@@ -4,7 +4,7 @@ Ana sayfa hero videosu gibi site videoları burada **spec dosyası** olarak tutu
 
 | Dosya | Ne işe yarar |
 |---|---|
-| `hero-kapadokya.json` | Ana sayfa hero: Kapadokya bozkırı, sonbahar altın saati, insansız, sıcak 35mm film, 5 × 3 sn montaj |
+| `hero-kapadokya.json` | Ana sayfa hero: Kapadokya bozkırı, sonbahar altın saati, insansız, sıcak 35mm film, 6 planlı 15 sn montaj |
 | `../../scripts/higgsfield_video.py` | Spec'i API'ye gönderir, take'leri indirir, seçilen take'i siteye hazırlar |
 
 ## Model: Kling 3.0 Standard (`kling-video/v3.0/std/text-to-video`)
@@ -26,7 +26,7 @@ npm run video:generate -- docs/video-pipeline/hero-kapadokya.json --finalize tem
 
 1. **Önce dry-run** ile prompt'u ve maliyeti kontrol edin.
 2. **Tek take üretin** ve izleyin. Beğenmediğiniz planın prompt'unu spec'te düzeltip yeni take alın. Her seferinde tek değişiklik yapın.
-3. **Seçilen take'i `--finalize` ile hazırlayın.** Sesi atar, H.264 + faststart'a çevirir, 1920 genişliğe ölçekler ve poster karesini çıkarır. Çıktı `public/sites/strale/video/hero.mp4` ve `hero-poster.jpg` olarak yazılır.
+3. **Seçilen take'i `--finalize` ile hazırlayın.** Plan kesmelerini bulup her birine `output.crossfade` sn'lik geçiş koyar; `output.loop` açıksa sonu başa eritir (video her geçiş kadar kısalır). Sesi atar, H.264 + faststart'a çevirir, 1920 genişliğe ölçekler ve poster karesini çıkarır. Çıktı `public/sites/strale/video/hero.mp4` ve `hero-poster.jpg` olarak yazılır.
 4. Her ücretli çağrı `temp/higgsfield/video/log.jsonl` dosyasına yazılır. Gerçek bakiye: [console.higgsfield.ai](https://console.higgsfield.ai/dashboard).
 
 ## Prompt yazım kuralları (öğrenilenler)
@@ -34,5 +34,7 @@ npm run video:generate -- docs/video-pipeline/hero-kapadokya.json --finalize tem
 - **Stil satırı tek ve ortak** (`style`): film stoku, renk paleti, ışık, kare hızı ve yasaklar (insan, yazı, logo, balon, araç). Her planın sonuna eklenir. Böylece planlar arasında renk ve doku tutarlı kalır.
 - **Plan prompt'u tek cümle:** plan tipi (geniş / yakın / statik), konu, ışık, kamera hareketi.
 - **Metin alanı:** hero yazısı sol altta durur. Son planda bunu açıkça istiyoruz ("lower left falls into soft shadow").
-- **Döngü:** video sessiz döngüde oynar. Son plan (gün batımı, statik) ile ilk plan (geniş vadi) arasında tonu yumuşak tutun.
+- **Döngü:** video sessiz döngüde oynar. Son plan ile ilk plan aynı amber altın saatte olsun; pembe alacakaranlık başa dönüşte sıçrama yapar.
+- **Akış:** kamera yönünü planlar boyunca aynı tutun (hep sağa) ve her plana bir sonrakinin ipucunu koyun (uzakta toz → atlar → toz içinde otlar).
+- Kling arka ışıkta sık sık yeşil lens yansıması (flare) ekliyor; istenmiyorsa yasaklara "no lens flare" ekleyin.
 - Kapadokya'da AI sık sık sıcak hava balonu ekler. Yasaklar listesinde tutun.

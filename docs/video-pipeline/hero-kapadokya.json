@@ -6,14 +6,16 @@
   "output": {
     "video": "public/sites/strale/video/hero.mp4",
     "poster": "public/sites/strale/video/hero-poster.jpg",
-    "posterAt": 1.0
+    "posterAt": 1.5,
+    "crossfade": 0.4,
+    "loop": true
   },
   "decisions": {
     "konsept": "Anadolu doğası: Kapadokya bozkırı",
     "insan": "yok, sadece manzara",
     "ton": "sıcak 35mm film",
     "zaman": "sonbahar, altın saat",
-    "yapı": "5 plan × 3 sn = 15 sn montaj, döngüye uygun",
+    "yapı": "6 plan (3+2+3+2+2+3 = 15 sn), planlar yön, ışık ve tozla bağlı; finalize'da 0.4 sn geçişler ve döngü dikişi",
     "model": "Kling 3.0 Standard, multi-shot, ses kapalı"
   },
   "style": "Shot on 35mm film, Kodak Vision3 250D, fine natural grain, soft halation, warm earthy palette of ochre, rust and dry gold, low golden-hour autumn sun, gentle natural camera motion, 24fps, cinematic, calm. No people, no text, no logos, no hot air balloons, no vehicles, no modern buildings.",
@@ -27,23 +29,27 @@
   "shots": [
     {
       "duration": 3,
-      "prompt": "Wide establishing shot of the Cappadocia valley at golden hour: fairy chimneys and soft tuff ridges, long shadows across dry autumn steppe, slow dolly forward."
+      "prompt": "Wide establishing shot of the Cappadocia valley at golden hour, fairy chimneys and tuff ridges, long shadows on dry steppe, slow dolly forward drifting right."
+    },
+    {
+      "duration": 2,
+      "prompt": "Low aerial glide over fairy chimney tops toward a golden grass plain, camera moving right, a trail of dust rising in the distance."
     },
     {
       "duration": 3,
-      "prompt": "A herd of wild horses gallops across a dry golden grass plain beneath tuff cliffs, backlit dust hanging in the low sun, smooth side tracking shot."
+      "prompt": "Wild horses gallop left to right across a golden grass plain beneath tuff cliffs, backlit dust in the low sun, smooth tracking shot moving right."
+    },
+    {
+      "duration": 2,
+      "prompt": "Close-up of dry golden grass swaying as drifting dust settles, strong backlight, shallow depth of field, slow drift right, no animals."
+    },
+    {
+      "duration": 2,
+      "prompt": "Carved stone doorway of an old cave dwelling, warm low sun raking across rough tuff, dust motes in the light, slow push in."
     },
     {
       "duration": 3,
-      "prompt": "Close-up of dry golden grass and thistles swaying in the wind, strong backlight, shallow depth of field, slow handheld drift."
-    },
-    {
-      "duration": 3,
-      "prompt": "Weathered carved stone doorway of an old cave dwelling, warm sunlight raking across the rough tuff wall, dust motes in the air, slow push in."
-    },
-    {
-      "duration": 3,
-      "prompt": "Static wide shot as the sun sinks behind the Rose Valley ridge, pink and amber sky, calm and still, the lower left of the frame falls into soft shadow."
+      "prompt": "Static wide shot, the sun touching the valley ridge in the center of frame, warm amber light on fairy chimneys, the lower left falls into soft shadow."
     }
   ]
 }

@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -61,13 +62,67 @@ def video_url(result: dict) -> str | None:
     return videos[0].get("url") if videos else None
 
 
+def detect_cuts(take: Path, threshold: float = 8.0) -> list[float]:
+    """Shot boundaries in the take, found with ffmpeg's scene-change detector."""
+    log = subprocess.run(
+        ["ffmpeg", "-hide_banner", "-i", str(take), "-vf", f"scdet=threshold={threshold}", "-f", "null", "-"],
+        capture_output=True, text=True, check=True,
+    ).stderr
+    return [float(match) for match in re.findall(r"lavfi\.scd\.time: ([0-9.]+)", log)]
+
+
+def probe_duration(take: Path) -> float:
+    out = subprocess.run(
+        ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(take)],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    return float(out)
+
+
+def transition_filter(take: Path, fade: float, loop: bool) -> tuple[str, float]:
+    """Builds a filtergraph that dissolves across every shot cut and, for loop, blends the
+    last `fade` seconds into the opening so the clip repeats without a visible jump.
+    Each dissolve overlaps two shots, so the result is shorter than the take."""
+    duration = probe_duration(take)
+    cuts = [cut for cut in detect_cuts(take) if fade < cut < duration - fade]
+    bounds = [0.0, *cuts, duration]
+    segments = [(start, end) for start, end in zip(bounds, bounds[1:]) if end - start > fade * 2]
+    print(f"  {len(segments) - 1} cut(s) at {', '.join(f'{cut:.2f}s' for cut in cuts) or '-'}; {fade}s dissolves")
+
+    parts = [
+        f"[0:v]trim={start}:{end},setpts=PTS-STARTPTS,fps=24,settb=AVTB[s{index}]"
+        for index, (start, end) in enumerate(segments)
+    ]
+    label, length = "s0", segments[0][1] - segments[0][0]
+    for index, (start, end) in enumerate(segments[1:], 1):
+        parts.append(f"[{label}][s{index}]xfade=transition=fade:duration={fade}:offset={length - fade:.3f}[x{index}]")
+        label, length = f"x{index}", length + (end - start) - fade
+    if loop:
+        parts.append(f"[{label}]split=3[a][b][c]")
+        parts.append(f"[a]trim=0:{fade},setpts=PTS-STARTPTS[head]")
+        parts.append(f"[b]trim={fade}:{length - fade:.3f},setpts=PTS-STARTPTS[body]")
+        parts.append(f"[c]trim={length - fade:.3f},setpts=PTS-STARTPTS[tail]")
+        parts.append(f"[tail][head]xfade=transition=fade:duration={fade}:offset=0[seam]")
+        parts.append("[seam][body]concat=n=2:v=1[joined]")
+        label, length = "joined", length - fade
+    parts.append(f"[{label}]scale=1920:-2,format=yuv420p[out]")
+    return ";".join(parts), length
+
+
 def finalize(spec: dict, take: Path) -> None:
     video = ROOT / spec["output"]["video"]
     poster = ROOT / spec["output"]["poster"]
     video.parent.mkdir(parents=True, exist_ok=True)
+    fade = spec["output"].get("crossfade", 0)
+    if fade:
+        graph, length = transition_filter(take, fade, spec["output"].get("loop", False))
+        filters = ["-filter_complex", graph, "-map", "[out]"]
+        print(f"  final length {length:.2f}s")
+    else:
+        filters = ["-vf", "scale=1920:-2", "-pix_fmt", "yuv420p"]
     subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-i", str(take), "-an", "-c:v", "libx264", "-preset", "slow", "-crf", "23",
-         "-pix_fmt", "yuv420p", "-vf", "scale=1920:-2", "-movflags", "+faststart", str(video)],
+        ["ffmpeg", "-y", "-v", "error", "-i", str(take), "-an", *filters, "-c:v", "libx264", "-preset", "slow",
+         "-crf", "23", "-movflags", "+faststart", str(video)],
         check=True,
     )
     subprocess.run(
