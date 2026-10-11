@@ -45,7 +45,7 @@
 | `mensei_uretim` | Üretim yeri ve kaynağı (ör. "Türkiye - AB siparişi fazlası"). |
 | `foto_dosyasi` | `docs/products/fotograflar/` içindeki dosya adı. Ürün tek başına, düz ve iyi ışıkta; en az 1200 px. Boşsa "Fotoğraf yakında" görünür. |
 | `gorsel` | `orijinal`, `urun`, `manken` veya `ikisi` (yukarıdaki tablo). |
-| `manken` | `gorsel` = `manken` / `ikisi` ise kullanılacak manken dosyası (uzantısız). Boşsa `manken-1`. Erkek: `manken-1` (önden, düz duruş), `manken-1-yuruyus`, `manken-1-yan`, `manken-1-eller-belde`, `manken-1-portre` (bel üstü, üst giyim yakın plan); kadın: `manken-2` (önden, eller belde), `manken-2-yuruyus`, `manken-2-yan`, `manken-2-arka` (sırt detayı), `manken-2-portre`. |
+| `manken` | `gorsel` = `manken` / `ikisi` ise kullanılacak manken dosyası (uzantısız). Boşsa `manken-1`. Erkek: `manken-1` (önden, düz duruş), `manken-1-yuruyus`, `manken-1-yan`, `manken-1-eller-belde`, `manken-1-portre` (bel üstü, üst giyim yakın plan); kadın: `manken-2` (önden, düz duruş), `manken-2-eller-belde`, `manken-2-yuruyus`, `manken-2-yan`, `manken-2-arka` (düz arkadan, sırt detayı), `manken-2-omuz` (arkadan, omuz üstü bakış), `manken-2-portre`. |
 | `not` | Kusur açıklaması veya ek bilgi. |
 
 Ürün sırası = sitede görünme sırası. En yeni ürünleri en üste koyun; ana sayfadaki "Bu Hafta Gelen Stoklar" ilk 12 ürünü gösterir.
