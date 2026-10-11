@@ -40,7 +40,8 @@ PRICE = {"low": 0.0189, "medium": 0.05, "high": 0.05}
 
 KEEP_GARMENT = (
     "Keep the garment exactly as in the reference image: same colour, fabric texture, cut, stitching, buttons, "
-    "zips, pockets and proportions. Do not add logos, text, labels, prints or accessories."
+    "zips, pockets, trims and proportions. Reproduce every existing logo, print, embroidery and badge exactly in "
+    "its original place, size and colour; never remove them and never add new ones."
 )
 PROMPTS = {
     "urun": (
@@ -50,7 +51,7 @@ PROMPTS = {
     ),
     "manken": (
         "Fashion e-commerce photo: dress the person from the last reference image in the garment from the first "
-        "reference image, worn naturally with neutral basics. Keep the person's face, body, skin and hair unchanged. "
+        "reference image, worn naturally with plain neutral trousers and clean white sneakers. Keep the person's face, body, skin and hair unchanged. "
         "Three-quarter to full-length, relaxed natural pose, seamless warm light grey studio background (#E8E3DA), "
         "soft daylight. Photorealistic, natural skin and fabric texture. " + KEEP_GARMENT
     ),

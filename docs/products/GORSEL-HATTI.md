@@ -54,7 +54,7 @@ invisible ghost mannequin, front view, centred with generous margin, on a seamle
 (#E8E3DA), soft even studio light, subtle natural shadow. No person. + KORUMA SATIRI
 
 **Mankene giydirme (`manken`):** Fashion e-commerce photo: dress the person from the last reference image in the garment
-from the first reference image, worn naturally with neutral basics. Keep the person's face, body, skin and hair unchanged.
+from the first reference image, worn naturally with plain neutral trousers and clean white sneakers. Keep the person's face, body, skin and hair unchanged.
 Three-quarter to full-length, relaxed natural pose, seamless warm light grey studio background (#E8E3DA), soft daylight.
 Photorealistic, natural skin and fabric texture. + KORUMA SATIRI
 
