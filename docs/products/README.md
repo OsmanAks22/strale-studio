@@ -52,8 +52,6 @@
 
 ## Satılabilecek ürünler
 - Marka etiketi olmayan ya da etiketi sökülmüş fabrika fazlası ürünler.
-- Ürün üzerinde (baskı, nakış, düğme, fermuar başı, iç etiket) **başka markaya ait logo veya isim bulunmamalı.**
-- Logolu ürün ancak marka sahibinin yazılı izniyle satılabilir.
 
 ## Yapay zekâ görselleri hakkında
 - Yapay zekâ ürünü birebir aynı çizmeyebilir (düğme sayısı, desen, logo yeri). Her görseli yayına almadan önce kontrol edin;
