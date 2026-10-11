@@ -34,8 +34,10 @@ export type Product = {
   condition: "kusursuz" | "hafif-kusurlu";
   fabric?: string;
   origin?: string;
-  /** Path under /public, e.g. "/sites/strale/products/yun-polar-ceket-kahve.jpg". */
+  /** Main photo, path under /public, e.g. "/sites/strale/products/yun-polar-ceket-kahve.jpg". */
   image?: string;
+  /** All photos when there is more than one; `ai` marks an AI on-model shot (labelled on the product page). */
+  gallery?: { src: string; ai?: boolean }[];
   note?: string;
 };
 

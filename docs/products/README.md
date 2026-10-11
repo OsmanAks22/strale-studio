@@ -2,15 +2,33 @@
 
 1. `urun-sablonu.csv` dosyasını Excel / Google Sheets ile açın, örnek satırları silip her ürün için bir satır doldurun
    ve CSV olarak kaydedin (virgül veya noktalı virgül ayraçlı olabilir).
-2. Ürün fotoğraflarını `public/sites/strale/products/` klasörüne koyun; dosya adını `foto_dosyasi` sütununa yazın.
-3. Çalıştırın:
+2. Ürün fotoğraflarını `docs/products/fotograflar/` klasörüne koyun; dosya adını `foto_dosyasi` sütununa yazın.
+   Mankene giydirilecek ürünler için manken fotoğraflarını `docs/products/mankenler/` klasörüne koyun
+   (`manken-1.jpg`, `manken-2.jpg`…).
+3. Her ürün için `gorsel` sütununda sitede ne görüneceğini seçin:
+
+   | `gorsel` | Ne olur | Maliyet |
+   |---|---|---|
+   | `orijinal` (boşsa bu) | Kendi fotoğrafınız 4:5 kırpılır | Ücretsiz |
+   | `urun` | Yapay zekâ ürünü açık gri stüdyo fonunda, mankensiz "packshot" olarak yeniden çeker | ≈ $0,05 |
+   | `manken` | Yapay zekâ ürünü `manken` sütunundaki mankene giydirir; kartta bu görsel çıkar, ürün sayfasında kendi fotoğrafınız da durur | ≈ $0,05 |
+
+4. Çalıştırın:
 
    ```bash
+   # Önce plan ve tahmini maliyet (API çağrısı yok)
+   npm run import-products -- docs/products/urun-listesi.csv --gorsel --dry-run
+   # Görselleri üret + siteye yükle (varsayılan bütçe sınırı $2)
+   npm run import-products -- docs/products/urun-listesi.csv --gorsel --budget 3
+   # Sadece fiyat/stok güncellemesi (görsellere dokunmaz)
    npm run import-products -- docs/products/urun-listesi.csv
    ```
 
-   Script hataları (eksik fiyat, bilinmeyen kategori) ve uyarıları (bulunamayan fotoğraf, açıklamasız kusur) listeler,
-   sonra `src/components/sites/strale/products.json` dosyasını yazar. Ürün ve koleksiyon sayfaları buradan üretilir.
+   Script hataları (eksik fiyat, bilinmeyen kategori, eksik manken) ve uyarıları (bulunamayan fotoğraf, açıklamasız kusur)
+   listeler, görselleri `public/sites/strale/products/` altına yazar, sonra `src/components/sites/strale/products.json`
+   dosyasını günceller. Daha önce üretilmiş görseller tekrar üretilmez (yeniden üretmek için `--force`).
+   Her ücretli çağrı `temp/urun-gorselleri/log.jsonl` dosyasına yazılır. Yapay zekâ için ortamda `HF_CREDENTIALS`
+   (Higgsfield anahtarı) tanımlı olmalı.
 
 | Sütun | Açıklama |
 |---|---|
@@ -24,7 +42,9 @@
 | `durum` | `kusursuz` veya `hafif-kusurlu`. Hafif kusurlu ise `not` sütununa kusuru yazın. |
 | `kumas` | Etiketteki içerik oranı. |
 | `mensei_uretim` | Üretim yeri ve kaynağı (ör. "Türkiye - AB siparişi fazlası"). |
-| `foto_dosyasi` | Kendi çekiminiz; 4:5 oran, düz açık zemin, en az 1200×1500 px. Boşsa "Fotoğraf yakında" görünür. |
+| `foto_dosyasi` | `docs/products/fotograflar/` içindeki dosya adı. Ürün tek başına, düz ve iyi ışıkta; en az 1200 px. Boşsa "Fotoğraf yakında" görünür. |
+| `gorsel` | `orijinal`, `urun` veya `manken` (yukarıdaki tablo). |
+| `manken` | `gorsel` = `manken` ise kullanılacak manken dosyası (uzantısız), ör. `manken-1`. Boşsa `manken-1`. |
 | `not` | Kusur açıklaması veya ek bilgi. |
 
 Ürün sırası = sitede görünme sırası. En yeni ürünleri en üste koyun; ana sayfadaki "Bu Hafta Gelen Stoklar" ilk 12 ürünü gösterir.
@@ -33,3 +53,10 @@
 - Marka etiketi olmayan ya da etiketi sökülmüş fabrika fazlası ürünler.
 - Ürün üzerinde (baskı, nakış, düğme, fermuar başı, iç etiket) **başka markaya ait logo veya isim bulunmamalı.**
 - Logolu ürün ancak marka sahibinin yazılı izniyle satılabilir.
+
+## Yapay zekâ görselleri hakkında
+- Yapay zekâ ürünü birebir aynı çizmeyebilir (düğme sayısı, desen, logo yeri). Her görseli yayına almadan önce kontrol edin;
+  bozuksa `--force` ile yeniden üretin ya da `orijinal`'e dönün.
+- Mankene giydirilmiş görsellerin altında ürün sayfasında "Yapay zekâ ile mankene giydirilmiştir" notu çıkar ve ürünün kendi
+  fotoğrafı da gösterilir; müşteri gerçek ürünü her zaman görür.
+- Manken gerçek bir kişiyse fotoğrafının bu amaçla kullanılması için yazılı izni gerekir.

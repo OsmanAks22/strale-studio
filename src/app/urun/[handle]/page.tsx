@@ -64,11 +64,26 @@ export default async function ProductPage({ params }: Props) {
       </nav>
 
       <div className="grid gap-6 px-3 pt-4 pb-12 tab:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] tab:gap-8 tab:px-8 desk:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] desk:gap-12">
-        <div className="relative">
-          <ProductImage product={product} sizes="(min-width: 990px) 58vw, (min-width: 750px) 50vw, 100vw" priority />
-          {discount > 0 ? (
-            <span className="absolute top-3 left-3 text-[12px] leading-[9.6px] tracking-[1px] text-rust uppercase">-%{discount}</span>
-          ) : null}
+        <div className="flex flex-col gap-1.5">
+          {(product.gallery ?? [{ src: product.image }]).map((shot, index) => (
+            <figure key={shot.src ?? "placeholder"} className="relative">
+              <ProductImage
+                product={{ ...product, image: shot.src }}
+                sizes="(min-width: 990px) 58vw, (min-width: 750px) 50vw, 100vw"
+                priority={index === 0}
+              />
+              {index === 0 && discount > 0 ? (
+                <span className="absolute top-3 left-3 text-[12px] leading-[9.6px] tracking-[1px] text-rust uppercase">
+                  -%{discount}
+                </span>
+              ) : null}
+              {"ai" in shot && shot.ai ? (
+                <figcaption className="absolute right-3 bottom-3 bg-bone/85 px-2 py-1 text-[10px] text-graphite">
+                  Yapay zekâ ile mankene giydirilmiştir; ürünün kendisi diğer fotoğraftadır.
+                </figcaption>
+              ) : null}
+            </figure>
+          ))}
         </div>
 
         <div className="tab:sticky tab:top-[76px] tab:self-start">

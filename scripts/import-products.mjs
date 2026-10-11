@@ -5,14 +5,27 @@
  *
  *   npm run import-products -- docs/products/urun-listesi.csv
  *
- * Product photos go in public/sites/strale/products/; the `foto_dosyasi` column names the file.
+ * Raw product photos go in docs/products/fotograflar/ (`foto_dosyasi` names the file); model photos for
+ * on-model shots in docs/products/mankenler/. The `gorsel` column picks what the site shows:
+ *   orijinal (default) your photo cropped to 4:5 · urun AI studio packshot · manken AI on-model + your photo
+ *
+ *   npm run import-products -- docs/products/urun-listesi.csv --gorsel            # also produce the images
+ *   npm run import-products -- docs/products/urun-listesi.csv --gorsel --dry-run  # show plan + AI cost only
+ * Extra flags after --gorsel (--budget 3, --force, --quality low) go to scripts/urun_gorselleri.py.
  */
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const input = process.argv[2];
+const [input, ...flags] = process.argv.slice(2);
+const generateImages = flags.includes("--gorsel");
+const imagerFlags = flags.filter((flag) => flag !== "--gorsel");
+const PHOTOS = resolve(root, "docs/products/fotograflar");
+const MODELS = resolve(root, "docs/products/mankenler");
+const LOOKS = ["orijinal", "urun", "manken"];
+const PUBLIC_PRODUCTS = "/sites/strale/products";
 if (!input) {
   console.error("Kullanım: npm run import-products -- <dosya.csv>");
   process.exit(1);
@@ -91,6 +104,7 @@ for (const required of ["ad", "kategori", "indirimli_fiyat", "stok", "bedenler"]
 const errors = [];
 const warnings = [];
 const seen = new Set();
+const jobs = [];
 const products = rows.map((cells, index) => {
   const line = index + 2;
   const get = (name) => (col[name] === undefined ? "" : (cells[col[name]] ?? "").trim());
@@ -114,10 +128,21 @@ const products = rows.map((cells, index) => {
   if (condition === "hafif-kusurlu" && !get("not")) warnings.push(`Satır ${line}: hafif kusurlu ama kusur açıklaması (not) boş`);
 
   const photo = get("foto_dosyasi");
-  let image;
+  const look = get("gorsel").toLocaleLowerCase("tr-TR") || "orijinal";
+  if (!LOOKS.includes(look)) errors.push(`Satır ${line}: gorsel "${look}" olamaz (${LOOKS.join(", ")})`);
   if (photo) {
-    image = `/sites/strale/products/${photo}`;
-    if (!existsSync(resolve(root, "public", image.slice(1)))) warnings.push(`Satır ${line}: fotoğraf bulunamadı: public${image}`);
+    const photoPath = resolve(PHOTOS, photo);
+    if (!existsSync(photoPath)) warnings.push(`Satır ${line}: fotoğraf bulunamadı: docs/products/fotograflar/${photo}`);
+    else {
+      const job = { handle, look, photo: photoPath };
+      if (look === "manken") {
+        const modelName = get("manken") || "manken-1";
+        const modelPath = [".jpg", ".jpeg", ".png", ".webp"].map((ext) => resolve(MODELS, modelName + ext)).find(existsSync);
+        if (modelPath) job.model = modelPath;
+        else errors.push(`Satır ${line}: manken fotoğrafı yok: docs/products/mankenler/${modelName}.jpg`);
+      }
+      jobs.push(job);
+    }
   }
 
   return Object.fromEntries(
@@ -133,7 +158,7 @@ const products = rows.map((cells, index) => {
       condition,
       fabric: get("kumas") || undefined,
       origin: get("mensei_uretim") || undefined,
-      image,
+      look,
       note: get("not") || undefined,
     }).filter(([, value]) => value !== undefined && value !== ""),
   );
@@ -143,6 +168,28 @@ warnings.forEach((w) => console.warn(`⚠️  ${w}`));
 if (errors.length) {
   errors.forEach((e) => console.error(`❌ ${e}`));
   process.exit(1);
+}
+
+if (generateImages && jobs.length) {
+  const jobFile = resolve(root, "temp/urun-gorselleri/jobs.json");
+  mkdirSync(dirname(jobFile), { recursive: true });
+  writeFileSync(jobFile, JSON.stringify(jobs, null, 2));
+  const run = spawnSync("python3", [resolve(root, "scripts/urun_gorselleri.py"), jobFile, ...imagerFlags], { stdio: "inherit" });
+  if (run.status !== 0) console.warn("⚠️  Bazı görseller üretilemedi; mevcut olanlarla devam ediliyor.");
+}
+
+/** Attach whatever images exist for each product: main shot first, AI on-model shot flagged. */
+for (const product of products) {
+  const files = { main: `${PUBLIC_PRODUCTS}/${product.handle}.jpg`, model: `${PUBLIC_PRODUCTS}/${product.handle}-manken.jpg` };
+  const has = (path) => existsSync(resolve(root, "public", path.slice(1)));
+  const gallery = [];
+  if (has(files.main)) gallery.push({ src: files.main });
+  if (has(files.model)) gallery[product.look === "manken" ? "unshift" : "push"]({ src: files.model, ai: true });
+  if (gallery.length) {
+    product.image = gallery[0].src;
+    if (gallery.length > 1) product.gallery = gallery;
+  }
+  delete product.look;
 }
 const out = resolve(root, "src/components/sites/strale/products.json");
 writeFileSync(out, `${JSON.stringify(products, null, 2)}\n`);
