@@ -50,7 +50,6 @@
 
 Ürün sırası = sitede görünme sırası. En yeni ürünleri en üste koyun; ana sayfadaki "Bu Hafta Gelen Stoklar" ilk 12 ürünü gösterir.
 
-
 ## Yapay zekâ görselleri hakkında
 - Yapay zekâ ürünü birebir aynı çizmeyebilir (düğme sayısı, desen, logo yeri). Her görseli yayına almadan önce kontrol edin;
   bozuksa `--force` ile yeniden üretin ya da `orijinal`'e dönün.
