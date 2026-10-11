@@ -39,6 +39,15 @@ export function Hero() {
     <section className="relative -mt-[60px] aspect-[4/5] w-full overflow-hidden text-bone tab:aspect-auto tab:h-[calc(100dvh-42px)]">
       <Link href={href} aria-label="İhracat Kalitesi, Stok Fiyatı" className="absolute inset-0">
         <MediaSlot media={media.hero} sizes="100vw" tone="dark" priority />
+        {/* Keeps the white header and headline legible over bright sky and pale tuff. */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 top-0 h-[160px] bg-[linear-gradient(to_bottom,rgba(21,20,18,0.45),rgba(21,20,18,0))]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-[55%] bg-[linear-gradient(to_top,rgba(21,20,18,0.7),rgba(21,20,18,0))]"
+        />
       </Link>
       <div className="pointer-events-none absolute bottom-8 left-3 tab:left-8">
         <h2 className="st-display text-[34px] leading-[36px] tab:text-[56px] tab:leading-[58px]">

@@ -7,7 +7,10 @@ export type Media = { image?: string; video?: string; poster?: string };
 
 export const media = {
   /** Full-bleed hero, 100dvh − 42px on desktop, 4:5 on mobile. Video autoplays muted on loop. */
-  hero: {} as Media,
+  hero: {
+    video: "/sites/strale/media/hero.mp4",
+    poster: "/sites/strale/media/hero-poster.jpg",
+  } as Media,
   /** Two-up 4:5 cards under "Bu Hafta Gelen Stoklar". */
   contentCards: [{}, {}] as Media[],
   /** 4:5 tiles in "Kategoriler", keyed by category slug. */
