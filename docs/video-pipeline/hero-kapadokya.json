@@ -1,0 +1,49 @@
+{
+  "name": "hero-kapadokya",
+  "usedIn": "Ana sayfa hero videosu (tam genişlik, metin sol altta; mobilde 4:5 ortadan kırpılır)",
+  "application": "kling-video/v3.0/std/text-to-video",
+  "pricePerSecond": 0.042,
+  "output": {
+    "video": "public/sites/strale/video/hero.mp4",
+    "poster": "public/sites/strale/video/hero-poster.jpg",
+    "posterAt": 1.0
+  },
+  "decisions": {
+    "konsept": "Anadolu doğası: Kapadokya bozkırı",
+    "insan": "yok, sadece manzara",
+    "ton": "sıcak 35mm film",
+    "zaman": "sonbahar, altın saat",
+    "yapı": "5 plan × 3 sn = 15 sn montaj, döngüye uygun",
+    "model": "Kling 3.0 Standard, multi-shot, ses kapalı"
+  },
+  "style": "Shot on 35mm film, Kodak Vision3 250D, fine natural grain, soft halation, warm earthy palette of ochre, rust and dry gold, low golden-hour autumn sun, gentle natural camera motion, 24fps, cinematic, calm. No people, no text, no logos, no hot air balloons, no vehicles, no modern buildings.",
+  "arguments": {
+    "aspect_ratio": "16:9",
+    "duration": 15,
+    "sound": "off",
+    "cfg_scale": 0.5,
+    "multi_shots": true
+  },
+  "shots": [
+    {
+      "duration": 3,
+      "prompt": "Wide establishing shot of the Cappadocia valley at golden hour: fairy chimneys and soft tuff ridges, long shadows across dry autumn steppe, slow dolly forward."
+    },
+    {
+      "duration": 3,
+      "prompt": "A herd of wild horses gallops across a dry golden grass plain beneath tuff cliffs, backlit dust hanging in the low sun, smooth side tracking shot."
+    },
+    {
+      "duration": 3,
+      "prompt": "Close-up of dry golden grass and thistles swaying in the wind, strong backlight, shallow depth of field, slow handheld drift."
+    },
+    {
+      "duration": 3,
+      "prompt": "Weathered carved stone doorway of an old cave dwelling, warm sunlight raking across the rough tuff wall, dust motes in the air, slow push in."
+    },
+    {
+      "duration": 3,
+      "prompt": "Static wide shot as the sun sinks behind the Rose Valley ridge, pink and amber sky, calm and still, the lower left of the frame falls into soft shadow."
+    }
+  ]
+}
