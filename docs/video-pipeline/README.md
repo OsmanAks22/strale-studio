@@ -39,4 +39,5 @@ npm run video:generate -- docs/video-pipeline/hero-kapadokya.json --finalize tem
 - **Döngü:** video sessiz döngüde oynar. Son plan ile ilk plan aynı amber altın saatte olsun; pembe alacakaranlık başa dönüşte sıçrama yapar.
 - **Akış:** kamera yönünü planlar boyunca aynı tutun (hep sağa) ve her plana bir sonrakinin ipucunu koyun (uzakta toz → atlar → toz içinde otlar).
 - Kling arka ışıkta sık sık yeşil lens yansıması (flare) ekliyor; yasaklara "no lens flare" yazmak işe yaramıyor (take 3 daha kötü çıktı). Asıl sebep güneşin kadrajda olması.
+- Yansıma yine de gelirse spec'te `output.grade` ile finalize sırasında yeşil/camgöbeğini sıcak altına kaydırın (bkz. `kart-dis-giyim.json`). Tamamen silmez ama doğal güneş yansıması gibi okunur.
 - Kapadokya'da AI sık sık sıcak hava balonu ekler. Yasaklar listesinde tutun.

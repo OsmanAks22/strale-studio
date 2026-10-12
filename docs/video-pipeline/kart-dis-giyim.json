@@ -10,14 +10,16 @@
     "crossfade": 0.4,
     "loop": true,
     "width": 720,
-    "crop": "4:5"
+    "crop": "4:5",
+    "grade": "huesaturation=hue=-50:saturation=-0.8:colors=g+c:strength=20,huesaturation=hue=-20:saturation=-0.3:colors=y:strength=3"
   },
   "decisions": {
     "konsept": "Geç sonbahar bozkırı, rüzgâr ve uzakta karlı dağ: yün ceketin sıcaklığı",
     "insan": "tek kişi, uzaktan ve arkadan, yüz yok",
     "ton": "sıcak 35mm film, hero ile aynı",
     "yapı": "5 plan × 2 sn = 10 sn, 9:16 üretilip 4:5 ortadan kırpılır; ana öğeler kadraj ortasında",
-    "model": "Kling 3.0 Standard, multi-shot, ses kapalı"
+    "model": "Kling 3.0 Standard, multi-shot, ses kapalı",
+    "renk": "Kling'in yeşil lens yansımaları finalize'da sıcak altına kaydırılır (output.grade); otlar altın kalır"
   },
   "style": "Shot on 35mm film, Kodak Vision3 250D, fine natural grain, soft halation, warm earthy palette of walnut brown, rust, ochre and pale snow, low late-autumn afternoon sun, gentle natural camera motion, 24fps, calm. Plain garments with no logos, no text, no prints. No faces, no text, no vehicles, no modern buildings.",
   "arguments": {

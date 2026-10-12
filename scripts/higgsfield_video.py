@@ -81,14 +81,16 @@ def probe_duration(take: Path) -> float:
 
 
 def frame_filter(output: dict) -> str:
-    """Scale (and optionally centre-crop to `output.crop`, e.g. "4:5") to `output.width` pixels wide."""
+    """Optional colour fix (`output.grade`, an ffmpeg filter chain), then scale (and optionally
+    centre-crop to `output.crop`, e.g. "4:5") to `output.width` pixels wide."""
+    grade = f"{output['grade']}," if output.get("grade") else ""
     width = output.get("width", 1920)
     if "crop" in output:
         w, h = (int(n) for n in output["crop"].split(":"))
         height = round(width * h / w / 2) * 2
-        return (f"scale={width}:{height}:force_original_aspect_ratio=increase:flags=lanczos,"
+        return (f"{grade}scale={width}:{height}:force_original_aspect_ratio=increase:flags=lanczos,"
                 f"crop={width}:{height},format=yuv420p")
-    return f"scale={width}:-2,format=yuv420p"
+    return f"{grade}scale={width}:-2,format=yuv420p"
 
 
 def transition_filter(take: Path, fade: float, loop: bool, frame: str) -> tuple[str, float]:

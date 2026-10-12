@@ -14,7 +14,7 @@ export const media = {
   /** Two-up 4:5 cards under "Bu Hafta Gelen Stoklar". */
   contentCards: [
     { video: "/sites/strale/media/kart-esofman.mp4", poster: "/sites/strale/media/kart-esofman-poster.jpg" },
-    {},
+    { video: "/sites/strale/media/kart-dis-giyim.mp4", poster: "/sites/strale/media/kart-dis-giyim-poster.jpg" },
   ] as Media[],
   /** 4:5 tiles in "Kategoriler", keyed by category slug. */
   categories: {} as Partial<Record<string, Media>>,
