@@ -1,0 +1,52 @@
+{
+  "name": "kart-esofman",
+  "usedIn": "Ana sayfa 'Eşofman & Sweat' içerik kartı (4:5, metin sol altta, koyu gradyan üstünde)",
+  "application": "kling-video/v3.0/std/text-to-video",
+  "pricePerSecond": 0.042,
+  "output": {
+    "video": "public/sites/strale/media/kart-esofman.mp4",
+    "poster": "public/sites/strale/media/kart-esofman-poster.jpg",
+    "posterAt": 1.0,
+    "crossfade": 0.4,
+    "loop": true,
+    "width": 720,
+    "crop": "4:5"
+  },
+  "decisions": {
+    "konsept": "Anadolu yaylası, şafak: sabah yürüyüşü ve ağır pamuk dokusu",
+    "insan": "tek kişi, uzaktan ve arkadan, yüz yok",
+    "ton": "sıcak 35mm film, hero ile aynı",
+    "yapı": "5 plan × 2 sn = 10 sn, 9:16 üretilip 4:5 ortadan kırpılır; ana öğeler kadraj ortasında",
+    "model": "Kling 3.0 Standard, multi-shot, ses kapalı"
+  },
+  "style": "Shot on 35mm film, Kodak Vision3 250D, fine natural grain, soft halation, warm earthy palette of stone grey, oat and dry gold, soft low dawn light, gentle natural camera motion, 24fps, calm. Plain garments with no logos, no text, no prints. No faces, no text, no vehicles, no modern buildings.",
+  "arguments": {
+    "aspect_ratio": "9:16",
+    "duration": 10,
+    "sound": "off",
+    "cfg_scale": 0.5,
+    "multi_shots": true
+  },
+  "shots": [
+    {
+      "duration": 2,
+      "prompt": "Vertical wide shot of an Anatolian highland plateau at dawn, thin mist over rolling dry grass, a stone wall leading into the distance, the main subject centred, slow push in."
+    },
+    {
+      "duration": 2,
+      "prompt": "Close-up of a folded heavyweight grey cotton sweatshirt resting on a rough stone wall, dew on the stone, low dawn sun raking across the brushed fleece texture, slow drift."
+    },
+    {
+      "duration": 2,
+      "prompt": "Macro close-up of a ribbed cotton cuff and soft fleece fibres in warm side light, shallow depth of field, gentle slow pan."
+    },
+    {
+      "duration": 2,
+      "prompt": "A single person seen from behind and far away, wearing a plain charcoal sweatshirt and matching joggers, walking slowly up a dirt path through misty grassland toward the light, centred, slow tracking."
+    },
+    {
+      "duration": 2,
+      "prompt": "Static vertical wide shot of the misty plateau at dawn, soft warm light on the stone wall in the centre, the lower part of the frame falls into soft shadow."
+    }
+  ]
+}

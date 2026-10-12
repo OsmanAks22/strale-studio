@@ -12,7 +12,10 @@ export const media = {
     poster: "/sites/strale/media/hero-poster.jpg",
   } as Media,
   /** Two-up 4:5 cards under "Bu Hafta Gelen Stoklar". */
-  contentCards: [{}, {}] as Media[],
+  contentCards: [
+    { video: "/sites/strale/media/kart-esofman.mp4", poster: "/sites/strale/media/kart-esofman-poster.jpg" },
+    {},
+  ] as Media[],
   /** 4:5 tiles in "Kategoriler", keyed by category slug. */
   categories: {} as Partial<Record<string, Media>>,
   /** Inset banner: 600px tall on desktop, separate 4:5 media on mobile. */

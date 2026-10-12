@@ -33,7 +33,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "check": "npm run lint && npm run typecheck && npm run build",
-    "import-products": "node scripts/import-products.mjs"
+    "import-products": "node scripts/import-products.mjs",
+    "video:generate": "python3 scripts/higgsfield_video.py"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",

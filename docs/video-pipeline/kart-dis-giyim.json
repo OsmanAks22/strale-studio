@@ -1,0 +1,52 @@
+{
+  "name": "kart-dis-giyim",
+  "usedIn": "Ana sayfa 'Dış Giyim' içerik kartı (4:5, metin sol altta, koyu gradyan üstünde)",
+  "application": "kling-video/v3.0/std/text-to-video",
+  "pricePerSecond": 0.042,
+  "output": {
+    "video": "public/sites/strale/media/kart-dis-giyim.mp4",
+    "poster": "public/sites/strale/media/kart-dis-giyim-poster.jpg",
+    "posterAt": 1.0,
+    "crossfade": 0.4,
+    "loop": true,
+    "width": 720,
+    "crop": "4:5"
+  },
+  "decisions": {
+    "konsept": "Geç sonbahar bozkırı, rüzgâr ve uzakta karlı dağ: yün ceketin sıcaklığı",
+    "insan": "tek kişi, uzaktan ve arkadan, yüz yok",
+    "ton": "sıcak 35mm film, hero ile aynı",
+    "yapı": "5 plan × 2 sn = 10 sn, 9:16 üretilip 4:5 ortadan kırpılır; ana öğeler kadraj ortasında",
+    "model": "Kling 3.0 Standard, multi-shot, ses kapalı"
+  },
+  "style": "Shot on 35mm film, Kodak Vision3 250D, fine natural grain, soft halation, warm earthy palette of walnut brown, rust, ochre and pale snow, low late-autumn afternoon sun, gentle natural camera motion, 24fps, calm. Plain garments with no logos, no text, no prints. No faces, no text, no vehicles, no modern buildings.",
+  "arguments": {
+    "aspect_ratio": "9:16",
+    "duration": 10,
+    "sound": "off",
+    "cfg_scale": 0.5,
+    "multi_shots": true
+  },
+  "shots": [
+    {
+      "duration": 2,
+      "prompt": "Vertical wide shot of a windswept golden Anatolian steppe in late autumn, a snow-capped volcanic mountain far in the centre, dry grass bending in the wind, slow push in."
+    },
+    {
+      "duration": 2,
+      "prompt": "Close-up of a brown wool overshirt jacket hanging on a weathered wooden fence post, wind moving the fabric, low sun raking across the dense wool texture, slow drift."
+    },
+    {
+      "duration": 2,
+      "prompt": "Macro close-up of thick brown wool fabric with a patch pocket and a horn button, fine fibres catching warm side light, a few snowflakes drifting past, shallow depth of field."
+    },
+    {
+      "duration": 2,
+      "prompt": "A single person seen from behind and far away, wearing a brown wool jacket, walking across the windy golden steppe toward the distant snowy mountain, centred, slow tracking."
+    },
+    {
+      "duration": 2,
+      "prompt": "Static vertical wide shot of the golden steppe and the snowy mountain in warm late sun, grass moving in the wind, the lower part of the frame falls into soft shadow."
+    }
+  ]
+}
