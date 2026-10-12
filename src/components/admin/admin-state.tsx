@@ -52,6 +52,43 @@ export function photosOf(product: Product): Photo[] {
   return product.image ? [{ src: product.image }] : [];
 }
 
+/**
+ * Three-way merge of the panel's edits (`mine`, made on top of `base`) onto the latest saved list (`theirs`).
+ * Stock changes are applied as differences so pieces sold meanwhile are not lost; other edited fields win.
+ */
+export function rebase(mine: Product[], base: Product[], theirs: Product[]): Product[] {
+  const baseBy = new Map(base.map((p) => [p.handle, p]));
+  const theirsBy = new Map(theirs.map((p) => [p.handle, p]));
+  const mineHandles = new Set(mine.map((p) => p.handle));
+  const result: Product[] = [];
+  // Products created elsewhere since we loaded go first (newest on top).
+  for (const p of theirs) if (!baseBy.has(p.handle) && !mineHandles.has(p.handle)) result.push(p);
+  for (const p of mine) {
+    const before = baseBy.get(p.handle);
+    const latest = theirsBy.get(p.handle);
+    if (!before) {
+      result.push(p);
+      continue;
+    }
+    if (!latest) continue; // deleted elsewhere
+    if (JSON.stringify(p) === JSON.stringify(before)) {
+      result.push(latest);
+      continue;
+    }
+    const merged: Product = { ...p };
+    if (p.sizeStock && before.sizeStock && latest.sizeStock) {
+      merged.sizeStock = Object.fromEntries(
+        p.sizes.map((size) => [size, Math.max(0, (latest.sizeStock?.[size] ?? 0) + (p.sizeStock![size] ?? 0) - (before.sizeStock?.[size] ?? 0))]),
+      );
+      merged.stock = Object.values(merged.sizeStock).reduce((a, b) => a + b, 0);
+    } else if (!p.sizeStock && !latest.sizeStock) {
+      merged.stock = Math.max(0, latest.stock + p.stock - before.stock);
+    }
+    result.push(merged);
+  }
+  return result;
+}
+
 const randomId = () => Math.random().toString(36).slice(2, 8);
 
 export function AdminProvider({ children }: { children: React.ReactNode }) {
@@ -150,15 +187,26 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     async (force = false) => {
       setSaving(true);
       setSaveError(null);
-      try {
-        const result = await api<{ version: string; commit?: string; url?: string; products: Product[] }>("urunler", {
+      const send = (list: Product[], baseVersion: string) =>
+        api<{ version: string; commit?: string; url?: string; products: Product[] }>("urunler", {
           body: {
-            products,
-            baseVersion: version,
+            products: list,
+            baseVersion,
             force,
             uploads: Object.entries(uploads).map(([path, upload]) => ({ path, ref: upload.ref })),
           },
         });
+      try {
+        let result;
+        try {
+          result = await send(products, version);
+        } catch (error) {
+          if (!(error instanceof ApiError && error.details.conflict)) throw error;
+          // Usually an order took stock while the panel was open: replay our edits on the latest list and retry once.
+          const latest = await api<{ products: Product[]; version: string }>("urunler");
+          const merged = rebase(products, saved, latest.products);
+          result = await send(merged, latest.version);
+        }
         setProductsState(result.products);
         setSaved(result.products);
         setVersion(result.version);
@@ -172,7 +220,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         setSaving(false);
       }
     },
-    [products, version, uploads],
+    [products, saved, version, uploads],
   );
 
   const discard = useCallback(() => {

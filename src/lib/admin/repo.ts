@@ -2,48 +2,64 @@ import { createHash, randomBytes } from "node:crypto";
 import { mkdir, readFile, rm, writeFile, copyFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import type { Product } from "@/components/sites/strale/catalog";
+import type { StoreSettings } from "@/components/sites/strale/site-config";
 
 /**
- * Where the admin panel reads and saves the catalogue.
- * - github: products.json and photos live in the GitHub repo; each save is one commit, which makes Vercel
- *   rebuild the site. Needs GITHUB_TOKEN (fine-grained: Contents read/write, Commit statuses read).
+ * Where the admin panel reads and saves site content (products, store settings, photos).
+ * - github: files live in the GitHub repo; each save is one commit, which makes Vercel rebuild the site.
+ *   Needs GITHUB_TOKEN (fine-grained: Contents read/write, Commit statuses read).
  * - local: no token outside production → writes straight to this checkout (npm run dev on your computer).
  */
 
 export const PRODUCTS_PATH = "src/components/sites/strale/products.json";
+export const SETTINGS_PATH = "src/components/sites/strale/store-settings.json";
+const WRITABLE = new Set([PRODUCTS_PATH, SETTINGS_PATH]);
 const UPLOAD_PATH = /^(public\/sites\/strale\/products|docs\/products\/fotograflar)\/[a-z0-9][a-z0-9-]*\.jpg$/;
 const DELETABLE_PATH = /^public\/sites\/strale\/products\/[a-z0-9][a-z0-9-]*\.(jpg|jpeg|png|webp)$/;
 
 export type Upload = { path: string; ref: string };
+/** A content file to write; `baseVersion` (from read) guards against overwriting someone else's save. */
+export type FileWrite = { path: string; content: string; baseVersion?: string };
 export type CommitInput = {
-  products: Product[];
-  baseVersion: string;
+  files: FileWrite[];
   force?: boolean;
-  uploads: Upload[];
-  deletes: string[];
+  uploads?: Upload[];
+  deletes?: string[];
   message: string;
 };
+export type CommitResult = { versions: Record<string, string>; commit?: string; url?: string };
 export type HistoryEntry = { sha: string; message: string; date: string; url?: string };
 export type DeployStatus = { state: "pending" | "success" | "failure" | "unknown"; url?: string };
 
 export class ConflictError extends Error {}
 export class ConfigError extends Error {}
 
-export interface CatalogRepo {
+export interface ContentRepo {
   mode: "github" | "local";
   label: string;
   /** Base URL for files saved but not deployed yet (null when the site serves them directly). */
   rawBase: string | null;
-  read(): Promise<{ products: Product[]; version: string }>;
+  readFile(path: string): Promise<{ content: string; version: string }>;
   stageFile(base64: string): Promise<string>;
-  commit(input: CommitInput): Promise<{ version: string; commit?: string; url?: string }>;
+  commit(input: CommitInput): Promise<CommitResult>;
   history(): Promise<HistoryEntry[]>;
   status(commit: string): Promise<DeployStatus>;
 }
 
-export const serializeProducts = (products: Product[]) => `${JSON.stringify(products, null, 2)}\n`;
+export const serializeJson = (value: unknown) => `${JSON.stringify(value, null, 2)}\n`;
 
-export function assertPaths({ uploads, deletes }: Pick<CommitInput, "uploads" | "deletes">) {
+export async function readProducts(repo: ContentRepo) {
+  const { content, version } = await repo.readFile(PRODUCTS_PATH);
+  return { products: JSON.parse(content) as Product[], version };
+}
+
+export async function readSettings(repo: ContentRepo) {
+  const { content, version } = await repo.readFile(SETTINGS_PATH);
+  return { settings: JSON.parse(content) as StoreSettings, version };
+}
+
+function assertPaths({ files, uploads = [], deletes = [] }: CommitInput) {
+  for (const file of files) if (!WRITABLE.has(file.path)) throw new Error(`Yazılamaz dosya: ${file.path}`);
   for (const upload of uploads) if (!UPLOAD_PATH.test(upload.path)) throw new Error(`Geçersiz dosya yolu: ${upload.path}`);
   for (const path of deletes) if (!DELETABLE_PATH.test(path)) throw new Error(`Silinemez dosya: ${path}`);
 }
@@ -53,7 +69,7 @@ export function assertPaths({ uploads, deletes }: Pick<CommitInput, "uploads" | 
 /** Branch names like "claude/x" keep their slashes in API paths (GitHub rejects an encoded %2F there). */
 const branchPath = (branch: string) => branch.split("/").map(encodeURIComponent).join("/");
 
-class GitHubRepo implements CatalogRepo {
+class GitHubRepo implements ContentRepo {
   mode = "github" as const;
   label: string;
   rawBase: string;
@@ -87,12 +103,9 @@ class GitHubRepo implements CatalogRepo {
     return (await response.json()) as T;
   }
 
-  async read() {
-    const file = await this.api<{ content: string; sha: string }>(
-      `/contents/${PRODUCTS_PATH}?ref=${encodeURIComponent(this.branch)}`,
-    );
-    const products = JSON.parse(Buffer.from(file.content, "base64").toString("utf8")) as Product[];
-    return { products, version: file.sha };
+  async readFile(path: string, ref = this.branch) {
+    const file = await this.api<{ content: string; sha: string }>(`/contents/${path}?ref=${encodeURIComponent(ref)}`);
+    return { content: Buffer.from(file.content, "base64").toString("utf8"), version: file.sha };
   }
 
   async stageFile(base64: string) {
@@ -103,21 +116,28 @@ class GitHubRepo implements CatalogRepo {
     return blob.sha;
   }
 
-  async commit(input: CommitInput, attempt = 0): Promise<{ version: string; commit: string; url: string }> {
+  async commit(input: CommitInput, attempt = 0): Promise<CommitResult> {
     assertPaths(input);
+    const { uploads = [], deletes = [] } = input;
     const ref = await this.api<{ object: { sha: string } }>(`/git/ref/heads/${branchPath(this.branch)}`);
     const head = ref.object.sha;
-    const current = await this.api<{ sha: string }>(`/contents/${PRODUCTS_PATH}?ref=${head}`);
-    if (!input.force && current.sha !== input.baseVersion) {
-      throw new ConflictError("Ürünler siz düzenlerken başka bir yerden değiştirilmiş.");
+    if (!input.force) {
+      for (const file of input.files) {
+        if (file.baseVersion === undefined) continue;
+        const current = await this.api<{ sha: string }>(`/contents/${file.path}?ref=${head}`);
+        if (current.sha !== file.baseVersion) throw new ConflictError("Siz düzenlerken başka bir yerden değiştirilmiş.");
+      }
     }
     const headCommit = await this.api<{ tree: { sha: string } }>(`/git/commits/${head}`);
-    const json = await this.stageFile(Buffer.from(serializeProducts(input.products)).toString("base64"));
+    const versions: Record<string, string> = {};
+    for (const file of input.files) {
+      versions[file.path] = await this.stageFile(Buffer.from(file.content).toString("base64"));
+    }
 
     const tree = [
-      { path: PRODUCTS_PATH, mode: "100644", type: "blob", sha: json },
-      ...input.uploads.map((u) => ({ path: u.path, mode: "100644", type: "blob", sha: u.ref })),
-      ...input.deletes.map((path) => ({ path, mode: "100644", type: "blob", sha: null })),
+      ...input.files.map((f) => ({ path: f.path, mode: "100644", type: "blob", sha: versions[f.path] })),
+      ...uploads.map((u) => ({ path: u.path, mode: "100644", type: "blob", sha: u.ref })),
+      ...deletes.map((path) => ({ path, mode: "100644", type: "blob", sha: null })),
     ];
     let newTree: { sha: string };
     try {
@@ -127,7 +147,7 @@ class GitHubRepo implements CatalogRepo {
       });
     } catch (error) {
       // Deleting a path that is already gone fails the whole tree; retry without deletes.
-      if (input.deletes.length && (error as { status?: number }).status === 422) {
+      if (deletes.length && (error as { status?: number }).status === 422) {
         return this.commit({ ...input, deletes: [] }, attempt);
       }
       throw error;
@@ -142,16 +162,16 @@ class GitHubRepo implements CatalogRepo {
         body: JSON.stringify({ sha: commit.sha, force: false }),
       });
     } catch (error) {
-      // Someone pushed between our read and write: rebuild on the new head once.
-      if (attempt === 0 && (error as { status?: number }).status === 422) return this.commit(input, 1);
+      // Someone pushed between our read and write: rebuild on the new head (the version check runs again).
+      if (attempt < 2 && (error as { status?: number }).status === 422) return this.commit(input, attempt + 1);
       throw error;
     }
-    return { version: json, commit: commit.sha, url: commit.html_url };
+    return { versions, commit: commit.sha, url: commit.html_url };
   }
 
   async history() {
     const commits = await this.api<{ sha: string; html_url: string; commit: { message: string; author: { date: string } } }[]>(
-      `/commits?sha=${encodeURIComponent(this.branch)}&path=${PRODUCTS_PATH}&per_page=20`,
+      `/commits?sha=${encodeURIComponent(this.branch)}&path=src/components/sites/strale&per_page=20`,
     );
     return commits.map((c) => ({
       sha: c.sha,
@@ -174,7 +194,7 @@ class GitHubRepo implements CatalogRepo {
 
 /* ------------------------------------------------------------------- local */
 
-class LocalRepo implements CatalogRepo {
+class LocalRepo implements ContentRepo {
   mode = "local" as const;
   label = "Yerel dosyalar (bu bilgisayar)";
   rawBase = null;
@@ -185,9 +205,9 @@ class LocalRepo implements CatalogRepo {
     return createHash("sha1").update(text).digest("hex");
   }
 
-  async read() {
-    const text = await readFile(resolve(this.root, PRODUCTS_PATH), "utf8");
-    return { products: JSON.parse(text) as Product[], version: this.hash(text) };
+  async readFile(path: string) {
+    const content = await readFile(resolve(this.root, path), "utf8");
+    return { content, version: this.hash(content) };
   }
 
   async stageFile(base64: string) {
@@ -199,20 +219,26 @@ class LocalRepo implements CatalogRepo {
 
   async commit(input: CommitInput) {
     assertPaths(input);
-    const { version } = await this.read();
-    if (!input.force && version !== input.baseVersion) {
-      throw new ConflictError("Ürünler siz düzenlerken başka bir yerden değiştirilmiş.");
+    if (!input.force) {
+      for (const file of input.files) {
+        if (file.baseVersion !== undefined && (await this.readFile(file.path)).version !== file.baseVersion) {
+          throw new ConflictError("Siz düzenlerken başka bir yerden değiştirilmiş.");
+        }
+      }
     }
-    for (const upload of input.uploads) {
+    for (const upload of input.uploads ?? []) {
       if (!/^[a-f0-9]{24}$/.test(upload.ref)) throw new Error("Geçersiz yükleme");
       const target = resolve(this.root, upload.path);
       await mkdir(dirname(target), { recursive: true });
       await copyFile(resolve(this.staging, `${upload.ref}.bin`), target);
     }
-    for (const path of input.deletes) await rm(resolve(this.root, path), { force: true });
-    const text = serializeProducts(input.products);
-    await writeFile(resolve(this.root, PRODUCTS_PATH), text);
-    return { version: this.hash(text) };
+    for (const path of input.deletes ?? []) await rm(resolve(this.root, path), { force: true });
+    const versions: Record<string, string> = {};
+    for (const file of input.files) {
+      await writeFile(resolve(this.root, file.path), file.content);
+      versions[file.path] = this.hash(file.content);
+    }
+    return { versions };
   }
 
   async history() {
@@ -224,7 +250,7 @@ class LocalRepo implements CatalogRepo {
   }
 }
 
-export function getRepo(): CatalogRepo {
+export function getRepo(): ContentRepo {
   const token = process.env.GITHUB_TOKEN;
   if (token) {
     const repo =
@@ -241,8 +267,18 @@ export function getRepo(): CatalogRepo {
   );
 }
 
+/** Repo when configured, else null (customer-facing code degrades instead of failing). */
+export function tryGetRepo() {
+  try {
+    return getRepo();
+  } catch {
+    return null;
+  }
+}
+
 export function errorResponse(error: unknown) {
   if (error instanceof ConflictError) return Response.json({ error: error.message, conflict: true }, { status: 409 });
   const message = error instanceof Error ? error.message : String(error);
+  console.error(error);
   return Response.json({ error: message }, { status: error instanceof ConfigError ? 503 : 500 });
 }

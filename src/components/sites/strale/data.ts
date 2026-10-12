@@ -103,6 +103,8 @@ export const footerColumns: MenuColumn[] = [
   {
     heading: "Yardım",
     links: [
+      { label: "Sipariş Takip", href: "/siparis-takip" },
+      { label: "Favorilerim", href: "/favoriler" },
       { label: "Nasıl Sipariş Verilir?", href: "/sayfa/siparis" },
       { label: "Kargo & Teslimat", href: "/sayfa/kargo-teslimat" },
       { label: "İade & Değişim", href: "/sayfa/iade-degisim" },

@@ -33,6 +33,7 @@ Vercel → **strale-studio** projesi → **Settings → Environment Variables**:
 | `GITHUB_TOKEN` | 1. adımdaki token | Kimseyle paylaşmayın, repoya yazmayın. |
 | `GITHUB_BRANCH` | Panelin yazacağı dal, ör. `main` | Boş bırakılırsa sitenin derlendiği dal kullanılır. |
 | `GITHUB_REPO` | `OsmanAks22/strale-studio` | İsteğe bağlı; Vercel bunu kendisi bilir. |
+| `DATABASE_URL` | Neon bağlantısı | Siparişler için; Vercel Storage → Neon eklenince otomatik gelir (bkz. siparis-sistemi.md). |
 
 Değişkenleri ekledikten sonra **Deployments → en son deployment → Redeploy** yapın.
 
@@ -43,6 +44,8 @@ Değişkenleri ekledikten sonra **Deployments → en son deployment → Redeploy
 `/yonetim` adresini açın, şifreyi girin. Oturum 7 gün açık kalır; **Çıkış** ile kapatabilirsiniz.
 
 ## Sekmeler
+
+Siparişler, Haber Ver Listesi, İndirim Kodları ve Mağaza Ayarları sekmeleri için bkz. [`siparis-sistemi.md`](siparis-sistemi.md).
 
 | Sekme | Ne işe yarar |
 |---|---|

@@ -1,0 +1,36 @@
+{
+  "domain": "",
+  "whatsapp": "",
+  "phone": "",
+  "email": "",
+  "hours": "Pazartesi–Cumartesi 10:00–19:00",
+  "instagram": "",
+  "company": {
+    "title": "",
+    "address": "",
+    "taxOffice": "",
+    "taxNumber": "",
+    "mersis": ""
+  },
+  "freeShippingThreshold": 2500,
+  "shippingFee": 120,
+  "dispatchDays": "1–3",
+  "returnDays": 14,
+  "payment": {
+    "transfer": true,
+    "cod": true,
+    "codFee": 0
+  },
+  "bank": {
+    "name": "",
+    "accountHolder": "",
+    "iban": ""
+  },
+  "announcement": {
+    "enabled": true,
+    "text": "İhraç fazlası ürünlerde %50’ye varan indirim.",
+    "linkText": "Alışverişe Başla",
+    "linkHref": "/koleksiyonlar/yeni-gelenler"
+  },
+  "etbisUrl": ""
+}

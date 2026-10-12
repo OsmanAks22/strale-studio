@@ -8,9 +8,12 @@ import { AdminProvider, useAdmin } from "./admin-state";
 import { BulkPhotos } from "./bulk-photos";
 import { emptyProduct, ProductEditor } from "./product-editor";
 import { ProductTable } from "./product-table";
+import { AlertsTab, CodesTab } from "./marketing-tabs";
+import { OrdersTab } from "./orders-tab";
+import { SettingsTab } from "./settings-tab";
 import { Checklist, CsvTools, History } from "./side-tabs";
 
-type Tab = "urunler" | "fotograflar" | "kontrol" | "csv" | "gecmis";
+type Tab = "siparisler" | "urunler" | "fotograflar" | "kontrol" | "bildirim" | "kodlar" | "ayarlar" | "csv" | "gecmis";
 
 export function AdminApp() {
   return (
@@ -23,7 +26,7 @@ export function AdminApp() {
 function Dashboard() {
   const admin = useAdmin();
   const { products, loading, loadError, setProducts } = admin;
-  const [tab, setTab] = useState<Tab>("urunler");
+  const [tab, setTab] = useState<Tab>("siparisler");
   const [editing, setEditing] = useState<string | null>(null);
   const editingProduct = products.find((p) => p.handle === editing);
 
@@ -61,9 +64,13 @@ function Dashboard() {
   }
 
   const tabs: [Tab, string][] = [
+    ["siparisler", "Siparişler"],
     ["urunler", "Ürünler & Stok"],
     ["fotograflar", "Toplu Fotoğraf"],
     ["kontrol", `Kontrol${stats.issues ? ` (${stats.issues})` : ""}`],
+    ["bildirim", "Haber Ver Listesi"],
+    ["kodlar", "İndirim Kodları"],
+    ["ayarlar", "Mağaza Ayarları"],
     ["csv", "Excel / CSV"],
     ["gecmis", "Geçmiş"],
   ];
@@ -110,7 +117,11 @@ function Dashboard() {
         </nav>
 
         <div className="mt-4">
+          {tab === "siparisler" ? <OrdersTab /> : null}
           {tab === "urunler" ? <ProductTable onEdit={setEditing} /> : null}
+          {tab === "bildirim" ? <AlertsTab /> : null}
+          {tab === "kodlar" ? <CodesTab /> : null}
+          {tab === "ayarlar" ? <SettingsTab /> : null}
           {tab === "fotograflar" ? <BulkPhotos onEdit={setEditing} /> : null}
           {tab === "kontrol" ? <Checklist onEdit={setEditing} /> : null}
           {tab === "csv" ? <CsvTools /> : null}

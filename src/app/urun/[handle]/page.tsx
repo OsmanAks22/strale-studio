@@ -8,6 +8,7 @@ import {
   formatPrice,
   getProduct,
   productTitle,
+  type Product,
 } from "@/components/sites/strale/catalog";
 import { OrderPanel } from "@/components/sites/strale/order-panel";
 import { ProductCard } from "@/components/sites/strale/product-card";
@@ -16,6 +17,7 @@ import { RecentlyViewedList, TrackRecentlyViewed } from "@/components/sites/stra
 import { siteConfig } from "@/components/sites/strale/site-config";
 import { Slider, SliderItem } from "@/components/sites/strale/slider";
 import { StoreShell } from "@/components/sites/strale/store-shell";
+import { siteOrigin } from "@/lib/site-url";
 
 type Props = { params: Promise<{ handle: string }> };
 
@@ -28,9 +30,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = getProduct((await params).handle);
   if (!product) return {};
+  const description = `${productTitle(product)} — ihraç fazlası, ${formatPrice(product.price)}. Bedenler: ${product.sizes.join(", ")}.`;
   return {
     title: productTitle(product),
-    description: `${productTitle(product)} — ihraç fazlası, ${formatPrice(product.price)}. Bedenler: ${product.sizes.join(", ")}.`,
+    description,
+    alternates: { canonical: `/urun/${product.handle}` },
+    openGraph: { title: productTitle(product), description, images: product.image ? [{ url: product.image, width: 1200, height: 1500 }] : undefined },
   };
 }
 
@@ -52,6 +57,11 @@ export default async function ProductPage({ params }: Props) {
 
   return (
     <StoreShell>
+      <script
+        type="application/ld+json"
+        // Product rich results (price, availability) for Google.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product)).replace(/</g, "\\u003c") }}
+      />
       <TrackRecentlyViewed handle={product.handle} />
       <nav aria-label="Sayfa yolu" className="px-3 pt-6 text-graphite tab:px-8">
         <Link href="/" className="st-hover-underline">
@@ -154,4 +164,24 @@ export default async function ProductPage({ params }: Props) {
       </section>
     </StoreShell>
   );
+}
+
+function productJsonLd(product: Product) {
+  const origin = siteOrigin();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: productTitle(product),
+    image: (product.gallery?.map((g) => g.src) ?? (product.image ? [product.image] : [])).map((src) => `${origin}${src}`),
+    description: [product.fabric, product.origin, product.condition === "hafif-kusurlu" ? `Hafif kusurlu: ${product.note ?? ""}` : ""].filter(Boolean).join(". "),
+    sku: product.sku ?? product.handle,
+    offers: {
+      "@type": "Offer",
+      url: `${origin}/urun/${product.handle}`,
+      priceCurrency: "TRY",
+      price: product.price,
+      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
 }

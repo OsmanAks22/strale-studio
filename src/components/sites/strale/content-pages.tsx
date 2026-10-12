@@ -173,20 +173,25 @@ export const contentPages: Record<string, ContentPage> = {
   siparis: {
     title: "Nasıl Sipariş Verilir?",
     eyebrow: "Yardım",
-    description: "STRALE’de WhatsApp üzerinden adım adım sipariş.",
+    description: "STRALE’de adım adım sipariş.",
     body: (
       <>
         <ol className="list-decimal space-y-3 pl-5">
-          <li>Beğendiğin ürünün sayfasında bedenini seç.</li>
+          <li>Beğendiğin ürünün sayfasında bedenini seç ve “Sepete Ekle”ye bas.</li>
+          <li>Sepetini kontrol et, “Siparişi Tamamla” ile teslimat bilgilerini doldur.</li>
+          <li>Ödeme yöntemini seç ({c.paymentMethods.join(" veya ")}); varsa indirim kodunu gir.</li>
+          <li>Siparişi onayladığında sipariş kodun ekranda görünür. Havale seçtiysen IBAN bilgisi de orada yer alır.</li>
           <li>
-            “WhatsApp ile Sipariş Ver” butonuna bas. Ürün adı, beden ve fiyat mesaja otomatik eklenir; mesajı gönder.
-          </li>
-          <li>Stok ve beden kontrolünden sonra sana sipariş özetini ve ödeme bilgilerini iletiriz.</li>
-          <li>Ad-soyad, teslimat adresi ve telefon bilgini paylaş; ödeme yöntemini seç ({c.paymentMethods.join(" veya ")}).</li>
-          <li>
-            Siparişin {c.dispatchDays} iş gününde kargoya verilir ve kargo takip numarası WhatsApp’tan gönderilir.
+            Siparişin {c.dispatchDays} iş gününde kargoya verilir; kargo takip numarası WhatsApp’tan iletilir ve{" "}
+            <Link href="/siparis-takip" className="st-underline">
+              Sipariş Takip
+            </Link>{" "}
+            sayfasından da görülebilir.
           </li>
         </ol>
+        <p className="mt-6">
+          Dilersen ürün sayfasındaki “Soru sor” bağlantısıyla WhatsApp’tan da sipariş verebilirsin.
+        </p>
         <p className="mt-6">
           Sipariş onayından önce{" "}
           <Link href="/sayfa/on-bilgilendirme" className="st-underline">
@@ -196,7 +201,7 @@ export const contentPages: Record<string, ContentPage> = {
           <Link href="/sayfa/mesafeli-satis-sozlesmesi" className="st-underline">
             Mesafeli Satış Sözleşmesi
           </Link>{" "}
-          sana iletilir.
+          ödeme adımında onayına sunulur.
         </p>
       </>
     ),
@@ -261,8 +266,9 @@ export const contentPages: Record<string, ContentPage> = {
       <>
         <List items={c.paymentMethods.map((method) => method)} />
         <p className="mt-6">
-          Havale/EFT bilgileri sipariş özetiyle birlikte WhatsApp’tan iletilir. Açıklama kısmına adını ve sipariş
-          numaranı yazmayı unutma. Kapıda ödemede kargo firmasının ek hizmet bedeli uygulanabilir.
+          Havale/EFT bilgileri sipariş onaylandığında ekranda gösterilir. Açıklama kısmına sipariş kodunu (ST-…)
+          yazmayı unutma; ödeme ulaşınca siparişin kargoya hazırlanır.
+          {c.payment.codFee ? ` Kapıda ödemede ${c.payment.codFee} TL hizmet bedeli eklenir.` : ""}
         </p>
       </>
     ),
@@ -319,6 +325,7 @@ export const contentPages: Record<string, ContentPage> = {
           items={[
             "Kimlik ve iletişim: ad-soyad, telefon, e-posta, teslimat adresi.",
             "Müşteri işlem: sipariş içeriği, ödeme yöntemi, yazışma kayıtları (WhatsApp dahil).",
+            "Stok bildirimi: “Gelince haber ver” formunda bıraktığınız ad ve telefon (yalnızca o ürün için bilgilendirme).",
             "Fatura bilgileri: T.C. kimlik veya vergi numarası (fatura düzenlenmesi için).",
             "İnternet sitesi kullanımı: çerezler aracılığıyla toplanan teknik veriler.",
           ]}
@@ -335,7 +342,9 @@ export const contentPages: Record<string, ContentPage> = {
         <p>
           Verileriniz yalnızca yukarıdaki amaçlarla sınırlı olarak kargo firmalarına, ödeme/banka kuruluşlarına, mali
           müşavirimize ve yetkili kamu kurumlarına aktarılabilir. WhatsApp üzerinden yürütülen yazışmalar WhatsApp’ın
-          (Meta) altyapısında işlenir.
+          (Meta) altyapısında işlenir. Sipariş kayıtları, hizmet aldığımız bulut veritabanı ve barındırma sağlayıcılarının
+          (Neon, Vercel) sunucularında saklanır. Sipariş kayıtları yasal saklama süresi boyunca, stok bildirimi kayıtları
+          bildirim yapıldıktan sonra en geç 6 ay içinde silinir.
         </p>
         <H2>Haklarınız</H2>
         <p>

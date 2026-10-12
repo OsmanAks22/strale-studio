@@ -9,14 +9,19 @@ import { Slider, SliderItem } from "./slider";
 
 /* Layout and type scale follow the cloned homepage 1:1 (docs/research/reigningchamp/page-brief.md). */
 
+/** Text and link are edited in the admin panel (Mağaza Ayarları → Duyuru çubuğu). */
 export function AnnouncementBar() {
+  const { announcement } = siteConfig;
+  if (!announcement.enabled) return null;
   return (
     <div className="flex h-[42px] items-center justify-center bg-ink px-3 text-bone tab:justify-between tab:px-8">
-      <p className="whitespace-nowrap">
-        İhraç fazlası ürünlerde %50’ye varan indirim.{" "}
-        <Link href="/koleksiyonlar/yeni-gelenler" className="st-underline">
-          Alışverişe Başla
-        </Link>
+      <p className="truncate whitespace-nowrap">
+        {announcement.text}{" "}
+        {announcement.linkText && announcement.linkHref ? (
+          <Link href={announcement.linkHref} className="st-underline">
+            {announcement.linkText}
+          </Link>
+        ) : null}
       </p>
       <p className="hidden whitespace-nowrap tab:block">
         {formatPrice(siteConfig.freeShippingThreshold)} üzeri siparişlerde ücretsiz kargo

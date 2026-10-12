@@ -8,6 +8,8 @@ import { AccountIcon, BagIcon, CaretIcon, CloseIcon, HamburgerIcon, SearchIcon, 
 import { StraleLogo } from "./logo";
 import { media } from "./media";
 import { MediaSlot } from "./media-slot";
+import { HeartIcon } from "./order-panel";
+import { cartCount, useCart, useFavourites } from "./shop-store";
 import { siteConfig, whatsappLink } from "./site-config";
 
 const SCROLLED_PAST = 70;
@@ -91,9 +93,7 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
             <Link href="/arama" aria-label="Ürün ara" className="block">
               <SearchIcon className="size-5" />
             </Link>
-            <Link href="/sayfa/siparis" aria-label="Nasıl sipariş verilir?" className="block">
-              <BagIcon className="size-5" />
-            </Link>
+            <HeaderShopLinks />
             {siteConfig.whatsapp ? (
               <a
                 href={whatsappLink("Merhaba, sipariş vermek istiyorum.") ?? undefined}
@@ -346,5 +346,31 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         </div>
       </div>
     </div>
+  );
+}
+
+/** Favourites + basket icons with counts (counts come from this browser's storage). */
+function HeaderShopLinks() {
+  const count = cartCount(useCart());
+  const favourites = useFavourites().length;
+  return (
+    <>
+      <Link href="/favoriler" aria-label={`Favoriler (${favourites})`} className="relative hidden tab:block">
+        <HeartIcon filled={false} className="size-5" />
+        {favourites ? <Badge value={favourites} /> : null}
+      </Link>
+      <Link href="/sepet" aria-label={`Sepet (${count} ürün)`} className="relative block">
+        <BagIcon className="size-5" />
+        {count ? <Badge value={count} /> : null}
+      </Link>
+    </>
+  );
+}
+
+function Badge({ value }: { value: number }) {
+  return (
+    <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-rust px-1 text-[10px] leading-none text-bone">
+      {value > 9 ? "9+" : value}
+    </span>
   );
 }

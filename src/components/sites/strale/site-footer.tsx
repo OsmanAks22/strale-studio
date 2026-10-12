@@ -101,6 +101,14 @@ function SubFooter() {
       </ul>
       <div className="mt-6 flex flex-col gap-6 tab:mt-0 tab:flex-row tab:items-center tab:gap-0">
         <p className="desk:whitespace-nowrap">© 2026 Strale. Tüm hakları saklıdır.</p>
+        {siteConfig.etbisUrl ? (
+          <>
+            <span className="mx-1 hidden text-bone tab:inline">|</span>
+            <a href={siteConfig.etbisUrl} target="_blank" rel="noreferrer" className="st-underline whitespace-nowrap">
+              ETBİS Kayıtlıdır
+            </a>
+          </>
+        ) : null}
         <span className="mx-1 hidden text-bone tab:inline">|</span>
         <span className="whitespace-nowrap text-bone">Teslimat: Türkiye</span>
       </div>
