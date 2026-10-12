@@ -13,6 +13,10 @@
  *   npm run import-products -- docs/products/urun-listesi.csv --gorsel            # also produce the images
  *   npm run import-products -- docs/products/urun-listesi.csv --gorsel --dry-run  # show plan + AI cost only
  * Extra flags after --gorsel (--budget 3, --force, --quality low) go to scripts/urun_gorselleri.py.
+ *
+ * The admin panel (/yonetim) edits products.json directly, so this script merges instead of overwriting:
+ * rows update the product with the same address (ad + renk), photos/draft/stock code set in the panel are kept,
+ * and products that are only in products.json stay (pass --replace to drop them).
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -22,7 +26,8 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [input, ...flags] = process.argv.slice(2);
 const generateImages = flags.includes("--gorsel");
-const imagerFlags = flags.filter((flag) => flag !== "--gorsel");
+const replace = flags.includes("--replace");
+const imagerFlags = flags.filter((flag) => flag !== "--gorsel" && flag !== "--replace");
 const PHOTOS = resolve(root, "docs/products/fotograflar");
 const MODELS = resolve(root, "docs/products/mankenler");
 const LOOKS = ["orijinal", "urun", "manken", "ikisi"];
@@ -124,7 +129,7 @@ const products = rows.map((cells, index) => {
   if (!name) errors.push(`Satır ${line}: ad boş`);
   if (!category) errors.push(`Satır ${line}: bilinmeyen kategori "${get("kategori")}" (${Object.keys(CATEGORIES).join(", ")})`);
   if (!Number.isFinite(price)) errors.push(`Satır ${line}: indirimli_fiyat sayı değil`);
-  if (!Number.isFinite(stock)) errors.push(`Satır ${line}: stok sayı değil`);
+  if (!Number.isFinite(stock) && !get("beden_stok")) errors.push(`Satır ${line}: stok sayı değil`);
   if (listPrice !== undefined && !(listPrice > price)) warnings.push(`Satır ${line}: önceki fiyat indirimli fiyattan büyük değil, rozet gösterilmeyecek`);
   if (condition === "hafif-kusurlu" && !get("not")) warnings.push(`Satır ${line}: hafif kusurlu ama kusur açıklaması (not) boş`);
 
@@ -146,6 +151,17 @@ const products = rows.map((cells, index) => {
     }
   }
 
+  const sizeStock = get("beden_stok")
+    ? Object.fromEntries(
+        get("beden_stok")
+          .split("|")
+          .map((part) => part.split(":").map((x) => x.trim()))
+          .filter(([size]) => size)
+          .map(([size, count]) => [size.toLocaleUpperCase("tr-TR"), Number(count) || 0]),
+      )
+    : undefined;
+  const draftCell = get("taslak").toLocaleLowerCase("tr-TR");
+
   return Object.fromEntries(
     Object.entries({
       handle,
@@ -154,8 +170,11 @@ const products = rows.map((cells, index) => {
       category,
       price,
       listPrice: listPrice > price ? listPrice : undefined,
-      stock,
+      stock: sizeStock ? Object.values(sizeStock).reduce((a, b) => a + b, 0) : stock,
       sizes: get("bedenler").split(/[|/,]/).map((s) => s.trim().toLocaleUpperCase("tr-TR")).filter(Boolean),
+      sizeStock,
+      sku: "stok_kodu" in col ? get("stok_kodu") || undefined : undefined,
+      draft: "taslak" in col ? ["evet", "e", "1", "x", "true"].includes(draftCell) || undefined : undefined,
       condition,
       fabric: get("kumas") || undefined,
       origin: get("mensei_uretim") || undefined,
@@ -183,18 +202,56 @@ if (generateImages && jobs.length) {
  * Attach whatever images exist for each product. The card shows `image`; the product page opens on gallery[0].
  * manken: on-model shot on both. ikisi: packshot on the card, on-model shot first on the product page.
  */
+const out = resolve(root, "src/components/sites/strale/products.json");
+const existing = existsSync(out) ? JSON.parse(readFileSync(out, "utf8")) : [];
+const previous = new Map(existing.map((product) => [product.handle, product]));
+
 for (const product of products) {
+  const before = previous.get(product.handle);
+  // Columns missing from the sheet keep the value set in the admin panel.
+  for (const [key, column] of [["sku", "stok_kodu"], ["draft", "taslak"], ["sizeStock", "beden_stok"]]) {
+    if (!(column in col) && before?.[key] !== undefined) product[key] = before[key];
+  }
+  if (!("beden_stok" in col) && product.sizeStock) {
+    const total = product.sizes.reduce((sum, size) => sum + (product.sizeStock[size] ?? 0), 0);
+    if (total !== product.stock) {
+      console.warn(`⚠️  ${product.name}: tablodaki stok (${product.stock}) beden stoklarından farklı; beden bazlı stok kaldırıldı.`);
+      delete product.sizeStock;
+    }
+  }
+  if (product.sizeStock) {
+    product.sizeStock = Object.fromEntries(product.sizes.map((size) => [size, product.sizeStock[size] ?? 0]));
+    product.stock = Object.values(product.sizeStock).reduce((a, b) => a + b, 0);
+  }
+
   const files = { main: `${PUBLIC_PRODUCTS}/${product.handle}.jpg`, model: `${PUBLIC_PRODUCTS}/${product.handle}-manken.jpg` };
   const has = (path) => existsSync(resolve(root, "public", path.slice(1)));
   const gallery = [];
   if (has(files.main)) gallery.push({ src: files.main });
   if (has(files.model)) gallery[["manken", "ikisi"].includes(product.look) ? "unshift" : "push"]({ src: files.model, ai: true });
+  // Photos added in the panel stay after the pipeline's own.
+  const panelPhotos = (before?.gallery ?? (before?.image ? [{ src: before.image }] : [])).filter(
+    (photo) => !gallery.some((g) => g.src === photo.src) && has(photo.src),
+  );
+  gallery.push(...panelPhotos);
   if (gallery.length) {
-    product.image = product.look === "ikisi" && has(files.main) ? files.main : gallery[0].src;
-    if (gallery.length > 1) product.gallery = gallery;
+    const pipelineCover = product.look === "ikisi" && has(files.main) ? files.main : undefined;
+    const panelCover = before?.image && gallery.some((g) => g.src === before.image) ? before.image : undefined;
+    product.image = pipelineCover ?? panelCover ?? gallery[0].src;
+    if (gallery.length > 1 || gallery[0].ai) product.gallery = gallery;
   }
   delete product.look;
 }
-const out = resolve(root, "src/components/sites/strale/products.json");
-writeFileSync(out, `${JSON.stringify(products, null, 2)}\n`);
-console.log(`✅ ${products.length} ürün → ${out}`);
+
+const sheetHandles = new Set(products.map((product) => product.handle));
+const onlyInPanel = existing.filter((product) => !sheetHandles.has(product.handle));
+if (onlyInPanel.length) {
+  console.log(
+    replace
+      ? `🗑  Tabloda olmayan ${onlyInPanel.length} ürün silindi (--replace).`
+      : `ℹ️  Tabloda olmayan ${onlyInPanel.length} ürün korundu (panelden eklenmiş olabilir; silmek için --replace).`,
+  );
+}
+const merged = replace ? products : [...products, ...onlyInPanel];
+writeFileSync(out, `${JSON.stringify(merged, null, 2)}\n`);
+console.log(`✅ ${merged.length} ürün → ${out}`);

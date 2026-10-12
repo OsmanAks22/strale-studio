@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { LOW_STOCK, formatPrice, productTitle, type Product } from "./catalog";
+import { LOW_STOCK, formatPrice, productTitle, sizeAvailable, type Product } from "./catalog";
 import { WhatsAppIcon } from "./icons";
 import { siteConfig, whatsappLink } from "./site-config";
 
 /** Size picker + WhatsApp order button. Ordering runs over WhatsApp until a payment provider is set up. */
 export function OrderPanel({ product, url }: { product: Product; url: string }) {
-  const [size, setSize] = useState<string | null>(product.sizes.length === 1 ? product.sizes[0] : null);
+  const available = product.sizes.filter((option) => sizeAvailable(product, option));
+  const [size, setSize] = useState<string | null>(available.length === 1 ? available[0] : null);
   const [tried, setTried] = useState(false);
   const soldOut = product.stock <= 0;
 
@@ -29,20 +30,25 @@ export function OrderPanel({ product, url }: { product: Product; url: string }) 
           Beden {size ? <span className="text-ink">· {size}</span> : null}
         </legend>
         <div className="mt-2 flex flex-wrap gap-1.5">
-          {product.sizes.map((option) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={size === option}
-              onClick={() => setSize(option)}
-              className={cn(
-                "st-label h-11 min-w-12 cursor-pointer border px-3 transition-colors",
-                size === option ? "border-ink bg-ink text-bone" : "border-sand hover:border-ink",
-              )}
-            >
-              {option}
-            </button>
-          ))}
+          {product.sizes.map((option) => {
+            const inStock = sizeAvailable(product, option);
+            return (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={size === option}
+                disabled={!inStock}
+                onClick={() => setSize(option)}
+                title={inStock ? undefined : "Bu beden tükendi"}
+                className={cn(
+                  "st-label h-11 min-w-12 cursor-pointer border px-3 transition-colors disabled:cursor-not-allowed disabled:border-stone disabled:text-ash disabled:line-through",
+                  size === option ? "border-ink bg-ink text-bone" : "border-sand hover:border-ink",
+                )}
+              >
+                {option}
+              </button>
+            );
+          })}
         </div>
         {tried && !size ? <p className="mt-2 text-rust">Lütfen bir beden seç.</p> : null}
       </fieldset>

@@ -39,9 +39,19 @@ export type Product = {
   /** All photos when there is more than one; `ai` marks an AI on-model shot (labelled on the product page). */
   gallery?: { src: string; ai?: boolean }[];
   note?: string;
+  /** Pieces per size. When set, `stock` is their sum and sizes at 0 show as sold out. */
+  sizeStock?: Record<string, number>;
+  /** Internal stock code; never shown on the site. */
+  sku?: string;
+  /** Hidden from the site (no listing, no product page) until published from the admin panel. */
+  draft?: boolean;
 };
 
-export const allProducts = products as Product[];
+/** Every product in the file, drafts included (the admin panel reads this). */
+export const catalogFile = products as Product[];
+
+/** Products visible on the site. */
+export const allProducts = catalogFile.filter((product) => !product.draft);
 
 /** Show "Son N adet" at or below this many pieces. */
 export const LOW_STOCK = 3;
@@ -68,6 +78,12 @@ export function categoryLabel(slug: CategorySlug) {
 
 export function getProduct(handle: string) {
   return allProducts.find((p) => p.handle === handle);
+}
+
+/** Size is orderable when the product has stock and, with per-size stock, that size has pieces left. */
+export function sizeAvailable(product: Product, size: string) {
+  if (product.stock <= 0) return false;
+  return product.sizeStock ? (product.sizeStock[size] ?? 0) > 0 : true;
 }
 
 export function productTitle(product: Product) {

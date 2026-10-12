@@ -1,5 +1,9 @@
 # Ürünleri siteye yükleme
 
+> **Kolay yol:** `/yonetim` panelinden ürün ekleyin, stok/fiyat güncelleyin ve fotoğraf yükleyin (telefondan da olur).
+> Kurulum ve kullanım: [`docs/yonetim-paneli.md`](../yonetim-paneli.md). Aşağıdaki tablo + betik yöntemi toplu girişler
+> ve yapay zekâ görselleri için hâlâ geçerli; ikisi birlikte kullanılabilir.
+
 1. `urun-sablonu.csv` dosyasını Excel / Google Sheets ile açın, örnek satırları silip her ürün için bir satır doldurun
    ve CSV olarak kaydedin (virgül veya noktalı virgül ayraçlı olabilir).
 2. Ürün fotoğraflarını `docs/products/fotograflar/` klasörüne koyun; dosya adını `foto_dosyasi` sütununa yazın.
