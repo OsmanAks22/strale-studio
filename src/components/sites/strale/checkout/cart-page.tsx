@@ -1,18 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { allProducts, formatPrice, productTitle, sizeAvailable } from "../catalog";
+import { formatPrice, productTitle, sizeAvailable } from "../catalog";
 import { ProductImage } from "../product-image";
 import { removeFromCart, setQty, useCart } from "../shop-store";
-import { shippingFor, siteConfig } from "../site-config";
+import { useProductsByHandle } from "../product-lookup";
+import { useSettings } from "../settings-context";
+import { shippingFor } from "../site-config";
 
 export function CartPage() {
   const lines = useCart();
-  const rows = lines.map((line) => ({ line, product: allProducts.find((p) => p.handle === line.handle) }));
+  const siteConfig = useSettings();
+  const lookup = useProductsByHandle([...new Set(lines.map((l) => l.handle))]);
+  const rows = lines.map((line) => ({ line, product: lookup.get(line.handle) ?? undefined }));
   const subtotal = rows.reduce((sum, { line, product }) => sum + (product ? product.price * line.qty : 0), 0);
-  const shipping = shippingFor(subtotal);
+  const shipping = shippingFor(siteConfig, subtotal);
   const toFree = siteConfig.freeShippingThreshold - subtotal;
   const blocked = rows.some(({ line, product }) => !product || !sizeAvailable(product, line.size));
+
+  if (lines.length && lookup.loading && !lookup.products.length) {
+    return <p className="px-3 pb-16 text-graphite tab:px-8">Sepet yükleniyor…</p>;
+  }
 
   if (!lines.length) {
     return (

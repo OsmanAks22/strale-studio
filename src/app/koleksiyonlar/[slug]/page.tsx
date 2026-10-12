@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { collectionSlugs, getCollection } from "@/components/sites/strale/catalog";
+import { collectionFor, collectionSlugs } from "@/components/sites/strale/catalog";
 import { ProductGrid } from "@/components/sites/strale/product-grid";
 import { PageHeading, StoreShell } from "@/components/sites/strale/store-shell";
+import { getProducts } from "@/lib/store-data";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -13,12 +14,12 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const collection = getCollection((await params).slug);
+  const collection = collectionFor(await getProducts(), (await params).slug);
   return collection ? { title: collection.title, description: collection.description } : {};
 }
 
 export default async function CollectionPage({ params }: Props) {
-  const collection = getCollection((await params).slug);
+  const collection = collectionFor(await getProducts(), (await params).slug);
   if (!collection) notFound();
 
   return (

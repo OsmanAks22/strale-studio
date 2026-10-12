@@ -52,11 +52,13 @@ export function SettingsTab() {
     setSaving(true);
     setStatus(null);
     try {
-      const result = await api<{ settings: StoreSettings; version: string }>("ayarlar", { body: { settings, baseVersion: version, force } });
+      const result = await api<{ settings: StoreSettings; version: string; commit?: string }>("ayarlar", {
+        body: { settings, baseVersion: version, force },
+      });
       setSettings(result.settings);
       setSaved(JSON.stringify(result.settings));
       setVersion(result.version);
-      setStatus({ ok: "Kaydedildi. Site 1–2 dakika içinde güncellenir." });
+      setStatus({ ok: result.commit ? "Kaydedildi. Site 1–2 dakika içinde güncellenir." : "Kaydedildi, sitede yayında." });
     } catch (error) {
       setStatus({ error: error instanceof Error ? error.message : String(error), conflict: error instanceof ApiError && error.details.conflict });
     } finally {

@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "../catalog";
 import { clearCart, removeFromCart, replaceCart, useCart } from "../shop-store";
-import { siteConfig } from "../site-config";
+import { useSettings } from "../settings-context";
 import { CITIES } from "./cities";
 
 type Method = "havale" | "kapida" | "kart";
@@ -46,6 +46,7 @@ function loadForm(): Form {
 
 export function CheckoutPage() {
   const router = useRouter();
+  const siteConfig = useSettings();
   const lines = useCart();
   const [form, setForm] = useState<Form>(emptyForm);
   const [method, setMethod] = useState<Method | null>(null);

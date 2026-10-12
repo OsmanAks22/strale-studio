@@ -1,26 +1,55 @@
 import { Pool, type PoolClient } from "pg";
 
 /**
- * Postgres for orders, back-in-stock requests and discount codes (personal data never goes to the public repo).
- * Set DATABASE_URL (or POSTGRES_URL, which Vercel's Neon integration adds). Tables are created on first use.
+ * Postgres (Supabase, Neon or any other) for orders, back-in-stock requests, discount codes and — when connected —
+ * the product catalogue and store settings. Personal data never goes to the public repo.
+ * Set DATABASE_URL (or POSTGRES_URL, which the Vercel Supabase/Neon integrations add). Tables are created on first use.
  */
 
 const connectionString = () => process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
 
 export const dbConfigured = () => Boolean(connectionString());
 
+/** Which database (host + name) is connected, or "file"; used to keep caches of different sources apart. */
+export function dbIdentity() {
+  const url = connectionString();
+  if (!url) return "file";
+  const parsed = new URL(url);
+  return `db:${parsed.host}${parsed.pathname}`;
+}
+
 const globalForDb = globalThis as unknown as { stralePool?: Pool; straleSchema?: Promise<void> };
+
+/**
+ * SSL is decided here, not by the URL: node-postgres lets `sslmode=require` in the URL override the `ssl` option
+ * and then insists on a publicly trusted certificate, which Supabase (own CA) does not have.
+ * - localhost: no SSL
+ * - Supabase: encrypted; verified only when DATABASE_CA_CERT (the project's CA, PEM) is set
+ * - others (Neon…): encrypted and verified
+ */
+export function connectionConfig(url: string) {
+  const parsed = new URL(url);
+  const host = parsed.hostname;
+  const sslmode = parsed.searchParams.get("sslmode");
+  for (const key of ["sslmode", "sslrootcert", "sslcert", "sslkey", "sslnegotiation", "uselibpqcompat", "supa", "pgbouncer"]) {
+    parsed.searchParams.delete(key);
+  }
+  const local = host === "localhost" || host === "127.0.0.1" || host === "::1";
+  const ca = process.env.DATABASE_CA_CERT?.replace(/\\n/g, "\n");
+  const ssl =
+    local || sslmode === "disable"
+      ? false
+      : ca
+        ? { ca, rejectUnauthorized: true }
+        : /(^|\.)supabase\.(co|com)$/.test(host)
+          ? { rejectUnauthorized: false }
+          : { rejectUnauthorized: true };
+  return { connectionString: parsed.toString(), ssl };
+}
 
 function pool() {
   if (!globalForDb.stralePool) {
-    const url = connectionString();
-    const local = /@(localhost|127\.0\.0\.1)[:/]/.test(url);
-    globalForDb.stralePool = new Pool({
-      connectionString: url,
-      ssl: local ? undefined : { rejectUnauthorized: false },
-      max: 3,
-      idleTimeoutMillis: 10_000,
-    });
+    globalForDb.stralePool = new Pool({ ...connectionConfig(connectionString()), max: 3, idleTimeoutMillis: 10_000 });
   }
   return globalForDb.stralePool;
 }
@@ -57,6 +86,22 @@ create table if not exists stock_alerts (
   name text not null,
   phone text not null,
   notified_at timestamptz
+);
+create table if not exists products (
+  handle text primary key,
+  position integer not null,
+  data jsonb not null,
+  updated_at timestamptz not null default now()
+);
+create table if not exists store_meta (
+  key text primary key,
+  value jsonb not null,
+  updated_at timestamptz not null default now()
+);
+create table if not exists catalog_log (
+  id serial primary key,
+  at timestamptz not null default now(),
+  message text not null
 );
 create table if not exists discount_codes (
   code text primary key,

@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { allProducts } from "../catalog";
 import { ProductCard } from "../product-card";
+import { useProductsByHandle } from "../product-lookup";
 import { useFavourites } from "../shop-store";
 
 export function FavouritesPage() {
   const handles = useFavourites();
-  const products = handles.map((h) => allProducts.find((p) => p.handle === h)).filter((p) => p !== undefined);
+  const { products, loading } = useProductsByHandle(handles);
+  if (loading && !products.length) return <p className="px-3 pb-16 text-graphite tab:px-8">Yükleniyor…</p>;
   if (!products.length) {
     return (
       <div className="px-3 pb-16 tab:px-8">

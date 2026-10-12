@@ -1,22 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { allProducts, categoryLabel } from "./catalog";
+import { categoryLabel, type Product } from "./catalog";
 import { SearchIcon } from "./icons";
 import { ProductCard } from "./product-card";
 
 const normalize = (value: string) => value.toLocaleLowerCase("tr-TR").normalize("NFD").replace(/[̀-ͯ]/g, "");
 
-export function ProductSearch() {
+export function ProductSearch({ products }: { products: Product[] }) {
   const [query, setQuery] = useState("");
   const results = useMemo(() => {
     const terms = normalize(query).split(/\s+/).filter(Boolean);
     if (!terms.length) return [];
-    return allProducts.filter((p) => {
+    return products.filter((p) => {
       const haystack = normalize([p.name, p.color, categoryLabel(p.category), p.fabric ?? ""].join(" "));
       return p.stock > 0 && terms.every((term) => haystack.includes(term));
     });
-  }, [query]);
+  }, [query, products]);
 
   return (
     <div className="px-3 pb-16 tab:px-8">

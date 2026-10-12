@@ -1,7 +1,8 @@
-import { siteConfig, whatsappLink } from "@/components/sites/strale/site-config";
+import { whatsappLink } from "@/components/sites/strale/site-config";
 import { dbConfigured, query, transaction, type PaymentMethod } from "@/lib/db";
 import { enabledPaymentMethods, newOrderCode, orderMessage, quote, validateCustomer, type CheckoutLine } from "@/lib/orders";
 import { applyStock } from "@/lib/stock";
+import { getSettings, storeChanged } from "@/lib/store-data";
 import { throttled } from "@/lib/throttle";
 
 type Body = {
@@ -28,7 +29,12 @@ export async function POST(request: Request) {
     if (!body.consents?.preInfo || !body.consents?.contract) {
       return bad("Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi'ni onaylamanız gerekiyor.");
     }
-    const methods = enabledPaymentMethods();
+    const settings = await getSettings();
+    // Without a database the order only exists as the WhatsApp message, so a number is required.
+    if (!dbConfigured() && !settings.whatsapp) {
+      return bad("Şu anda online sipariş alınamıyor. Lütfen iletişim sayfasındaki kanallardan bize ulaşın.", {}, 503);
+    }
+    const methods = enabledPaymentMethods(settings);
     if (!body.paymentMethod || !methods.includes(body.paymentMethod)) return bad("Ödeme yöntemi seçin.");
     const lines = (Array.isArray(body.lines) ? body.lines : []).slice(0, 30);
     if (!lines.length) return bad("Sepetiniz boş.");
@@ -74,12 +80,13 @@ export async function POST(request: Request) {
       ).catch((error: Error) => ({ ok: false as const, error: error.message }));
       if (stock.ok) {
         await query("update orders set stock_applied = true where code = $1", [order.code]);
+        storeChanged();
       } else if (stock.error === "short") {
         await query("update orders set status = 'iptal', admin_note = 'Stok yetmedi, otomatik iptal' where code = $1", [order.code]);
         if (order.discount_code) await query("update discount_codes set used_count = greatest(used_count - 1, 0) where code = $1", [order.discount_code]);
         return bad("Siz sipariş verirken bir ürünün son adedi satıldı. Lütfen sepetinizi kontrol edin.", {}, 409);
       } else {
-        // Saved but stock not updated (no GitHub token yet, or GitHub error): the panel flags it.
+        // Saved but stock not updated (database error): the panel flags it.
         console.error("Stock not applied for", order.code, stock.error);
       }
     }
@@ -90,9 +97,9 @@ export async function POST(request: Request) {
       saved,
       total: order.total,
       paymentMethod: order.payment_method,
-      whatsappUrl: whatsappLink(message),
+      whatsappUrl: whatsappLink(settings, message),
       message,
-      bank: order.payment_method === "havale" ? siteConfig.bank : undefined,
+      bank: order.payment_method === "havale" ? settings.bank : undefined,
     });
   } catch (error) {
     console.error(error);

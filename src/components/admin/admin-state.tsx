@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { Product } from "@/components/sites/strale/catalog";
 import { IMAGE_DIR } from "@/components/sites/strale/product-rules";
+import type { CatalogMode } from "@/lib/admin/catalog-store";
 import { api, ApiError } from "./api";
 import { blobToBase64, renderCrop, renderOriginal, type Crop } from "./image-tools";
 
@@ -17,7 +18,7 @@ type State = {
   products: Product[];
   saved: Product[];
   version: string;
-  mode: "github" | "local";
+  mode: CatalogMode;
   label: string;
   rawBase: string | null;
   dirty: boolean;
@@ -97,7 +98,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [products, setProductsState] = useState<Product[]>([]);
   const [saved, setSaved] = useState<Product[]>([]);
   const [version, setVersion] = useState("");
-  const [meta, setMeta] = useState<{ mode: "github" | "local"; label: string; rawBase: string | null }>({
+  const [meta, setMeta] = useState<{ mode: CatalogMode; label: string; rawBase: string | null }>({
     mode: "local",
     label: "",
     rawBase: null,
@@ -113,7 +114,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     setLoadError(null);
     try {
-      const data = await api<{ products: Product[]; version: string; mode: "github" | "local"; label: string; rawBase: string | null }>(
+      const data = await api<{ products: Product[]; version: string; mode: CatalogMode; label: string; rawBase: string | null }>(
         "urunler",
       );
       setProductsState(data.products);
@@ -211,7 +212,12 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         setSaved(result.products);
         setVersion(result.version);
         setUploads({});
-        setDeploy(result.commit ? { commit: result.commit, url: result.url, state: "pending", startedAt: Date.now() } : null);
+        setDeploy(
+          result.commit
+            ? { commit: result.commit, url: result.url, state: "pending", startedAt: Date.now() }
+            : // Database: live as soon as it is saved.
+              { commit: "", state: "success", startedAt: Date.now() },
+        );
       } catch (error) {
         if (error instanceof ApiError) {
           setSaveError({ message: error.message, errors: error.details.errors, conflict: error.details.conflict });
@@ -235,13 +241,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       for (const [index, photo] of photos.entries()) {
         const name = `${handle}-${randomId()}`;
         const cropped = await renderCrop(photo.image, photo.crop);
-        const { ref } = await api<{ ref: string }>("yukle", { body: { data: await blobToBase64(cropped) } });
-        const src = `${IMAGE_DIR}/${name}.jpg`;
-        const entries: Record<string, Upload> = { [`public${src}`]: { ref } };
+        // Supabase Storage answers with the public URL; the repo answers with a ref published on save.
+        const upload = await api<{ ref?: string; url?: string }>("yukle", {
+          body: { data: await blobToBase64(cropped), name, kind: "urun" },
+        });
+        const src = upload.url ?? `${IMAGE_DIR}/${name}.jpg`;
+        const entries: Record<string, Upload> = upload.ref ? { [`public${src}`]: { ref: upload.ref } } : {};
         if (keepOriginals) {
           const original = await renderOriginal(photo.image, photo.crop.rotate);
-          const res = await api<{ ref: string }>("yukle", { body: { data: await blobToBase64(original) } });
-          entries[`docs/products/fotograflar/${name}.jpg`] = { ref: res.ref };
+          const res = await api<{ ref?: string; url?: string }>("yukle", {
+            body: { data: await blobToBase64(original), name, kind: "orijinal" },
+          });
+          if (res.ref) entries[`docs/products/fotograflar/${name}.jpg`] = { ref: res.ref };
         }
         setUploads((current) => ({ ...current, ...entries }));
         setPreviews((current) => ({ ...current, [src]: URL.createObjectURL(cropped) }));

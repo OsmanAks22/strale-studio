@@ -1,12 +1,14 @@
 import type { StoreSettings } from "@/components/sites/strale/site-config";
 import { requireAdmin } from "@/lib/admin/auth";
-import { errorResponse, getRepo, readSettings, serializeJson, SETTINGS_PATH } from "@/lib/admin/repo";
+import { readStoreSettings, saveStoreSettings } from "@/lib/admin/catalog-store";
+import { errorResponse } from "@/lib/admin/repo";
+import { storeChanged } from "@/lib/store-data";
 
 export async function GET(request: Request) {
   const denied = await requireAdmin(request);
   if (denied) return denied;
   try {
-    return Response.json(await readSettings(getRepo()));
+    return Response.json(await readStoreSettings());
   } catch (error) {
     return errorResponse(error);
   }
@@ -69,12 +71,9 @@ export async function POST(request: Request) {
     if (settings.payment.transfer && !settings.bank.iban) {
       return Response.json({ error: "Havale açıkken IBAN boş olamaz." }, { status: 400 });
     }
-    const result = await getRepo().commit({
-      files: [{ path: SETTINGS_PATH, content: serializeJson(settings), baseVersion: body.baseVersion }],
-      force: body.force,
-      message: "Panel: mağaza ayarları güncellendi",
-    });
-    return Response.json({ settings, version: result.versions[SETTINGS_PATH], commit: result.commit, url: result.url });
+    const result = await saveStoreSettings(settings, body.baseVersion, body.force);
+    storeChanged();
+    return Response.json({ settings, ...result });
   } catch (error) {
     return errorResponse(error);
   }

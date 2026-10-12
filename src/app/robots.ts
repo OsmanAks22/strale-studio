@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { siteOrigin } from "@/lib/site-url";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
   return {
     rules: { userAgent: "*", allow: "/", disallow: ["/yonetim", "/api/", "/sepet", "/odeme", "/siparis/", "/favoriler"] },
-    sitemap: `${siteOrigin()}/sitemap.xml`,
+    sitemap: `${await siteOrigin()}/sitemap.xml`,
   };
 }

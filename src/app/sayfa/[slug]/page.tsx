@@ -1,23 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { contentPages } from "@/components/sites/strale/content-pages";
+import { buildContentPages, contentPageSlugs } from "@/components/sites/strale/content-pages";
 import { PageHeading, StoreShell } from "@/components/sites/strale/store-shell";
+import { getSettings } from "@/lib/store-data";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return Object.keys(contentPages).map((slug) => ({ slug }));
+  return contentPageSlugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const page = contentPages[(await params).slug];
+  const page = buildContentPages(await getSettings())[(await params).slug];
   return page ? { title: page.title, description: page.description } : {};
 }
 
 export default async function ContentPageRoute({ params }: Props) {
-  const page = contentPages[(await params).slug];
+  const page = buildContentPages(await getSettings())[(await params).slug];
   if (!page) notFound();
 
   return (

@@ -30,8 +30,9 @@
    ```
 
    Script hataları (eksik fiyat, bilinmeyen kategori, eksik manken) ve uyarıları (bulunamayan fotoğraf, açıklamasız kusur)
-   listeler, görselleri `public/sites/strale/products/` altına yazar, sonra `src/components/sites/strale/products.json`
-   dosyasını günceller. Daha önce üretilmiş görseller tekrar üretilmez (yeniden üretmek için `--force`).
+   listeler, görselleri `public/sites/strale/products/` altına yazar, sonra ürünleri günceller: ortamda `DATABASE_URL`
+   (Supabase) varsa doğrudan canlı veritabanına (sonra panelde **Siteyi yenile**), yoksa
+   `src/components/sites/strale/products.json` dosyasına. Repoya yazılan görseller commit + deploy sonrası görünür. Daha önce üretilmiş görseller tekrar üretilmez (yeniden üretmek için `--force`).
    Her ücretli çağrı `temp/urun-gorselleri/log.jsonl` dosyasına yazılır. Yapay zekâ için ortamda `HF_CREDENTIALS`
    (Higgsfield anahtarı) tanımlı olmalı.
 

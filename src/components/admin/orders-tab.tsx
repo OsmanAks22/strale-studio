@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatPrice } from "@/components/sites/strale/catalog";
 import { trackingUrl } from "@/components/sites/strale/checkout/order-tracking";
-import { siteConfig } from "@/components/sites/strale/site-config";
+import { useSettings } from "@/components/sites/strale/settings-context";
+import type { StoreSettings } from "@/components/sites/strale/site-config";
 import { ORDER_STATUSES, PAYMENT_METHODS, PAYMENT_STATUSES, type Order, type OrderStatus } from "@/lib/order-types";
 import { api, ApiError } from "./api";
 import { useAdmin } from "./admin-state";
@@ -24,10 +25,10 @@ const STATUS_STYLE: Record<OrderStatus, string> = {
 const statusLabel = (value: string) => ORDER_STATUSES.find((s) => s.value === value)?.label ?? value;
 const phoneText = (phone: string) => phone.replace(/^90(\d{3})(\d{3})(\d{2})(\d{2})$/, "0$1 $2 $3 $4");
 const waLink = (phone: string, text: string) => `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-const siteUrl = () => (siteConfig.domain ? `https://${siteConfig.domain}` : typeof window === "undefined" ? "" : window.location.origin);
+const siteUrl = (s: StoreSettings) => (s.domain ? `https://${s.domain}` : typeof window === "undefined" ? "" : window.location.origin);
 
 /** Ready-made WhatsApp messages for each step of an order. */
-function customerMessages(order: Order) {
+function customerMessages(order: Order, siteConfig: StoreSettings) {
   const first = order.customer.name.split(" ")[0];
   const link = trackingUrl(order.carrier, order.tracking);
   return [
@@ -45,7 +46,7 @@ function customerMessages(order: Order) {
     order.tracking
       ? {
           label: "Kargoya verildi",
-          text: `Merhaba ${first}, ${order.code} numaralı siparişiniz ${order.carrier ?? "kargoya"} ile yola çıktı. Takip no: ${order.tracking}${link ? `\n${link}` : ""}\nSipariş takibi: ${siteUrl()}/siparis-takip`,
+          text: `Merhaba ${first}, ${order.code} numaralı siparişiniz ${order.carrier ?? "kargoya"} ile yola çıktı. Takip no: ${order.tracking}${link ? `\n${link}` : ""}\nSipariş takibi: ${siteUrl(siteConfig)}/siparis-takip`,
         }
       : null,
   ].filter((m): m is { label: string; text: string } => m !== null);
@@ -186,6 +187,7 @@ export function OrdersTab() {
 }
 
 function OrderDetail({ order, onChange }: { order: Order; onChange: (order: Order) => void }) {
+  const siteConfig = useSettings();
   const { reload, dirty: productsDirty } = useAdmin();
   const [draft, setDraft] = useState({
     status: order.status,
@@ -261,7 +263,7 @@ function OrderDetail({ order, onChange }: { order: Order; onChange: (order: Orde
             <a href={waLink(order.customer.phone, "")} target="_blank" rel="noreferrer" className="underline">
               WhatsApp
             </a>
-            <button type="button" onClick={() => printSlip(order)} className="cursor-pointer underline">
+            <button type="button" onClick={() => printSlip(order, siteConfig)} className="cursor-pointer underline">
               Sipariş fişi yazdır
             </button>
           </div>
@@ -270,7 +272,7 @@ function OrderDetail({ order, onChange }: { order: Order; onChange: (order: Orde
         <div className="mt-4">
           <p className="st-micro text-[10px] text-graphite">Müşteriye hazır mesajlar</p>
           <div className="mt-1.5 flex flex-wrap gap-2">
-            {customerMessages({ ...order, carrier: draft.carrier || order.carrier, tracking: draft.tracking || order.tracking }).map((m) => (
+            {customerMessages({ ...order, carrier: draft.carrier || order.carrier, tracking: draft.tracking || order.tracking }, siteConfig).map((m) => (
               <a key={m.label} href={waLink(order.customer.phone, m.text)} target="_blank" rel="noreferrer" className="border border-sand px-3 py-1.5 text-[12px] hover:border-ink">
                 {m.label} ↗
               </a>
@@ -347,7 +349,7 @@ function OrderDetail({ order, onChange }: { order: Order; onChange: (order: Orde
 }
 
 /** Opens a plain packing slip in a new window and prints it. */
-function printSlip(order: Order) {
+function printSlip(order: Order, siteConfig: StoreSettings) {
   const win = window.open("", "_blank", "width=600,height=800");
   if (!win) return;
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);

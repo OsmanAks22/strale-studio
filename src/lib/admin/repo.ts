@@ -5,7 +5,8 @@ import type { Product } from "@/components/sites/strale/catalog";
 import type { StoreSettings } from "@/components/sites/strale/site-config";
 
 /**
- * Where the admin panel reads and saves site content (products, store settings, photos).
+ * Repo-backed content (products.json, store-settings.json, photos) — used only when no database is connected
+ * (with Supabase, see catalog-store.ts).
  * - github: files live in the GitHub repo; each save is one commit, which makes Vercel rebuild the site.
  *   Needs GITHUB_TOKEN (fine-grained: Contents read/write, Commit statuses read).
  * - local: no token outside production → writes straight to this checkout (npm run dev on your computer).
@@ -263,7 +264,7 @@ export function getRepo(): ContentRepo {
   }
   if (process.env.NODE_ENV !== "production" || process.env.ADMIN_LOCAL_MODE === "1") return new LocalRepo();
   throw new ConfigError(
-    "GITHUB_TOKEN tanımlı değil. Vercel → Project → Settings → Environment Variables'a ekleyin (bkz. docs/yonetim-paneli.md).",
+    "Veritabanı bağlı değil. Vercel → Storage → Supabase ekleyin (bkz. docs/KURULUM.md); ya da GITHUB_TOKEN tanımlayın.",
   );
 }
 

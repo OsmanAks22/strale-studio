@@ -228,7 +228,8 @@ export function History() {
   return (
     <div>
       <p className="text-graphite">
-        Ürün listesindeki son değişiklikler ({label}). Bir değişikliği geri almak için GitHub’daki commit sayfasından “Revert” yapılabilir.
+        Ürün, stok ve ayar değişiklikleri ({label}).
+        {mode === "github" ? " Bir değişikliği geri almak için GitHub’daki commit sayfasından “Revert” yapılabilir." : ""}
       </p>
       <ul className="mt-3 flex flex-col">
         {entries.map((entry) => (

@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { formatPrice, productTitle } from "@/components/sites/strale/catalog";
-import { siteConfig } from "@/components/sites/strale/site-config";
+import { useSettings } from "@/components/sites/strale/settings-context";
+import type { StoreSettings } from "@/components/sites/strale/site-config";
 import type { DiscountCode, StockAlert } from "@/lib/order-types";
 import { api, ApiError } from "./api";
 import { useAdmin } from "./admin-state";
@@ -13,12 +14,13 @@ function NoDb({ message }: { message: string }) {
 }
 
 const phoneText = (phone: string) => phone.replace(/^90(\d{3})(\d{3})(\d{2})(\d{2})$/, "0$1 $2 $3 $4");
-const siteUrl = () => (siteConfig.domain ? `https://${siteConfig.domain}` : window.location.origin);
+const siteUrl = (s: StoreSettings) => (s.domain ? `https://${s.domain}` : window.location.origin);
 
 /* ---------------------------------------------------------- Gelince haber ver */
 
 export function AlertsTab() {
   const { products } = useAdmin();
+  const settings = useSettings();
   const [alerts, setAlerts] = useState<StockAlert[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showDone, setShowDone] = useState(false);
@@ -76,7 +78,7 @@ export function AlertsTab() {
       {groups.length === 0 ? <p className="bg-white px-3 py-6 text-center text-graphite">Bekleyen istek yok.</p> : null}
       {groups.map((group) => {
         const title = group.product ? productTitle(group.product) : group.handle;
-        const url = `${siteUrl()}/urun/${group.handle}`;
+        const url = `${siteUrl(settings)}/urun/${group.handle}`;
         return (
           <section key={group.key} className="bg-white p-3">
             <div className="flex flex-wrap items-center gap-2">

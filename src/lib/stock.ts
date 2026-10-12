@@ -1,98 +1,25 @@
-import { catalogFile, type Product } from "@/components/sites/strale/catalog";
-import { ConflictError, PRODUCTS_PATH, readProducts, serializeJson, tryGetRepo } from "@/lib/admin/repo";
-import { dbConfigured, transaction } from "@/lib/db";
+import type { Product } from "@/components/sites/strale/catalog";
+import { dbApplyStock, dbReadCatalog } from "@/lib/catalog-db";
+import { dbConfigured } from "@/lib/db";
+import { getStoreData } from "@/lib/store-data";
+import type { StockLine } from "@/lib/stock-math";
 
-/** Any constant; identifies the stock lock in Postgres. */
-const STOCK_LOCK = 734_001;
+export { available, shortages, type StockLine } from "@/lib/stock-math";
 
 /**
- * Runs stock changes one at a time across every server instance (Postgres advisory lock), so two customers
- * can never both buy the last piece.
+ * Freshest catalogue for pricing an order: straight from the database (not the page cache). Without a database
+ * the catalogue only changes with a rebuild, so the built-in copy is current.
  */
-export async function withStockLock<T>(work: () => Promise<T>) {
-  if (!dbConfigured()) return work();
-  return transaction(async (client) => {
-    await client.query("select pg_advisory_xact_lock($1)", [STOCK_LOCK]);
-    return work();
-  });
-}
-
-/** Pieces left for a product/size (per-size stock when the product tracks it). */
-export function available(product: Product, size: string) {
-  if (product.draft || !product.sizes.includes(size)) return 0;
-  return product.sizeStock ? (product.sizeStock[size] ?? 0) : product.stock;
-}
-
-export type StockLine = { handle: string; size: string; qty: number };
-
-/** Freshest catalogue: the repo (includes panel edits not deployed yet), else the one built into the site. */
-export async function currentProducts() {
-  const repo = tryGetRepo();
-  if (!repo) return { products: catalogFile, live: false };
-  return { products: (await readProducts(repo)).products, live: true };
-}
-
-/** Same handle + size lines added together (a basket can hold the same item twice). */
-function merge(lines: StockLine[]) {
-  const map = new Map<string, StockLine>();
-  for (const line of lines) {
-    const key = `${line.handle}\u0000${line.size}`;
-    const existing = map.get(key);
-    map.set(key, existing ? { ...existing, qty: existing.qty + line.qty } : { ...line });
-  }
-  return [...map.values()];
-}
-
-export function shortages(products: Product[], lines: StockLine[]) {
-  return merge(lines).filter((line) => {
-    const product = products.find((p) => p.handle === line.handle);
-    return !product || available(product, line.size) < line.qty;
-  });
-}
-
-function adjust(products: Product[], lines: StockLine[], sign: 1 | -1) {
-  return products.map((product) => {
-    const mine = lines.filter((l) => l.handle === product.handle);
-    if (!mine.length) return product;
-    const next = { ...product };
-    if (next.sizeStock) {
-      next.sizeStock = { ...next.sizeStock };
-      for (const line of mine) next.sizeStock[line.size] = Math.max(0, (next.sizeStock[line.size] ?? 0) + sign * line.qty);
-      next.stock = Object.values(next.sizeStock).reduce((a, b) => a + b, 0);
-    } else {
-      next.stock = Math.max(0, next.stock + sign * mine.reduce((sum, l) => sum + l.qty, 0));
-    }
-    return next;
-  });
+export async function currentProducts(): Promise<{ products: Product[] }> {
+  if (dbConfigured()) return { products: (await dbReadCatalog()).products };
+  return { products: (await getStoreData()).products };
 }
 
 /**
- * Takes (`-1`) or returns (`+1`) stock in products.json with one commit, retrying when another save lands
- * first. Taking fails without changes if any line is short.
+ * Takes (`-1`) or returns (`+1`) stock for an order. Only orders saved in the database move stock, and with a
+ * database the catalogue lives there too (row locks make concurrent orders queue up).
  */
 export async function applyStock(lines: StockLine[], sign: 1 | -1, reason: string) {
-  return withStockLock(() => applyStockUnlocked(lines, sign, reason));
-}
-
-async function applyStockUnlocked(lines: StockLine[], sign: 1 | -1, reason: string) {
-  const repo = tryGetRepo();
-  if (!repo) return { ok: false as const, error: "no-repo" as const };
-  const merged = merge(lines);
-  for (let attempt = 0; attempt < 4; attempt++) {
-    const { products, version } = await readProducts(repo);
-    if (sign === -1) {
-      const short = shortages(products, merged);
-      if (short.length) return { ok: false as const, error: "short" as const, short };
-    }
-    try {
-      await repo.commit({
-        files: [{ path: PRODUCTS_PATH, content: serializeJson(adjust(products, merged, sign)), baseVersion: version }],
-        message: `Stok: ${reason}`,
-      });
-      return { ok: true as const };
-    } catch (error) {
-      if (!(error instanceof ConflictError)) throw error;
-    }
-  }
-  throw new Error("Stok güncellenemedi (çok sayıda eşzamanlı değişiklik). Lütfen tekrar deneyin.");
+  if (!dbConfigured()) return { ok: false as const, error: "no-db" as const };
+  return dbApplyStock(lines, sign, reason);
 }

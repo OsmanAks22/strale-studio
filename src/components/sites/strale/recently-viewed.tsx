@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
-import { getProduct, type Product } from "./catalog";
+import { useProductsByHandle } from "./product-lookup";
 import { ProductCard } from "./product-card";
 import { Slider, SliderItem } from "./slider";
 
@@ -52,10 +52,11 @@ export function TrackRecentlyViewed({ handle }: { handle: string }) {
 
 export function RecentlyViewedList({ exclude }: { exclude?: string }) {
   const raw = useSyncExternalStore(subscribe, read, () => "[]");
-  const products = parse(raw)
-    .filter((handle) => handle !== exclude)
-    .map(getProduct)
-    .filter((p): p is Product => Boolean(p && p.stock > 0));
+  const handles = parse(raw).filter((handle) => handle !== exclude);
+  const lookup = useProductsByHandle(handles);
+  const products = lookup.products.filter((p) => p.stock > 0);
+
+  if (lookup.loading && !products.length) return <div className="mt-3 h-24" aria-busy="true" />;
 
   if (!products.length) {
     return (

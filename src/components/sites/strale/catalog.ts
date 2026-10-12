@@ -1,8 +1,6 @@
-import products from "./products.json";
-
 /**
- * Product catalogue. `products.json` is generated from the stock spreadsheet by
- * `npm run import-products -- <file.csv>`; edit the spreadsheet, not the JSON.
+ * Product catalogue: types and pure helpers. The products themselves come from the database (or products.json
+ * when none is connected) via `getProducts()` in src/lib/store-data.ts and are edited in the admin panel.
  */
 
 export const categories = [
@@ -47,11 +45,6 @@ export type Product = {
   draft?: boolean;
 };
 
-/** Every product in the file, drafts included (the admin panel reads this). */
-export const catalogFile = products as Product[];
-
-/** Products visible on the site. */
-export const allProducts = catalogFile.filter((product) => !product.draft);
 
 /** Show "Son N adet" at or below this many pieces. */
 export const LOW_STOCK = 3;
@@ -76,8 +69,8 @@ export function categoryLabel(slug: CategorySlug) {
   return categories.find((c) => c.slug === slug)?.label ?? slug;
 }
 
-export function getProduct(handle: string) {
-  return allProducts.find((p) => p.handle === handle);
+export function findProduct(products: Product[], handle: string) {
+  return products.find((p) => p.handle === handle);
 }
 
 /** Size is orderable when the product has stock and, with per-size stock, that size has pieces left. */
@@ -118,14 +111,15 @@ const specialCollections: Record<string, Collection> = {
 
 export const collectionSlugs = [...Object.keys(specialCollections), ...categories.map((c) => c.slug)];
 
-export function getCollection(slug: string) {
+/** A collection page's products (in stock only) from the visible products. */
+export function collectionFor(products: Product[], slug: string) {
   const special = specialCollections[slug];
-  if (special) return { ...special, products: allProducts.filter((p) => p.stock > 0 && special.filter(p)) };
+  if (special) return { ...special, products: products.filter((p) => p.stock > 0 && special.filter(p)) };
   const category = categories.find((c) => c.slug === slug);
   if (!category) return null;
   return {
     title: category.label,
     description: `İhraç fazlası ${category.label.toLocaleLowerCase("tr-TR")} modelleri.`,
-    products: allProducts.filter((p) => p.stock > 0 && p.category === category.slug),
+    products: products.filter((p) => p.stock > 0 && p.category === category.slug),
   };
 }

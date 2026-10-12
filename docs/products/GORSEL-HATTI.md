@@ -18,11 +18,17 @@ fotoğraflarını, repodaki otomatik hatla sitenin ürün görsellerine dönüş
 |---|---|
 | `docs/products/README.md` | Ürün tablosu sütunları, görsel modları, komutlar |
 | `docs/products/urun-sablonu.csv` | Ürün tablosu şablonu |
-| `scripts/import-products.mjs` | CSV → `products.json`; `--gorsel` ile görsel hattını çalıştırır |
+| `scripts/import-products.mjs` | CSV → ürünler (ortamda `DATABASE_URL` varsa canlı Supabase veritabanı, yoksa `products.json`); `--gorsel` ile görsel hattını çalıştırır |
 | `scripts/urun_gorselleri.py` | Higgsfield API çağrıları, kırpma, bütçe, log |
 | `docs/products/mankenler/` | Manken fotoğrafları (aşağıda) |
 | `docs/brand/strale-brand-blueprint.md` | Marka kuralları, renkler, iş modeli |
 | `src/components/sites/strale/catalog.ts` | Ürün tipi (`image`, `gallery`) |
+
+## Önemli: ürünler nereye yazılır?
+Site Supabase'e bağlıysa canlı katalog veritabanındadır; `products.json`'a yazmak canlı siteyi **değiştirmez**.
+Bu durumda ortamda `DATABASE_URL` (Supabase → Connect → Transaction pooler adresi) tanımlı olmalı; kullanıcıdan
+ortam ayarlarına eklemesini iste (adresi sohbete yazdırma). Betik bittikten sonra kullanıcıya panelde
+**Siteyi yenile**'ye basmasını söyle. Görseller yine repoya commit edilir ve deploy sonrası görünür.
 
 ## Akış
 1. Ürün fotoğrafları → `docs/products/fotograflar/` (dosya adı = CSV'deki `foto_dosyasi`).

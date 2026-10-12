@@ -1,17 +1,18 @@
 import Link from "next/link";
-import { allProducts, categories, formatPrice, getCollection } from "./catalog";
+import { getProducts, getSettings } from "@/lib/store-data";
+import { categories, collectionFor, formatPrice } from "./catalog";
 import { media } from "./media";
 import { MediaSlot } from "./media-slot";
 import { ProductCard } from "./product-card";
 import { RecentlyViewedList } from "./recently-viewed";
-import { siteConfig } from "./site-config";
 import { Slider, SliderItem } from "./slider";
 
 /* Layout and type scale follow the cloned homepage 1:1 (docs/research/reigningchamp/page-brief.md). */
 
 /** Text and link are edited in the admin panel (Mağaza Ayarları → Duyuru çubuğu). */
-export function AnnouncementBar() {
-  const { announcement } = siteConfig;
+export async function AnnouncementBar() {
+  const settings = await getSettings();
+  const { announcement } = settings;
   if (!announcement.enabled) return null;
   return (
     <div className="flex h-[42px] items-center justify-center bg-ink px-3 text-bone tab:justify-between tab:px-8">
@@ -24,7 +25,7 @@ export function AnnouncementBar() {
         ) : null}
       </p>
       <p className="hidden whitespace-nowrap tab:block">
-        {formatPrice(siteConfig.freeShippingThreshold)} üzeri siparişlerde ücretsiz kargo
+        {formatPrice(settings.freeShippingThreshold)} üzeri siparişlerde ücretsiz kargo
       </p>
     </div>
   );
@@ -74,8 +75,8 @@ export function Hero() {
   );
 }
 
-export function NewArrivals() {
-  const products = allProducts.filter((p) => p.stock > 0).slice(0, 12);
+export async function NewArrivals() {
+  const products = (await getProducts()).filter((p) => p.stock > 0).slice(0, 12);
   return (
     <section className="pt-6 pb-8 tab:pb-[30px]">
       <SectionHeading>Yeni Gelenler</SectionHeading>
@@ -118,8 +119,9 @@ export function ContentCards() {
   );
 }
 
-export function ShopByCategory() {
-  const withStock = categories.filter((category) => (getCollection(category.slug)?.products.length ?? 0) > 0);
+export async function ShopByCategory() {
+  const products = await getProducts();
+  const withStock = categories.filter((category) => (collectionFor(products, category.slug)?.products.length ?? 0) > 0);
   return (
     <section className="pt-6 pb-9">
       <SectionHeading>Kategoriler</SectionHeading>

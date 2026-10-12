@@ -10,7 +10,8 @@ import { media } from "./media";
 import { MediaSlot } from "./media-slot";
 import { HeartIcon } from "./order-panel";
 import { cartCount, useCart, useFavourites } from "./shop-store";
-import { siteConfig, whatsappLink } from "./site-config";
+import { useSettings } from "./settings-context";
+import { whatsappLink } from "./site-config";
 
 const SCROLLED_PAST = 70;
 
@@ -21,6 +22,7 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const closeTimer = useRef<number | undefined>(undefined);
+  const settings = useSettings();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > SCROLLED_PAST);
@@ -94,9 +96,9 @@ export function SiteHeader({ overlay = true }: { overlay?: boolean }) {
               <SearchIcon className="size-5" />
             </Link>
             <HeaderShopLinks />
-            {siteConfig.whatsapp ? (
+            {settings.whatsapp ? (
               <a
-                href={whatsappLink("Merhaba, sipariş vermek istiyorum.") ?? undefined}
+                href={whatsappLink(settings, "Merhaba, sipariş vermek istiyorum.") ?? undefined}
                 aria-label="WhatsApp ile yazın"
                 target="_blank"
                 rel="noreferrer"

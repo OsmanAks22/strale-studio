@@ -7,7 +7,7 @@ export async function requireAdminDb(request: Request) {
   if (denied) return denied;
   if (!dbConfigured()) {
     return Response.json(
-      { error: "Veritabanı bağlı değil. Vercel → Storage → Neon Postgres ekleyin (bkz. docs/siparis-sistemi.md).", noDb: true },
+      { error: "Veritabanı bağlı değil. Vercel → Storage → Supabase ekleyin (bkz. docs/KURULUM.md).", noDb: true },
       { status: 503 },
     );
   }

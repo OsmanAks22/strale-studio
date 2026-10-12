@@ -14,9 +14,12 @@
  *   npm run import-products -- docs/products/urun-listesi.csv --gorsel --dry-run  # show plan + AI cost only
  * Extra flags after --gorsel (--budget 3, --force, --quality low) go to scripts/urun_gorselleri.py.
  *
- * The admin panel (/yonetim) edits products.json directly, so this script merges instead of overwriting:
+ * The admin panel (/yonetim) edits the catalogue too, so this script merges instead of overwriting:
  * rows update the product with the same address (ad + renk), photos/draft/stock code set in the panel are kept,
- * and products that are only in products.json stay (pass --replace to drop them).
+ * and products that are not in the sheet stay (pass --replace to drop them).
+ *
+ * Where it writes: with DATABASE_URL (or POSTGRES_URL) set — the live Supabase catalogue; otherwise products.json.
+ * Pass --json to force the file.
  */
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -27,7 +30,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [input, ...flags] = process.argv.slice(2);
 const generateImages = flags.includes("--gorsel");
 const replace = flags.includes("--replace");
-const imagerFlags = flags.filter((flag) => flag !== "--gorsel" && flag !== "--replace");
+const forceJson = flags.includes("--json");
+const imagerFlags = flags.filter((flag) => !["--gorsel", "--replace", "--json"].includes(flag));
 const PHOTOS = resolve(root, "docs/products/fotograflar");
 const MODELS = resolve(root, "docs/products/mankenler");
 const LOOKS = ["orijinal", "urun", "manken", "ikisi"];
@@ -203,7 +207,13 @@ if (generateImages && jobs.length) {
  * manken: on-model shot on both. ikisi: packshot on the card, on-model shot first on the product page.
  */
 const out = resolve(root, "src/components/sites/strale/products.json");
-const existing = existsSync(out) ? JSON.parse(readFileSync(out, "utf8")) : [];
+const dbUrl = forceJson ? "" : process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
+const db = dbUrl ? await openDatabase(dbUrl) : null;
+const existing = db
+  ? (await db.query("select data from products order by position, handle")).rows.map((row) => row.data)
+  : existsSync(out)
+    ? JSON.parse(readFileSync(out, "utf8"))
+    : [];
 const previous = new Map(existing.map((product) => [product.handle, product]));
 
 for (const product of products) {
@@ -225,7 +235,8 @@ for (const product of products) {
   }
 
   const files = { main: `${PUBLIC_PRODUCTS}/${product.handle}.jpg`, model: `${PUBLIC_PRODUCTS}/${product.handle}-manken.jpg` };
-  const has = (path) => existsSync(resolve(root, "public", path.slice(1)));
+  // Panel photos in Supabase Storage are full URLs; repo photos must exist on disk.
+  const has = (path) => /^https?:\/\//.test(path) || existsSync(resolve(root, "public", path.slice(1)));
   const gallery = [];
   if (has(files.main)) gallery.push({ src: files.main });
   if (has(files.model)) gallery[["manken", "ikisi"].includes(product.look) ? "unshift" : "push"]({ src: files.model, ai: true });
@@ -253,5 +264,48 @@ if (onlyInPanel.length) {
   );
 }
 const merged = replace ? products : [...products, ...onlyInPanel];
-writeFileSync(out, `${JSON.stringify(merged, null, 2)}\n`);
-console.log(`✅ ${merged.length} ürün → ${out}`);
+if (db) {
+  await db.query("begin");
+  // Same version lock as orders and the panel: nothing else writes the catalogue meanwhile.
+  const { rows } = await db.query("select value from store_meta where key = 'catalog_version' for update");
+  await db.query("update store_meta set value = $1::jsonb, updated_at = now() where key = 'catalog_version'", [
+    String(Number(rows[0]?.value ?? 0) + 1),
+  ]);
+  await db.query("delete from products where not (handle = any($1::text[]))", [merged.map((p) => p.handle)]);
+  await db.query(
+    `insert into products (handle, position, data)
+     select e->>'handle', (ord - 1)::int, e from jsonb_array_elements($1::jsonb) with ordinality as t(e, ord)
+     on conflict (handle) do update set position = excluded.position, data = excluded.data,
+       updated_at = case when products.data = excluded.data then products.updated_at else now() end`,
+    [JSON.stringify(merged)],
+  );
+  await db.query("insert into catalog_log (message) values ($1)", [`Tablo içe aktarıldı: ${products.length} satır (${input})`]);
+  await db.query("commit");
+  await db.end();
+  console.log(`✅ ${merged.length} ürün → veritabanı. Sitede hemen görmek için panelde “Siteyi yenile”ye basın (yoksa en geç 1 saat).`);
+} else {
+  writeFileSync(out, `${JSON.stringify(merged, null, 2)}\n`);
+  console.log(`✅ ${merged.length} ürün → ${out}`);
+}
+
+/** Same SSL rules as src/lib/db.ts (Supabase uses its own CA; localhost has no SSL). */
+async function openDatabase(url) {
+  const { default: pg } = await import("pg");
+  const parsed = new URL(url);
+  const sslmode = parsed.searchParams.get("sslmode");
+  for (const key of ["sslmode", "sslrootcert", "sslcert", "sslkey", "sslnegotiation", "uselibpqcompat", "supa", "pgbouncer"]) {
+    parsed.searchParams.delete(key);
+  }
+  const host = parsed.hostname;
+  const local = ["localhost", "127.0.0.1", "::1"].includes(host);
+  const ca = process.env.DATABASE_CA_CERT?.replace(/\\n/g, "\n");
+  const ssl = local || sslmode === "disable" ? false : ca ? { ca } : /(^|\.)supabase\.(co|com)$/.test(host) ? { rejectUnauthorized: false } : true;
+  const client = new pg.Client({ connectionString: parsed.toString(), ssl });
+  await client.connect();
+  const ready = await client.query("select 1 from store_meta where key = 'seeded'").catch(() => ({ rowCount: 0 }));
+  if (!ready.rowCount) {
+    console.error("❌ Veritabanı henüz hazır değil: siteyi veya /yonetim panelini bir kez açın, sonra tekrar deneyin.");
+    process.exit(1);
+  }
+  return client;
+}

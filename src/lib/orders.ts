@@ -1,6 +1,6 @@
 import { randomInt } from "node:crypto";
 import { formatPrice } from "@/components/sites/strale/catalog";
-import { shippingFor, siteConfig } from "@/components/sites/strale/site-config";
+import { shippingFor, transferEnabled, type StoreSettings } from "@/components/sites/strale/site-config";
 import {
   dbConfigured,
   evaluateDiscount,
@@ -13,6 +13,7 @@ import {
   type PaymentMethod,
 } from "@/lib/db";
 import { available, currentProducts } from "@/lib/stock";
+import { getSettings } from "@/lib/store-data";
 
 export type CheckoutLine = { handle: string; size: string; qty: number };
 export type CheckoutInput = {
@@ -40,11 +41,11 @@ export const newOrderCode = () => `ST-${Array.from({ length: 6 }, () => ALPHABET
 
 export const cardPaymentEnabled = () => false;
 
-export function enabledPaymentMethods(): PaymentMethod[] {
+export function enabledPaymentMethods(settings: StoreSettings): PaymentMethod[] {
   return [
     // Bank transfer needs an IBAN to show the customer.
-    ...(siteConfig.payment.transfer && siteConfig.bank.iban ? (["havale"] as const) : []),
-    ...(siteConfig.payment.cod ? (["kapida"] as const) : []),
+    ...(transferEnabled(settings) ? (["havale"] as const) : []),
+    ...(settings.payment.cod ? (["kapida"] as const) : []),
     ...(cardPaymentEnabled() ? (["kart"] as const) : []),
   ];
 }
@@ -57,7 +58,7 @@ export async function findDiscount(code: string) {
 
 /** Prices and stock always come from the server's catalogue, never from the browser. */
 export async function quote(lines: CheckoutLine[], paymentMethod: PaymentMethod | undefined, discountCode?: string): Promise<Quote> {
-  const { products } = await currentProducts();
+  const [{ products }, settings] = await Promise.all([currentProducts(), getSettings()]);
   const items: OrderItem[] = [];
   const problems: Quote["problems"] = [];
   const wanted = new Map<string, number>();
@@ -94,8 +95,8 @@ export async function quote(lines: CheckoutLine[], paymentMethod: PaymentMethod 
       appliedCode = discountCode.trim().toLocaleUpperCase("tr-TR");
     } else discountError = result.error;
   }
-  const shipping = shippingFor(subtotal - discount);
-  const codFee = paymentMethod === "kapida" ? siteConfig.payment.codFee : 0;
+  const shipping = shippingFor(settings, subtotal - discount);
+  const codFee = paymentMethod === "kapida" ? settings.payment.codFee : 0;
   return { items, subtotal, discount, discountCode: appliedCode, discountError, shipping, codFee, total: subtotal - discount + shipping + codFee, problems };
 }
 

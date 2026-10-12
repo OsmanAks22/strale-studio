@@ -3,6 +3,7 @@ import { requireAdminDb } from "@/lib/admin/db-guard";
 import { errorResponse } from "@/lib/admin/repo";
 import { ORDER_STATUSES, PAYMENT_STATUSES, query, RELEASED_STATUSES, type Order, type OrderStatus } from "@/lib/db";
 import { applyStock } from "@/lib/stock";
+import { storeChanged } from "@/lib/store-data";
 
 export async function GET(request: NextRequest) {
   const denied = await requireAdminDb(request);
@@ -41,13 +42,17 @@ export async function PATCH(request: NextRequest) {
     const releasing = patch.status && RELEASED_STATUSES.includes(patch.status);
     if (releasing && order.stock_applied) {
       const result = await applyStock(lines, 1, `${order.code} ${patch.status === "iptal" ? "iptal" : "iade"}, stok geri eklendi`);
-      if (result.ok) stockApplied = false;
-      else stockNote = "Stok geri eklenemedi (GitHub bağlantısı yok); panelden elle düzeltin.";
+      if (result.ok) {
+        stockApplied = false;
+        storeChanged();
+      } else stockNote = "Stok geri eklenemedi; ürün stoğunu panelden elle düzeltin.";
     } else if (patch.status && !releasing && !order.stock_applied) {
       const result = await applyStock(lines, -1, `${order.code} yeniden açıldı`);
-      if (result.ok) stockApplied = true;
-      else if (result.error === "short") return Response.json({ error: "Bu siparişi açmak için yeterli stok yok." }, { status: 409 });
-      else stockNote = "Stok düşülemedi (GitHub bağlantısı yok); panelden elle düzeltin.";
+      if (result.ok) {
+        stockApplied = true;
+        storeChanged();
+      } else if (result.error === "short") return Response.json({ error: "Bu siparişi açmak için yeterli stok yok." }, { status: 409 });
+      else stockNote = "Stok düşülemedi; ürün stoğunu panelden elle düzeltin.";
     }
 
     const text = (value: string | undefined, max: number) => (value === undefined ? undefined : value.trim().slice(0, max) || null);

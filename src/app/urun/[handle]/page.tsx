@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  allProducts,
   categoryLabel,
   discountPercent,
+  findProduct,
   formatPrice,
-  getProduct,
   productTitle,
   type Product,
 } from "@/components/sites/strale/catalog";
@@ -14,21 +13,22 @@ import { OrderPanel } from "@/components/sites/strale/order-panel";
 import { ProductCard } from "@/components/sites/strale/product-card";
 import { ProductImage } from "@/components/sites/strale/product-image";
 import { RecentlyViewedList, TrackRecentlyViewed } from "@/components/sites/strale/recently-viewed";
-import { siteConfig } from "@/components/sites/strale/site-config";
 import { Slider, SliderItem } from "@/components/sites/strale/slider";
 import { StoreShell } from "@/components/sites/strale/store-shell";
 import { siteOrigin } from "@/lib/site-url";
+import { getProducts, getSettings } from "@/lib/store-data";
 
 type Props = { params: Promise<{ handle: string }> };
 
-export const dynamicParams = false;
+/** Products added after the build get their page on first visit (then cached like the others). */
+export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return allProducts.map((product) => ({ handle: product.handle }));
+export async function generateStaticParams() {
+  return (await getProducts()).map((product) => ({ handle: product.handle }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = getProduct((await params).handle);
+  const product = findProduct(await getProducts(), (await params).handle);
   if (!product) return {};
   const description = `${productTitle(product)} — ihraç fazlası, ${formatPrice(product.price)}. Bedenler: ${product.sizes.join(", ")}.`;
   return {
@@ -40,12 +40,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
-  const product = getProduct((await params).handle);
+  const [products, siteConfig, origin] = await Promise.all([getProducts(), getSettings(), siteOrigin()]);
+  const product = findProduct(products, (await params).handle);
   if (!product) notFound();
 
   const discount = discountPercent(product);
-  const related = allProducts.filter((p) => p.category === product.category && p.handle !== product.handle && p.stock > 0);
-  const url = siteConfig.domain ? `https://${siteConfig.domain}/urun/${product.handle}` : `/urun/${product.handle}`;
+  const related = products.filter((p) => p.category === product.category && p.handle !== product.handle && p.stock > 0);
+  const url = `${origin}/urun/${product.handle}`;
 
   const details = [
     { label: "Durum", value: product.condition === "hafif-kusurlu" ? "Hafif kusurlu" : "Kusursuz" },
@@ -60,7 +61,7 @@ export default async function ProductPage({ params }: Props) {
       <script
         type="application/ld+json"
         // Product rich results (price, availability) for Google.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product)).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product, origin)).replace(/</g, "\\u003c") }}
       />
       <TrackRecentlyViewed handle={product.handle} />
       <nav aria-label="Sayfa yolu" className="px-3 pt-6 text-graphite tab:px-8">
@@ -166,13 +167,13 @@ export default async function ProductPage({ params }: Props) {
   );
 }
 
-function productJsonLd(product: Product) {
-  const origin = siteOrigin();
+function productJsonLd(product: Product, origin: string) {
+  const absolute = (src: string) => (src.startsWith("http") ? src : `${origin}${src}`);
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: productTitle(product),
-    image: (product.gallery?.map((g) => g.src) ?? (product.image ? [product.image] : [])).map((src) => `${origin}${src}`),
+    image: (product.gallery?.map((g) => g.src) ?? (product.image ? [product.image] : [])).map(absolute),
     description: [product.fabric, product.origin, product.condition === "hafif-kusurlu" ? `Hafif kusurlu: ${product.note ?? ""}` : ""].filter(Boolean).join(". "),
     sku: product.sku ?? product.handle,
     offers: {

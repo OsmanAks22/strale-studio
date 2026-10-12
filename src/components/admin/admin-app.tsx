@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { CatalogMode } from "@/lib/admin/catalog-store";
 import { cn } from "@/lib/utils";
+import { api } from "./api";
 import { formatPrice } from "@/components/sites/strale/catalog";
 import { checkProduct, stockState } from "@/components/sites/strale/product-rules";
 import { AdminProvider, useAdmin } from "./admin-state";
@@ -173,7 +175,7 @@ function SaveBar() {
             disabled={!dirty || saving}
             className="st-label cursor-pointer bg-ink px-4 py-2.5 text-bone hover:bg-smoke disabled:cursor-default disabled:bg-sand disabled:text-graphite"
           >
-            {saving ? "Kaydediliyor…" : mode === "github" ? "Kaydet ve yayınla" : "Kaydet"}
+            {saving ? "Kaydediliyor…" : mode === "local" ? "Kaydet" : "Kaydet ve yayınla"}
           </button>
           <form action="/api/yonetim/cikis" method="post" onSubmit={async (event) => {
             event.preventDefault();
@@ -215,8 +217,9 @@ function SaveBar() {
   );
 }
 
-function DeployState({ deploy, mode }: { deploy: ReturnType<typeof useAdmin>["deploy"]; mode: "github" | "local" }) {
+function DeployState({ deploy, mode }: { deploy: ReturnType<typeof useAdmin>["deploy"]; mode: CatalogMode }) {
   if (mode === "local") return <span className="text-[12px] text-graphite">Yerel mod · dosyalara yazılır</span>;
+  if (mode === "db" && !deploy) return <RefreshSite />;
   if (!deploy) return <span className="text-[12px] text-graphite">Tüm değişiklikler kaydedildi</span>;
   const text = {
     pending: "Kaydedildi · site güncelleniyor (1–2 dk)…",
@@ -235,6 +238,29 @@ function DeployState({ deploy, mode }: { deploy: ReturnType<typeof useAdmin>["de
           </a>
         </>
       ) : null}
+    </span>
+  );
+}
+
+/** Pages refresh by themselves after every save; this is for changes made directly in Supabase. */
+function RefreshSite() {
+  const [state, setState] = useState<"idle" | "busy" | "done">("idle");
+  return (
+    <span className="text-[12px] text-graphite">
+      Kaydettiğiniz anda yayında ·{" "}
+      <button
+        type="button"
+        disabled={state === "busy"}
+        onClick={async () => {
+          setState("busy");
+          await api("yenile", { body: {} }).catch(() => undefined);
+          setState("done");
+        }}
+        className="cursor-pointer underline hover:text-ink"
+        title="Supabase panelinden doğrudan yaptığınız değişiklikleri siteye yansıtır"
+      >
+        {state === "done" ? "Site yenilendi ✓" : "Siteyi yenile"}
+      </button>
     </span>
   );
 }

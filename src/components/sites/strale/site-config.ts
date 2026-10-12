@@ -1,7 +1,7 @@
-import settings from "./store-settings.json";
-
 /**
- * Store settings live in store-settings.json and are edited in the admin panel (/yonetim → Mağaza Ayarları).
+ * Store settings: types and pure helpers. The values come from the database (or store-settings.json when no
+ * database is connected) and are edited in the admin panel (/yonetim → Mağaza Ayarları).
+ * Server code reads them with `getSettings()` (src/lib/store-data.ts), client components with `useSettings()`.
  * Empty strings are hidden on the site (and legal pages show "[doldurulacak]").
  */
 export type StoreSettings = {
@@ -31,18 +31,19 @@ export type StoreSettings = {
   etbisUrl: string;
 };
 
-const stored = settings as StoreSettings;
+export const STORE_NAME = "STRALE";
 
-export const siteConfig = {
-  name: "STRALE",
-  ...stored,
-  /** Payment methods offered with WhatsApp / bank-transfer ordering. */
-  paymentMethods: [stored.payment.transfer && stored.bank.iban ? "Havale / EFT" : "", stored.payment.cod ? "Kapıda ödeme (nakit veya kart)" : ""].filter(Boolean),
-};
+/** Bank transfer is only offered once an IBAN is set. */
+export const transferEnabled = (s: StoreSettings) => s.payment.transfer && Boolean(s.bank.iban);
 
-export function whatsappLink(message: string) {
-  if (!siteConfig.whatsapp) return null;
-  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(message)}`;
+/** Payment methods offered with basket / WhatsApp ordering, as shown to customers. */
+export function paymentMethodLabels(s: StoreSettings) {
+  return [transferEnabled(s) ? "Havale / EFT" : "", s.payment.cod ? "Kapıda ödeme (nakit veya kart)" : ""].filter(Boolean);
+}
+
+export function whatsappLink(s: StoreSettings, message: string) {
+  if (!s.whatsapp) return null;
+  return `https://wa.me/${s.whatsapp}?text=${encodeURIComponent(message)}`;
 }
 
 export function filled(value: string) {
@@ -50,6 +51,13 @@ export function filled(value: string) {
 }
 
 /** Shipping for a basket subtotal. */
-export function shippingFor(subtotal: number) {
-  return subtotal === 0 || subtotal >= siteConfig.freeShippingThreshold ? 0 : siteConfig.shippingFee;
+export function shippingFor(s: StoreSettings, subtotal: number) {
+  return subtotal === 0 || subtotal >= s.freeShippingThreshold ? 0 : s.shippingFee;
+}
+
+/** Public site origin: the bought domain, else Vercel's production URL, else localhost. */
+export function siteOriginFor(s: StoreSettings) {
+  if (s.domain) return `https://${s.domain}`;
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  return vercel ? `https://${vercel}` : "http://localhost:3000";
 }

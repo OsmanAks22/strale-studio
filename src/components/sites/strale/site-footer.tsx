@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { footerColumns, legalLinks } from "./data";
 import { InstagramIcon, WhatsAppIcon } from "./icons";
-import { siteConfig, whatsappLink } from "./site-config";
+import { getSettings } from "@/lib/store-data";
+import { whatsappLink, type StoreSettings } from "./site-config";
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const settings = await getSettings();
   return (
     <footer className="bg-ink text-bone">
       <div className="px-3 pt-6 pb-12 tab:flex tab:justify-between tab:gap-6 tab:px-8 tab:pt-12">
@@ -24,15 +26,15 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <ContactBlock />
+        <ContactBlock siteConfig={settings} />
       </div>
-      <SubFooter />
+      <SubFooter siteConfig={settings} />
     </footer>
   );
 }
 
-function ContactBlock() {
-  const whatsapp = whatsappLink("Merhaba, bir ürün hakkında bilgi almak istiyorum.");
+function ContactBlock({ siteConfig }: { siteConfig: StoreSettings }) {
+  const whatsapp = whatsappLink(siteConfig, "Merhaba, bir ürün hakkında bilgi almak istiyorum.");
   return (
     <div className="mt-[71px] min-w-0 tab:mt-[3px] tab:max-w-[380px] tab:flex-1 tab:basis-[200px]">
       <h2 className="st-display text-[34px] leading-10">Sipariş & Destek</h2>
@@ -84,7 +86,7 @@ function ContactBlock() {
   );
 }
 
-function SubFooter() {
+function SubFooter({ siteConfig }: { siteConfig: StoreSettings }) {
   return (
     <div className="border-t border-smoke px-3 pt-[13px] pb-9 text-ash tab:flex tab:items-start tab:justify-between tab:gap-6 tab:px-8 tab:pt-4 tab:pb-12">
       <ul className="flex flex-wrap items-center gap-y-[9px] tab:shrink-0 tab:basis-[340px] desk:basis-auto">

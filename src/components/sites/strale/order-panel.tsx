@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 import { LOW_STOCK, productTitle, sizeAvailable, type Product } from "./catalog";
 import { WhatsAppIcon } from "./icons";
 import { addToCart, toggleFavourite, useFavourites } from "./shop-store";
-import { siteConfig, whatsappLink } from "./site-config";
+import { useSettings } from "./settings-context";
+import { paymentMethodLabels, whatsappLink } from "./site-config";
 import { StockAlertForm } from "./stock-alert-form";
 
 /** Size picker, add-to-basket, favourite and "notify me" for sold-out sizes. */
@@ -20,7 +21,8 @@ export function OrderPanel({ product, url }: { product: Product; url: string }) 
   const soldOut = available.length === 0;
   const soldOutSizes = product.sizes.filter((option) => !sizeAvailable(product, option));
 
-  const ask = whatsappLink(["Merhaba, bu ürün hakkında bilgi almak istiyorum:", productTitle(product), size ? `Beden: ${size}` : "", url].filter(Boolean).join("\n"));
+  const settings = useSettings();
+  const ask = whatsappLink(settings, ["Merhaba, bu ürün hakkında bilgi almak istiyorum:", productTitle(product), size ? `Beden: ${size}` : "", url].filter(Boolean).join("\n"));
 
   return (
     <div>
@@ -118,7 +120,7 @@ export function OrderPanel({ product, url }: { product: Product; url: string }) 
       ) : null}
 
       <p className="mt-3 text-graphite">
-        Ödeme: {siteConfig.paymentMethods.join(" veya ")}.{" "}
+        Ödeme: {paymentMethodLabels(settings).join(" veya ")}.{" "}
         <Link href="/sayfa/siparis" className="st-underline">
           Nasıl sipariş verilir?
         </Link>

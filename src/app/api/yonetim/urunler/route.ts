@@ -1,25 +1,24 @@
 import type { Product } from "@/components/sites/strale/catalog";
 import { checkProduct, IMAGE_DIR, normalizeProduct, productImages } from "@/components/sites/strale/product-rules";
 import { requireAdmin } from "@/lib/admin/auth";
-import { errorResponse, getRepo, PRODUCTS_PATH, readProducts, serializeJson, type Upload } from "@/lib/admin/repo";
-import { withStockLock } from "@/lib/stock";
+import { catalogInfo, readCatalog, saveCatalog } from "@/lib/admin/catalog-store";
+import { errorResponse, type Upload } from "@/lib/admin/repo";
+import { storeChanged } from "@/lib/store-data";
 
-/** Latest catalogue straight from the repo (may be newer than what the deployed site shows). */
+/** Latest catalogue straight from the database / repo (may be newer than the cached pages). */
 export async function GET(request: Request) {
   const denied = await requireAdmin(request);
   if (denied) return denied;
   try {
-    const repo = getRepo();
-    const { products, version } = await readProducts(repo);
-    return Response.json({ products, version, mode: repo.mode, label: repo.label, rawBase: repo.rawBase });
+    const info = catalogInfo();
+    const { products, version } = await readCatalog();
+    return Response.json({ products, version, ...info });
   } catch (error) {
     return errorResponse(error);
   }
 }
 
 type SaveBody = { products?: Product[]; baseVersion?: string; force?: boolean; uploads?: Upload[] };
-
-const repoPath = (publicPath: string) => `public${publicPath}`;
 
 function summary(before: Product[], after: Product[]) {
   const old = new Map(before.map((p) => [p.handle, p]));
@@ -51,28 +50,28 @@ export async function POST(request: Request) {
     );
     if (errors.length) return Response.json({ error: "Kaydedilemedi", errors }, { status: 400 });
 
-    const repo = getRepo();
-    const { products: before } = await readProducts(repo);
+    const { products: before } = await readCatalog();
     const used = new Set(products.flatMap(productImages));
-    // Only publish photos a product still points at; an uncropped original (kept for the AI pipeline)
-    // goes along with its cropped photo.
+    // Only publish repo photos a product still points at; an uncropped original (kept for the AI pipeline)
+    // goes along with its cropped photo. (Supabase Storage photos are uploaded straight away.)
     const uploads = (body.uploads ?? []).filter((u) =>
       used.has(u.path.replace(/^public/, "").replace(/^docs\/products\/fotograflar\//, `${IMAGE_DIR}/`)),
     );
-    // Photos no product uses any more are removed from the repo.
-    const deletes = [...new Set(before.flatMap(productImages))]
-      .filter((path) => !used.has(path) && path.startsWith(`${IMAGE_DIR}/`))
-      .map(repoPath);
+    // Photos no product uses any more are removed.
+    const removed = [...new Set(before.flatMap(productImages))].filter((src) => !used.has(src));
 
-    // Same lock as orders, so a panel save and an order never write products.json at the same moment.
-    const result = await withStockLock(() => repo.commit({
-      files: [{ path: PRODUCTS_PATH, content: serializeJson(products), baseVersion: body.baseVersion }],
+    // In the database, the catalogue version lock queues this save behind any order that is taking stock.
+    const result = await saveCatalog({
+      products,
+      before,
+      baseVersion: body.baseVersion!,
       force: body.force,
       uploads,
-      deletes,
+      removed,
       message: summary(before, products),
-    }));
-    return Response.json({ version: result.versions[PRODUCTS_PATH], commit: result.commit, url: result.url, products });
+    });
+    storeChanged();
+    return Response.json({ ...result, products });
   } catch (error) {
     return errorResponse(error);
   }

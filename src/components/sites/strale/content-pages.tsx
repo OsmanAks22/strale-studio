@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { formatPrice } from "./catalog";
-import { filled, siteConfig, whatsappLink } from "./site-config";
+import { filled, paymentMethodLabels, whatsappLink, type StoreSettings } from "./site-config";
 
 export type ContentPage = {
   title: string;
@@ -11,9 +11,6 @@ export type ContentPage = {
   body: React.ReactNode;
 };
 
-const c = siteConfig;
-const company = c.company;
-const shipping = `${formatPrice(c.freeShippingThreshold)} ve üzeri siparişlerde kargo ücretsizdir; altındaki siparişlerde kargo ücreti ${formatPrice(c.shippingFee)}’dir.`;
 
 function H2({ children }: { children: React.ReactNode }) {
   return <h2 className="st-heading mt-10 mb-3 text-[13px] first:mt-0 tab:text-[14px]">{children}</h2>;
@@ -29,7 +26,8 @@ function List({ items }: { items: React.ReactNode[] }) {
   );
 }
 
-function SellerTable() {
+function SellerTable({ c }: { c: StoreSettings }) {
+  const company = c.company;
   const rows = [
     ["Unvan", filled(company.title)],
     ["Adres", filled(company.address)],
@@ -50,8 +48,8 @@ function SellerTable() {
   );
 }
 
-function WhatsAppLine() {
-  const href = whatsappLink("Merhaba, sipariş vermek istiyorum.");
+function WhatsAppLine({ c }: { c: StoreSettings }) {
+  const href = whatsappLink(c, "Merhaba, sipariş vermek istiyorum.");
   return href ? (
     <a href={href} target="_blank" rel="noreferrer" className="st-underline">
       WhatsApp hattımız
@@ -61,7 +59,12 @@ function WhatsAppLine() {
   );
 }
 
-export const contentPages: Record<string, ContentPage> = {
+/** Info and legal pages, filled in with the current store settings. */
+export function buildContentPages(c: StoreSettings): Record<string, ContentPage> {
+  const company = c.company;
+  const shipping = `${formatPrice(c.freeShippingThreshold)} ve üzeri siparişlerde kargo ücretsizdir; altındaki siparişlerde kargo ücreti ${formatPrice(c.shippingFee)}’dir.`;
+  const paymentMethods = paymentMethodLabels(c);
+  return {
   hakkimizda: {
     title: "Hakkımızda",
     eyebrow: "STRALE",
@@ -98,7 +101,7 @@ export const contentPages: Record<string, ContentPage> = {
     body: (
       <>
         <p>
-          Sipariş, beden ve stok soruların için <WhatsAppLine /> en hızlı yol. Çalışma saatlerimiz: {c.hours}.
+          Sipariş, beden ve stok soruların için <WhatsAppLine c={c} /> en hızlı yol. Çalışma saatlerimiz: {c.hours}.
         </p>
         <H2>İletişim bilgileri</H2>
         <dl className="border-t border-sand">
@@ -179,7 +182,7 @@ export const contentPages: Record<string, ContentPage> = {
         <ol className="list-decimal space-y-3 pl-5">
           <li>Beğendiğin ürünün sayfasında bedenini seç ve “Sepete Ekle”ye bas.</li>
           <li>Sepetini kontrol et, “Siparişi Tamamla” ile teslimat bilgilerini doldur.</li>
-          <li>Ödeme yöntemini seç ({c.paymentMethods.join(" veya ")}); varsa indirim kodunu gir.</li>
+          <li>Ödeme yöntemini seç ({paymentMethods.join(" veya ")}); varsa indirim kodunu gir.</li>
           <li>Siparişi onayladığında sipariş kodun ekranda görünür. Havale seçtiysen IBAN bilgisi de orada yer alır.</li>
           <li>
             Siparişin {c.dispatchDays} iş gününde kargoya verilir; kargo takip numarası WhatsApp’tan iletilir ve{" "}
@@ -264,7 +267,7 @@ export const contentPages: Record<string, ContentPage> = {
     description: "STRALE ödeme yöntemleri.",
     body: (
       <>
-        <List items={c.paymentMethods.map((method) => method)} />
+        <List items={paymentMethods} />
         <p className="mt-6">
           Havale/EFT bilgileri sipariş onaylandığında ekranda gösterilir. Açıklama kısmına sipariş kodunu (ST-…)
           yazmayı unutma; ödeme ulaşınca siparişin kargoya hazırlanır.
@@ -343,7 +346,7 @@ export const contentPages: Record<string, ContentPage> = {
           Verileriniz yalnızca yukarıdaki amaçlarla sınırlı olarak kargo firmalarına, ödeme/banka kuruluşlarına, mali
           müşavirimize ve yetkili kamu kurumlarına aktarılabilir. WhatsApp üzerinden yürütülen yazışmalar WhatsApp’ın
           (Meta) altyapısında işlenir. Sipariş kayıtları, hizmet aldığımız bulut veritabanı ve barındırma sağlayıcılarının
-          (Neon, Vercel) sunucularında saklanır. Sipariş kayıtları yasal saklama süresi boyunca, stok bildirimi kayıtları
+          (Supabase, Vercel) sunucularında saklanır. Sipariş kayıtları yasal saklama süresi boyunca, stok bildirimi kayıtları
           bildirim yapıldıktan sonra en geç 6 ay içinde silinir.
         </p>
         <H2>Haklarınız</H2>
@@ -363,11 +366,11 @@ export const contentPages: Record<string, ContentPage> = {
     body: (
       <>
         <H2>Satıcı bilgileri</H2>
-        <SellerTable />
+        <SellerTable c={c} />
         <H2>Ürün, fiyat ve ödeme</H2>
         <p>
           Ürünün temel nitelikleri, KDV dahil satış fiyatı, beden ve adet bilgisi ürün sayfasında ve sipariş öncesi
-          WhatsApp’tan iletilen sipariş özetinde yer alır. Ödeme yöntemleri: {c.paymentMethods.join(", ")}. {shipping}
+          WhatsApp’tan iletilen sipariş özetinde yer alır. Ödeme yöntemleri: {paymentMethods.join(", ")}. {shipping}
         </p>
         <H2>Teslimat</H2>
         <p>
@@ -398,7 +401,7 @@ export const contentPages: Record<string, ContentPage> = {
       <>
         <H2>1. Taraflar</H2>
         <p>Satıcı:</p>
-        <SellerTable />
+        <SellerTable c={c} />
         <p className="mt-3">
           Alıcı: Sipariş sırasında ad-soyad, adres ve iletişim bilgilerini bildiren gerçek veya tüzel kişi.
         </p>
@@ -457,7 +460,8 @@ export const contentPages: Record<string, ContentPage> = {
       </>
     ),
   },
-};
+  };
+}
 
 function SizeTable({ head, rows }: { head: string[]; rows: string[][] }) {
   return (
@@ -487,3 +491,18 @@ function SizeTable({ head, rows }: { head: string[]; rows: string[][] }) {
     </div>
   );
 }
+
+export const contentPageSlugs = [
+  "hakkimizda",
+  "iletisim",
+  "sss",
+  "siparis",
+  "kargo-teslimat",
+  "iade-degisim",
+  "odeme",
+  "beden-rehberi",
+  "kvkk",
+  "on-bilgilendirme",
+  "mesafeli-satis-sozlesmesi",
+  "cerez-politikasi",
+];
